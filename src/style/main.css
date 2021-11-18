@@ -1,0 +1,4 @@
+/* Only for tailwind import -- Do not add custom css to this file. Instead, adjust themes accordingly */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
