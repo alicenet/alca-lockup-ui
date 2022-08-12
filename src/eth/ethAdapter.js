@@ -1,0 +1,281 @@
+import 'ethers';
+import { ethers } from 'ethers';
+import config from 'config/_config';
+import store from 'redux/store/store';
+import { APPLICATION_ACTIONS } from 'redux/actions';
+import { TOKEN_TYPES } from 'redux/constants';
+
+/** 
+ * Re exported for easy importing
+ */
+export const CONTRACT_NAMES = config.CONTRACT_NAMES;
+
+/**
+ * Callback to run after establishing web3connection state pass or fail
+ * @callback web3ConnectCallback
+ * @param { Object } err - Will be null if no error, or else contain the error
+ */
+class EthAdapter {
+
+    ////////////////////////////////////////////////////////
+    /* Private Methods -- Scroll down for public methods */
+    //////////////////////////////////////////////////////
+    constructor() {
+        this.accounts = []; // Web3 Accounts List 
+        this.provider = null; // Web3 Provider -- Populated on successful _connectToWeb3Wallet()
+        this.signer = null; // Web3 Signer -- Populated on successful _connectToWeb3Wallet()
+        this.contracts = config.CONTRACTS; // Contracts from config
+        console.debug("EthAdapter Init: ", this);
+        this._setupWeb3Listeners();
+        this.timeBetweenBalancePolls = 7500;
+    }
+
+    /**
+     * Listen for balance updates
+     */
+    _balanceLoop() {
+        this.updateBalances();
+        setTimeout(this._balanceLoop.bind(this), this.timeBetweenBalancePolls);
+    }
+
+    /**
+     * Setup web3 listeners for connected web3Wallet state changes
+     */
+    async _setupWeb3Listeners() {
+        if (window.ethereum) {
+            window.ethereum.on("networkChanged", networkId => {
+                store.dispatch(APPLICATION_ACTIONS.updateNetwork(networkId));
+                this.updateBalances();
+            })
+            window.ethereum.on("accountsChanged", async accounts => {
+                this.accounts = accounts;
+                let address = await this._getAddressByIndex(0);
+                store.dispatch(APPLICATION_ACTIONS.setConnectedAddress(address));
+                this.updateBalances();
+            })
+        } else {
+            console.warn("No web3 detected.") // TODO: Add fallback
+        }
+    }
+
+    /**
+     * Get address from accounts[index] or return 0 if empty.
+     * @param { Number } index - Index to get from this.accounts
+     */
+    async _getAddressByIndex(index = 0) {
+        return this.accounts.length > 0 ? this.accounts[index] : "0x0";
+    }
+
+    /**
+     * Returns an ethers.js contract instance that has been instanced without a signer for read-only calls
+     * @param { ContractName } contractName - One of the available contract name strings from config  
+     */
+    _getReadonlyContractInstance(contractName) {
+        this._requireContractExists(contractName);
+        this._requireContractAddress(contractName);
+        this._requireContractAbi(contractName);
+        return new ethers.Contract(this.contracts[contractName].address, this.contracts[contractName].abi, this.provider);
+    }
+
+    /**
+     * Returns an ethers.js contract instance that has been instanced with a signer ( this.signer )
+     * @param { ContractName } contractName - One of the available contract name strings from config  
+     */
+    _getSignerContractInstance(contractName) {
+        this._requireContractExists(contractName);
+        this._requireContractAddress(contractName);
+        this._requireContractAbi(contractName);
+        this._requireSigner(contractName);
+        return new ethers.Contract(this.contracts[contractName].address, this.contracts[contractName].abi, this.signer);
+    }
+
+    // TODO: FINISH DETERMINISTIC CONFIG SETUP
+    /** 
+     * Get deterministic create2 contract address by contract name
+     * @param { ContractName } contractName - One of the available contract name strings from config  
+     * @returns { web3.eth.Contract } 
+     */
+    _getDeterministicContractAddress(contractName) {
+        return `0x${this.web3.utils.sha3(`0x${[
+            'ff',
+            config.factoryContractAddress,
+            config.CONTRACT_SALTS[contractName],
+            this.web3.utils.sha3(config.CONTRACT_BYTECODE[contractName])
+        ].map(x => x.replace(/0x/, '')).join('')}`).slice(-40)}`.toLowerCase();
+    }
+
+    /**
+     * Throw exceptions
+     * @param { String } msg 
+     */
+    async _throw(msg) {
+        throw new Error("eth/ethAdaper.js: " + msg);
+    }
+
+    /** 
+     * Internal contract settings requirement helper for contract functions 
+     * @param { String } contractName
+     */
+    _requireContractExists(contractName) {
+        if (!this.contracts[contractName]) {
+            this._throw("Contract configuration for contract '" + contractName + "' nonexistant. Verify contract has been set in .env");
+        }
+    }
+
+    /** 
+     * Internal ABI requirement helper for contract functions 
+     * @param { String } contractName
+     */
+    _requireContractAbi(contractName) {
+        if (!this.contracts[contractName].abi) {
+            this._throw("Requesting contract instance for contract '" + contractName + "' with nonexistant abi. Verify ABI has been set.");
+        }
+    }
+
+    /** 
+     * Internal contract address requirement helper for contract functions 
+     * @param { String } contractName
+     */
+    _requireContractAddress(contractName) {
+        if (!this.contracts[contractName].address) {
+            this._throw("Requesting contract instance for contract '" + contractName + "' with nonexistant address. Verify address has been set.");
+        }
+    }
+
+    /** 
+     * Internal signer requirement helper for contract functions 
+     * @param { String } contractName
+     */
+    _requireSigner(contractName) {
+        if (!this.signer) {
+            this._throw("Requesting contract instance for contract '" + contractName + "' but EthAdapter has not been provided a signer. Verify a signer has been set.");
+        }
+    }
+
+    /**
+     * Try a function, if it fails return the error with message nested as "error" in a plain object
+     * @param { Function } func 
+     * @returns { Promise } - Function result or error
+     */
+    async _try(func) {
+        try {
+            return await func();
+        } catch (ex) {
+            console.error(ex);
+            return { error: ex.message };
+        }
+    }
+
+    /**
+     * Attempt a call on a contract method
+     * @param { ContractName } contractName - One of the available contract name strings from config  
+     * @param { String } methodName - Exact smart contract method name as a string
+     * @param { Array } paramaters - Contract method parameters as an array  
+     */
+    async _tryCall(contractName, methodName, params = []) {
+        let contract = this._getReadonlyContractInstance(contractName);
+        let result = await contract[methodName](...params);
+        // If return is a BN parse and return the value string, else just return
+        if (ethers.BigNumber.isBigNumber(result)) {
+            return result.toString();
+        }
+        return result;
+    }
+
+    /**
+     * Attempt a send on a contract method
+     * @param { ContractName } contractName - One of the available contract name strings from config  
+     * @param { String } methodName - Exact smart contract method name as a string
+     * @param { Array } paramaters - Contract method parameters as an array  
+     */
+    async _trySend(contractName, methodName, params = []) {
+        console.log(params)
+        return await this._getSignerContractInstance(contractName)[methodName](...params);
+    }
+
+    /////////////////////
+    /* Public Methods  */
+    ////////////////////
+
+    /**
+     * Attempt to connect to a Web3 Wallet from window.ethereum
+     * @param { web3ConnectCallback } cb - Callback to run after a connection contains err if error
+     * @returns { String } - Connected Address
+     */
+    async connectToWeb3Wallet(cb) {
+        try {
+            this.provider = new ethers.providers.Web3Provider(window.ethereum, "any"); // Establish connection to injected wallet
+            this.accounts = await this.provider.send("eth_requestAccounts", []); // Request accounts
+            this.signer = this.provider.getSigner(); // Get the signer
+            let connectedAddress = await this._getAddressByIndex(0);
+            store.dispatch(APPLICATION_ACTIONS.updateNetwork(String(parseInt(window.ethereum.chainId, 16))));
+            store.dispatch(APPLICATION_ACTIONS.setWeb3Connected(true));
+            store.dispatch(APPLICATION_ACTIONS.setConnectedAddress(connectedAddress));
+            cb(null, connectedAddress);
+            // Setup balance listener
+            this._balanceLoop();
+        } catch (ex) {
+            console.error(ex);
+            store.dispatch(APPLICATION_ACTIONS.setWeb3Connected(false));
+            cb({ error: ex.message });
+        }
+    }
+
+    /**
+     * Get Ether balance
+     * @param { Number } accountIndex - Account index of this.accounts[i] to check balance for
+     * @returns { Promise<String> } - Ethereum balance of this.accounts[accountIndex] as formatted string
+     */
+    async getEthereumBalance(accountIndex = 0) {
+        return this._try(async () => {
+            let balance = await this.provider.getBalance(this._getAddressByIndex(accountIndex))
+            return ethers.utils.formatEther(balance);
+        })
+    }
+
+    /**
+     * Request a network change to the active web wallet in window.ethereum
+     * @param { String } networkId - Network ID as a string -- Not Hexadecimal 
+     */
+    async requestNetworkChange(networkId) {
+        let hexChainId = "0x" + parseInt(networkId).toString(16);
+        await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: hexChainId }],
+        });
+        this.updateBalances();
+    }
+
+    /** 
+     * Sign a simple string with this.signer
+     * @param { String } message - The string to sign
+     * @returns { String } -- Signed message
+     */
+    async signSimpleStringMessage(message) {
+        this._requireSigner();
+        return await this.signer.signMessage(message);
+    }
+
+    /** 
+     * Signs the bytes of message with this.signer -- Useful for signing hashes 
+     * @param { String } message - The string to sign
+     * @returns { String } -- Signed message
+     */
+    async signBytes(message) {
+        this._requireSigner();
+        const msgBytes = ethers.utils.arrayify(message);
+        return await this.signer.signMessage(msgBytes)
+    }
+
+    /** 
+     * Sends dispatch to update the connected addresses ethereum balance
+     */
+    async updateBalances() {
+        store.dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
+    }
+
+
+}
+
+let ethAdapter = new EthAdapter();
+export default ethAdapter;

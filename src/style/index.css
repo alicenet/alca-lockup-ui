@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'JetBrains Mono', 'Inter', 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.extra-small-balance-loader::before, .extra-small-loader::after {
+    height: .75rem !important;
+    width: .75rem !important;
+    margin: .175rem 0rem 0rem -.5rem !important;
+}
+
+.extra-small-balance-loader:before {
+    border: none !important;
+}
+
+button {
+    font-family: 'JetBrains Mono' !important;
+    font-style: normal !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    line-height: 20px !important;
+    padding: 8px 30px !important;
+}
+.ui, h1, input {
+    font-family: 'JetBrains Mono' !important;
+}
+h2 {
+    font-family: 'Helvetica Neue' !important;
+}
+h3 {
+    font-family: 'Inter' !important;
+}
+i {
+    line-height: 19px;
+}
+
+/*Modal*/
+.modal {
+    font-family: 'Inter' !important;
+}
+.modal .ui.header { 
+    font-family: 'Inter' !important;
+}
+

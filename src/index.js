@@ -1,15 +1,20 @@
-// Baseline requirements
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 
-// Themeing
-import 'semantic-ui-less/semantic.less'
-import 'style/main.css';
+// Style
+import 'semantic-ui-css/semantic.min.css'
+import './style/index.css';
+
+/* Redux Store */
+import store from "redux/store/store.js";
+import { Provider } from "react-redux";
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+    <React.StrictMode>
+        <Provider store={store}>
+            <App />
+        </Provider>
+    </React.StrictMode>,
+    document.getElementById('root')
 );
