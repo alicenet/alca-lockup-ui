@@ -6,12 +6,13 @@ const initialApplicationState = {
     web3Connecting: false,
     balancesLoading: false,
     balances: {
-        ethereum: 0,
         alca: 0,
         alcb: 0,
+        ethereum: 0,
+        mad: 0,
     },
     allowances: {
-        madToken: 0,
+        mad: 0,
     },
     connectedAddress: "",
     networkId: "",
@@ -48,6 +49,12 @@ export default function applicationReducer(state = initialApplicationState, acti
         case APPLICATION_ACTION_TYPES.SET_BALANCES:
             return Object.assign({}, state, {
                 balances: { ...state.balances, ...action.payload },
+
+            });
+
+        case APPLICATION_ACTION_TYPES.SET_ALLOWANCES:
+            return Object.assign({}, state, {
+                allowances: { ...state.allowances, ...action.payload },
             });
 
         case APPLICATION_ACTION_TYPES.TOGGLE_TX_PENDING_STATUS:

@@ -91,18 +91,32 @@ export const updateBalances = tokenType => {
     return async function (dispatch, getState) {
         let state = getState();
         let ethBalance = state.application.balances.ethereum;
-        let aBytesBal = state.application.balances.aliceBytes;
+        let madBal = state.application.balances.mad;
+        let madAllowance = state.application.allowances.mad;
+        let alcaBal = state.application.balances.alca;
+
         if (tokenType === TOKEN_TYPES.ETHEREUM || tokenType === TOKEN_TYPES.ALL) {
             ethBalance = await ethAdapter.getEthereumBalance(0);
         }
-        if (tokenType === TOKEN_TYPES.ALICENET || tokenType === TOKEN_TYPES.ALL) {
-            aBytesBal = await ethAdapter.getALCBTokenBalance(0);
+        if (tokenType === TOKEN_TYPES.MADTOKEN || tokenType === TOKEN_TYPES.ALL) {
+            madBal = await ethAdapter.getMadTokenBalance(0);
+            madAllowance = await ethAdapter.getMadTokenAllowance(0);
+        }
+        if (tokenType === TOKEN_TYPES.ALCA || tokenType === TOKEN_TYPES.ALL) {
+            alcaBal = await ethAdapter.getAlcaBalance(0);
         }
         dispatch({ 
             type: APPLICATION_ACTION_TYPES.SET_BALANCES, 
             payload: { 
                 ethereum: parseFloat(ethBalance).toFixed(4), 
-                aliceBytes: parseInt(aBytesBal) || 0 // Fallback to 0 if token doesn't exist on network
+                mad: parseInt(madBal) || 0, // Fallback to 0 if token doesn't exist on network
+                alca: parseInt(alcaBal) || 0 // Fallback to 0 if token doesn't exist on network
+            } 
+        });
+        dispatch({ 
+            type: APPLICATION_ACTION_TYPES.SET_ALLOWANCES, 
+            payload: { 
+                mad: parseInt(madAllowance) || 0 // Fallback to 0 if token doesn't exist on network
             } 
         });
     }

@@ -4,6 +4,9 @@ import config from 'config/_config';
 import store from 'redux/store/store';
 import { APPLICATION_ACTIONS } from 'redux/actions';
 import { TOKEN_TYPES } from 'redux/constants';
+import { CONTRACT_ADDRESSES } from 'config/contracts';
+
+const madTokenContractAddress = "0x5b09a0371c1da44a8e24d36bf5deb1141a84d875";
 
 /** 
  * Re exported for easy importing
@@ -189,7 +192,7 @@ class EthAdapter {
      * @param { Array } paramaters - Contract method parameters as an array  
      */
     async _trySend(contractName, methodName, params = []) {
-        console.log(params)
+        console.log(contractName, methodName, params)
         return await this._getSignerContractInstance(contractName)[methodName](...params);
     }
 
@@ -233,6 +236,37 @@ class EthAdapter {
         })
     }
 
+    async getAlcaBalance(accountIndex = 0) {
+      return this._try(async () => {
+        let balance = await this._tryCall("AToken", "balanceOf", [this._getAddressByIndex(accountIndex)]);
+        return ethers.utils.formatEther(balance);
+      });
+    }
+
+    /**
+     * Get mad token balance for an address
+     * @param {String} address - Ethereum address to which the balance should be fetched for 
+     * @returns {String} - Balance of mad tokens held by the address
+     */
+    async getMadTokenBalance(accountIndex = 0) {
+        return this._try(async () => {
+            let balance = await this._tryCall("MadToken", "balanceOf", [this._getAddressByIndex(accountIndex)])
+            return ethers.utils.formatEther(balance); // MadToken is an 18 Decimal balance like ETH, format it
+        });
+    }
+
+    /**
+     * Get mad token allowance for an address
+     * @param {String} address - Ethereum address to which the balance should be fetched for 
+     * @returns {String} - Allowance of mad tokens held by the address
+     */
+    async getMadTokenAllowance(accountIndex = 0) {
+        return this._try(async () => {
+            let allowance = await this._tryCall("MadToken", "allowance", [this._getAddressByIndex(accountIndex), CONTRACT_ADDRESSES.AToken]);
+            return ethers.utils.formatEther(allowance);
+        });
+    }
+
     /**
      * Request a network change to the active web wallet in window.ethereum
      * @param { String } networkId - Network ID as a string -- Not Hexadecimal 
@@ -244,6 +278,30 @@ class EthAdapter {
             params: [{ chainId: hexChainId }],
         });
         this.updateBalances();
+    }
+
+    /**
+     * Send an allowance request for a specified index and amount
+     * @param {String|Number} unformattedAmount - Non wei formatted amount
+     * @returns {ethers.Transaction} - Ethers Tx -- can call wait() for mining
+     */
+    async sendAllowanceRequest(unformattedAmount) {
+        return await this._try(async () => {
+            let tx = await this._trySend("MadToken", "approve", [CONTRACT_ADDRESSES.AToken, ethers.utils.parseEther(unformattedAmount)]);
+            return tx;
+        })
+    }
+
+    /**
+     * Send a migration request transaction to the alca contract for the specified amount
+     * @param {String|Number} unformattedAmount - Non wei formatted amount of mad token to migrate
+     * @returns {ethers.Transaction} - Ethers Tx -- can call wait() for mining
+     */
+    async sendMigrateRequest(unformattedAmount) {
+        return await this._try(async () => {
+            let tx = await this._trySend("AToken", "migrate", [ethers.utils.parseEther(unformattedAmount)])
+            return tx
+        });
     }
 
     /** 
