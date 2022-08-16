@@ -1,7 +1,5 @@
 
-# TBD -
-
-TLDR: Swap MadToken => ALCA Tokens
+# Swap MadToken => ALCA Tokens
 
 ## Setting up and running in a dev environment
 
@@ -12,7 +10,7 @@ TLDR: Swap MadToken => ALCA Tokens
     - MAD_TOKEN_HOLDER and MAD_TOKEN_ADDRESS can be left as defaults
 3. In project root run `npm run ii` to install all dependencies
 4. Start the development node with by running `npm run hh-env` from the project root
-5. Deploy contracts to the development node with `npm run deploy-deb` from the project root
+5. Deploy contracts to the development node with `npm run deploy-dev` from the project root
 6. Start the UI with `npm start`
 # Built from eth interface boilerplate
 
