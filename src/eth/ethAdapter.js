@@ -236,11 +236,16 @@ class EthAdapter {
         })
     }
 
+    /**
+     * Get ALCA balance
+     * @param {Number} accountIndex - Account index to get ALCA for 
+     * @returns {String} - Balance of ALCA for given account index
+     */
     async getAlcaBalance(accountIndex = 0) {
-      return this._try(async () => {
-        let balance = await this._tryCall("AToken", "balanceOf", [this._getAddressByIndex(accountIndex)]);
-        return ethers.utils.formatEther(balance);
-      });
+        return this._try(async () => {
+            let balance = await this._tryCall("AToken", "balanceOf", [this._getAddressByIndex(accountIndex)]);
+            return ethers.utils.formatEther(balance);
+        });
     }
 
     /**

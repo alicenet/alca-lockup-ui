@@ -32,7 +32,10 @@
     "postinstall": "semantic-ui-css-patch",
     "transpile-abi": "node scripts/buildAbiAndContractNameFiles.js run",
     "transpile-bytecode": "node scripts/buildBytecodeFiles.js run",
-    "transpile-all": "node scripts/buildOnStart.js startRun"
+    "transpile-all": "node scripts/buildOnStart.js startRun",
+    "ii": "rm -rf node_modules hardhat-env/node_modules && npm i && cd hardhat-env && npm i",
+    "hh-env": "cd hardhat-env && npx hardhat node",
+    "hh-deploy": "cd hardhat-env && npx hardhat run ./scripts/init.js --network localhost"
   },
   "eslintConfig": {
     "extends": [

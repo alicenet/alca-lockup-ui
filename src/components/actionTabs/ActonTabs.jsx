@@ -12,11 +12,23 @@ export function ActionTabs() {
 
     const panes = [
         {
-            menuItem: 'Allow',
+            menuItem: '1 - Phishing Notification',
             render: () => <Tab.Pane attached={false} ><AllowTokens setTabIdx={ (idx) => setTabIdx(idx)} /></Tab.Pane>,
         },
         {
-            menuItem: 'Migrate',
+            menuItem: '2 - Connect',
+            render: () => <Tab.Pane attached={false} ><AllowTokens setTabIdx={ (idx) => setTabIdx(idx)} /></Tab.Pane>,
+        },
+        {
+            menuItem: '3 - Allow',
+            render: () => <Tab.Pane attached={false} ><AllowTokens setTabIdx={ (idx) => setTabIdx(idx)} /></Tab.Pane>,
+        },
+        {
+            menuItem: '4 - Migrate',
+            render: () => <Tab.Pane attached={false}> <SwapTokens setTabIdx={ (idx) => setTabIdx(idx)} /></Tab.Pane>,
+        },
+        {
+            menuItem: '5 - Success',
             render: () => <Tab.Pane attached={false}> <SwapTokens setTabIdx={ (idx) => setTabIdx(idx)} /></Tab.Pane>,
         },
 
