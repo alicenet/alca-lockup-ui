@@ -1,4 +1,4 @@
-import { Button, Checkbox, Container, Header, Icon, List } from "semantic-ui-react";
+import { Button, Checkbox, Container, Header, Icon, Image, List, Popup } from "semantic-ui-react";
 import React, { useContext, useState } from "react";
 import config from "utils";
 import { TabPanesContext } from "context";
@@ -11,74 +11,105 @@ export function PhishingBox() {
 
     return (
 
-        <Container className="flex flex-col justify-around items-center p-4 min-h-[240px]">
+        <>
 
-            <div className="text-sm">
+            <Container className="flex flex-col justify-around items-center p-4 min-h-[240px]">
 
-                <Header>
-                    In order to proceed with the swapping process some checks need to occur:
-                </Header>
+                <div className="text-sm">
 
-                <List bulleted>
+                    <Header>
+                        In order to proceed with the migration process some checks need to occur:
+                    </Header>
 
-                    <List.Item className="pt-3">
+                    <List bulleted>
 
-                        <List.Content className="flex flex-row justify-between items-center">
-                            <span>Verify contract addresses:</span>
-                        </List.Content>
+                        <List.Item className="pt-3">
 
-                        <List bulleted>
-                            <List.Item className="py-3">
-                                <List.Content className="flex flex-row justify-between items-center">
-                                    <span>ALCA Contract Address</span>
-                                    <Icon color="green" name="check" className="m-0 h-full" />
-                                </List.Content>
-                            </List.Item>
+                            <List.Content className="flex flex-row justify-between items-center">
+                                <span>Verify contract addresses:</span>
+                            </List.Content>
 
-                            <List.Item className="py-3">
-                                <List.Content className="flex flex-row justify-between items-center">
-                                    <span>MadToken Contract Address</span>
-                                    <Icon color="green" name="check" className="m-0 h-full" />
-                                </List.Content>
-                            </List.Item>
-                        </List>
+                            <List bulleted>
+                                <List.Item className="py-3">
+                                    <List.Content className="flex flex-row justify-between items-center">
+                                        <span>ALCA Contract Address</span>
+                                        <Icon color="green" name="check" className="m-0 h-full" />
+                                    </List.Content>
+                                </List.Item>
 
-                    </List.Item>
+                                <List.Item className="py-3">
+                                    <List.Content className="flex flex-row justify-between items-center">
+                                        <span>MadToken Contract Address</span>
+                                        <Icon color="green" name="check" className="m-0 h-full" />
+                                    </List.Content>
+                                </List.Item>
+                            </List>
 
-                    <List.Item className="py-3">
-                        <List.Content className="flex flex-row justify-between items-center">
-                            <span>Metamask contract verification</span>
-                            <Icon color="green" name="check" className="m-0 h-full" />
-                        </List.Content>
-                    </List.Item>
+                        </List.Item>
 
-                    <List.Item className="py-3">
-                        <List.Content className="flex flex-row justify-between items-center">
-                            <span>Verify URL</span>
-                            <Icon color="green" name="check" className="m-0 h-full" />
-                        </List.Content>
-                    </List.Item>
+                        <List.Item className="py-3">
+                            <List.Content className="flex flex-row justify-between items-center">
+                                <Popup
+                                    position="top center"
+                                    content={
+                                        <Image
+                                            src='https://react.semantic-ui.com/images/wireframe/square-image.png'
+                                            rounded
+                                        />
+                                    }
+                                    trigger={<span>Metamask contract verification</span>}
+                                />
+                                <Icon color="green" name="check" className="m-0 h-full" />
+                            </List.Content>
+                        </List.Item>
 
-                    <List.Item className="py-3">
-                        <List.Content className="flex flex-row justify-between items-center">
-                            <span>Verify HTTPS Lock and Cert</span>
-                            <Icon color="green" name="check" className="m-0 h-full" />
-                        </List.Content>
-                    </List.Item>
+                        <List.Item className="py-3">
+                            <List.Content className="flex flex-row justify-between items-center">
+                                <Popup
+                                    position="top center"
+                                    content={
+                                        <Image
+                                            src='https://react.semantic-ui.com/images/wireframe/square-image.png'
+                                            rounded
+                                        />
+                                    }
+                                    trigger={<span>Verify URL</span>}
+                                />
+                                <Icon color="green" name="check" className="m-0 h-full" />
+                            </List.Content>
+                        </List.Item>
 
-                </List>
+                        <List.Item className="py-3">
+                            <List.Content className="flex flex-row justify-between items-center">
+                                <Popup
+                                    position="top center"
+                                    content={
+                                        <Image
+                                            src='https://react.semantic-ui.com/images/wireframe/square-image.png'
+                                            rounded
+                                        />
+                                    }
+                                    trigger={<span>Verify HTTPS Lock and Cert</span>}
+                                />
+                                <Icon color="green" name="check" className="m-0 h-full" />
+                            </List.Content>
+                        </List.Item>
 
-                <Header>
-                    <Checkbox
-                        label="I Have read and addressed the noted concerns"
-                        onChange={(e, data) => setChecked(data.checked)}
-                        checked={checked}
-                    />
-                </Header>
+                    </List>
 
-            </div>
+                    <Header>
+                        <Checkbox
+                            label="I Have read and addressed the noted concerns"
+                            onChange={(e, data) => setChecked(data.checked)}
+                            checked={checked}
+                        />
+                    </Header>
 
-            <div className="absolute right-0 top-[105%]">
+                </div>
+
+            </Container>
+
+            <div className="absolute mt-4 right-0 top-[100%]">
                 <Button
                     color="green"
                     content="Continue"
@@ -90,7 +121,6 @@ export function PhishingBox() {
                 />
             </div>
 
-        </Container>
-
+        </>
     );
 }
