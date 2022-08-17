@@ -342,12 +342,6 @@ class EthAdapter {
      */
     async updateBalances() {
         store.dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
-        // Anytime balances update, update the exchange rate too
-        this.updateExchangeRate();
-    }
-
-    async updateExchangeRate() {
-        store.dispatch(APPLICATION_ACTIONS.updateExchangeRate());
     }
 
 

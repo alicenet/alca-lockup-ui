@@ -123,9 +123,9 @@ export const updateBalances = tokenType => {
     }
 };
 
-export const updateExchangeRate = () => {
+export const updateExchangeRate = (madTokenAmt) => {
     return async function (dispatch) {
-        let exchangeRate = await ethAdapter.getMadTokenToALCAExchangeRate();
+        let exchangeRate = await ethAdapter.getMadTokenToALCAExchangeRate(madTokenAmt);
         console.log(exchangeRate)
         dispatch({
             type: APPLICATION_ACTION_TYPES.UPDATE_EXCHANGE_RATE,

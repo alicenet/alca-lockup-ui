@@ -1,23 +1,26 @@
 import { Button, Container, Header, Input } from "semantic-ui-react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import React, { useContext, useState } from "react";
 import ethAdapter from "eth/ethAdapter";
 import { tabPanes } from "utils/constants";
 import { TabPanesContext } from "context";
+import * as ACTIONS from 'redux/actions/application';
 
 export function SwapTokens() {
 
     const [migrateAmount, setMigrateAmount] = useState(0);
+    const dispatch = useDispatch();
 
     const [error, setError] = useState();
     const [success, setSuccess] = useState();
     const [waiting, setWaiting] = useState(false);
     const { setActiveTabPane } = useContext(TabPanesContext);
 
-    const { web3Connected, alcaBalance, madAllowance } = useSelector(state => ({
+    const { web3Connected, alcaBalance, madAllowance, alcaExchangeRate } = useSelector(state => ({
         web3Connected: state.application.web3Connected,
         madAllowance: state.application.allowances.mad,
-        alcaBalance: state.application.balances.alca
+        alcaBalance: state.application.balances.alca,
+        alcaExchangeRate: state.application.alcaExchangeRate
     }));
 
     const initiateMigrate = async () => {
@@ -35,6 +38,11 @@ export function SwapTokens() {
         setActiveTabPane(tabPanes.SUCCESS)
     }
 
+    const updateMigrateAmt = (amt) => {
+        dispatch(ACTIONS.updateExchangeRate(amt));
+        setMigrateAmount(amt);
+    }
+
     return (
 
         <Container className="flex flex-col justify-around items-center p-4 min-h-[240px]">
@@ -50,13 +58,14 @@ export function SwapTokens() {
                     placeholder="0"
                     value={migrateAmount}
                     onChange={(e) =>
-                        setMigrateAmount(e.target.value)
+                        updateMigrateAmt(e.target.value)
+
                     }
                     action={{
                         content: "Max",
                         secondary: true,
                         size: "mini",
-                        onClick: () => setMigrateAmount(madAllowance),
+                        onClick: () => updateMigrateAmt(madAllowance),
                         disabled: !web3Connected
                     }}
                 />
@@ -77,11 +86,15 @@ export function SwapTokens() {
             <div>
                 <Button
                     size="small"
-                    content='Exchange'
+                    content={`Migrate for ~${typeof (alcaExchangeRate) !== 'object' ? alcaExchangeRate : "0"} ALCA*`}
                     className="relative left-[2px] mt-4 w-[318px]"
                     disabled={!web3Connected}
                     onClick={initiateMigrate}
                 />
+            </div>
+            <div className="text-center text-xs mt-4">
+                This is an approximate amount of tokens based on the current conversion rate.<br/> 
+                It is <b>not</b> guaranteed at transaction execution time
             </div>
 
         </Container>

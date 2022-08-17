@@ -4,6 +4,7 @@ import React, { useContext, useState } from "react";
 import ethAdapter from "eth/ethAdapter";
 import config from "utils";
 import { TabPanesContext } from "context";
+import { ethers } from "ethers";
 
 export function AllowTokens() {
 
@@ -32,6 +33,7 @@ export function AllowTokens() {
         setSuccess("Tx Mined: " + tx.hash);
         setWaiting(false);
     }
+
 
     return (
         <Container className="flex flex-col justify-around items-center p-4 min-h-[240px]">
@@ -78,6 +80,19 @@ export function AllowTokens() {
                     className="relative left-[2px] mt-4 w-[318px]"
                     onClick={sendAllowanceReq}
                     loading={waiting}
+                />
+                <br />
+                <Button
+                    fluid
+                    color="green"
+                    content="Use Existing Allowance"
+                    className={config.generic.classNames(
+                        {
+                            'hidden': !ethers.BigNumber.from(madAllowance).gte(ethers.BigNumber.from(1)),
+                            "mt-4": true,
+                        }
+                    )}
+                    onClick={() => setActiveTabPane(config.constants.tabPanes.MIGRATE)}
                 />
             </div>
 
