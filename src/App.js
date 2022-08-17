@@ -14,7 +14,7 @@ function App() {
                 <Route exact path="/tos" element={<TOS />} />
             </>
         );
-    }
+    };
 
     return (
 

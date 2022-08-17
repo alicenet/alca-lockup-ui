@@ -10,12 +10,14 @@ export const TabPanesContext = createContext(null);
  */
 export const TabPanesProvider = (props) => {
 
-    const [activeTabPane, setActiveTabPane] = useState(tabPanes.PHISHING);
+    const [activeTabPane, setActiveTabPane] = useState(tabPanes.PHISHING.index);
+
+    const handleSetActiveTabPane = tabPane => setActiveTabPane(tabPane.index);
 
     return (
         <TabPanesContext.Provider value={{
             activeTabPane,
-            setActiveTabPane,
+            setActiveTabPane: handleSetActiveTabPane,
         }}>
             {props.children}
         </TabPanesContext.Provider>
