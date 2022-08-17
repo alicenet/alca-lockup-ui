@@ -1,10 +1,10 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./App";
 
-// Style
-import 'semantic-ui-css/semantic.min.css'
-import './style/index.css';
+/* Styles */
+import "semantic-ui-css/semantic.min.css";
+import "./style/index.css";
 
 /* Redux Store */
 import store from "redux/store/store.js";

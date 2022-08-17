@@ -7,9 +7,8 @@ import { useSelector } from "react-redux";
 
 export function Connect() {
 
-    const { setActiveTabPane } = useContext(TabPanesContext);
     const { generic, constants } = config;
-
+    const { setActiveTabPane } = useContext(TabPanesContext);
     const { web3Connected, address } = useSelector(state => ({
         address: state.application.connectedAddress,
         web3Connected: state.application.web3Connected
@@ -19,10 +18,7 @@ export function Connect() {
 
         <Container className="flex flex-col justify-around items-center p-4 min-h-[240px]">
 
-            <div
-                className="text-sm text-center"
-            >
-
+            <div className="text-sm text-center">
                 {web3Connected ? (
                         <>
                             ...{address.slice(32)} is connected
@@ -30,7 +26,6 @@ export function Connect() {
                     ) :
                     <ConnectWalletButton />
                 }
-
             </div>
 
             <div className="absolute right-0 top-[105%]">

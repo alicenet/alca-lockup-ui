@@ -1,13 +1,13 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { Button, Popup } from 'semantic-ui-react';
-import ethAdapter from 'eth/ethAdapter';
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { Button, Popup } from "semantic-ui-react";
+import ethAdapter from "eth/ethAdapter";
 
 export function ConnectWalletButton() {
 
     const { web3Connected } = useSelector(state => ({ web3Connected: state.application.web3Connected }))
 
-    const [error, setError] = React.useState(false);
+    const [error, setError] = useState(false);
 
     const connect = () => {
         ethAdapter.connectToWeb3Wallet((err) => {
