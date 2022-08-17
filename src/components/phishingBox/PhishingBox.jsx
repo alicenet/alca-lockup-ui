@@ -6,6 +6,8 @@ import { TabPanesContext } from "context";
 const MadTokenContractAddress = process.env.REACT_APP__MadToken_CONTRACT_ADDRESS;
 const AToken_CONTRACT_ADDRESS = process.env.REACT_APP__AToken_CONTRACT_ADDRESS;
 
+const CheckIcon = ({isChecked}) => <Icon color={isChecked ? "green" : "red"} name={isChecked ? "check" : "x"} className="m-0 h-full" />
+
 const LinkedListItem = ({ text, link }) => {
     const [hovered, setHovered] = useState(false);
     return (
@@ -20,7 +22,7 @@ const LinkedListItem = ({ text, link }) => {
                     {text}
                     {hovered && <Icon name="external" className="m-0 h-full" />}
                 </div>
-                <Icon color="green" name="check" className="m-0 h-full" />
+                <CheckIcon isChecked/> 
             </List.Content>
         </List.Item>
     );
@@ -41,7 +43,7 @@ export function PhishingBox() {
                 <div className="text-sm">
 
                     <Header>
-                        In order to proceed with the migration process some checks need to occur:
+                        Before proceeding with the migration please verify the following:
                     </Header>
 
                     <List bulleted>
@@ -49,12 +51,12 @@ export function PhishingBox() {
                         <List.Item className="pt-3">
 
                             <List.Content className="flex flex-row justify-between items-center">
-                                <span>Verify contract addresses:</span>
+                                <span>Verify both contract addresses:</span>
                             </List.Content>
 
                             <List bulleted>
                                 <LinkedListItem
-                                    text="ALCA Contract Address"
+                                    text={`ALCA Contract Address (${AToken_CONTRACT_ADDRESS})`}
                                     link={`https://etherscan.io/address/${AToken_CONTRACT_ADDRESS}`}
                                 />
 
@@ -78,7 +80,7 @@ export function PhishingBox() {
                                     }
                                     trigger={<span>Metamask contract verification</span>}
                                 />
-                                <Icon color="green" name="check" className="m-0 h-full" />
+                                <CheckIcon isChecked />
                             </List.Content>
                         </List.Item>
 
@@ -94,7 +96,7 @@ export function PhishingBox() {
                                     }
                                     trigger={<span>Verify URL</span>}
                                 />
-                                <Icon color="green" name="check" className="m-0 h-full" />
+                                <CheckIcon isChecked />
                             </List.Content>
                         </List.Item>
 
@@ -110,7 +112,7 @@ export function PhishingBox() {
                                     }
                                     trigger={<span>Verify HTTPS Lock and Cert</span>}
                                 />
-                                <Icon color="green" name="check" className="m-0 h-full" />
+                                <CheckIcon isChecked />
                             </List.Content>
                         </List.Item>
 

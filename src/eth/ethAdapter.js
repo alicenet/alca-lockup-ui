@@ -288,6 +288,13 @@ class EthAdapter {
         });
     }
 
+    async getMadTokenToALCAExchangeRate(alcaAmount) {
+        return this._try(async () => {
+            let exchangeRate = await this._tryCall("AToken", "convert", [ethers.BigNumber.from(alcaAmount)]);
+            return exchangeRate.toString();
+        });
+    }
+
     /**
      * Request a network change to the active web wallet in window.ethereum
      * @param { String } networkId - Network ID as a string -- Not Hexadecimal 
