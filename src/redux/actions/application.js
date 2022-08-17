@@ -45,7 +45,7 @@ export const updateNetwork = (networkId) => {
     // Get network name from network key -- Shouldn't fail but try/catch in case it does
     let networkName;
     try {
-        networkName = Object.keys(config.METAMASK_NETWORKS).map( (key) => {
+        networkName = Object.keys(config.METAMASK_NETWORKS).map((key) => {
             if (config.METAMASK_NETWORKS[key].id === networkId) {
                 return config.METAMASK_NETWORKS[key].name;
             }
@@ -105,19 +105,31 @@ export const updateBalances = tokenType => {
         if (tokenType === TOKEN_TYPES.ALCA || tokenType === TOKEN_TYPES.ALL) {
             alcaBal = await ethAdapter.getAlcaBalance(0);
         }
-        dispatch({ 
-            type: APPLICATION_ACTION_TYPES.SET_BALANCES, 
-            payload: { 
-                ethereum: parseFloat(ethBalance).toFixed(4), 
+        dispatch({
+            type: APPLICATION_ACTION_TYPES.SET_BALANCES,
+            payload: {
+                ethereum: parseFloat(ethBalance).toFixed(4),
                 mad: parseInt(madBal) || 0, // Fallback to 0 if token doesn't exist on network
                 alca: parseInt(alcaBal) || 0 // Fallback to 0 if token doesn't exist on network
-            } 
+            }
         });
-        dispatch({ 
-            type: APPLICATION_ACTION_TYPES.SET_ALLOWANCES, 
-            payload: { 
+        dispatch({
+            type: APPLICATION_ACTION_TYPES.SET_ALLOWANCES,
+            payload: {
                 mad: parseInt(madAllowance) || 0 // Fallback to 0 if token doesn't exist on network
-            } 
+            }
         });
+      
     }
 };
+
+export const updateExchangeRate = () => {
+    return async function (dispatch) {
+        let exchangeRate = await ethAdapter.getMadTokenToALCAExchangeRate();
+        console.log(exchangeRate)
+        dispatch({
+            type: APPLICATION_ACTION_TYPES.UPDATE_EXCHANGE_RATE,
+            payload: exchangeRate
+        })
+    }
+}

@@ -14,6 +14,7 @@ const initialApplicationState = {
     allowances: {
         mad: 0,
     },
+    alcaExchangeRate: 0, // MadTokens => Alca :: Example... If this == 3... 1 MadToken == 3 ALCA || madTokens * alcaExchangeRate = estimateReturnedAlcaTokens
     connectedAddress: "",
     networkId: "",
     networkName: "",
@@ -73,6 +74,11 @@ export default function applicationReducer(state = initialApplicationState, acti
             return Object.assign({}, state, {
                 networkId: action.payload.id,
                 networkName: action.payload.name
+            })
+
+        case APPLICATION_ACTION_TYPES.UPDATE_EXCHANGE_RATE:
+            return Object.assign({}, state, {
+                alcaExchangeRate: action.payload
             })
 
         default:

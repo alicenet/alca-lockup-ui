@@ -15,9 +15,16 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 /// @custom:salt AToken
 /// @custom:deploy-type deployStatic
 contract ATokenMock is ERC20Upgradeable {
-
     address internal immutable _legacyToken;
     bool internal _migrationAllowed = false;
+
+    // Multiplier vars
+    uint256 internal constant _CONVERSION_MULTIPLIER = 155555555555555555555556;
+    uint256 internal constant _CONVERSION_SCALE = 100000000000000000000000;
+    bool internal constant _MULTIPLIER_ON = false;
+    bool internal constant _MULTIPLIER_OFF = true;
+
+    bool internal _multiply;
 
     constructor(address legacyToken_) {
         _legacyToken = legacyToken_;
@@ -30,7 +37,42 @@ contract ATokenMock is ERC20Upgradeable {
     function migrate(uint256 amount) public {
         require(_migrationAllowed, "MadTokens migration not allowed");
         IERC20(_legacyToken).transferFrom(msg.sender, address(this), amount);
-        _mint(msg.sender, amount);
+        _mint(msg.sender, _convert(amount));
+    }
+
+    // Mock Exchange Rate Functions
+    function convert(uint256 amount) public view returns (uint256) {
+        return _convert(amount);
+    }
+
+    function _toggleMultiplierOff() internal {
+        _multiply = _MULTIPLIER_OFF;
+    }
+
+    function _toggleMultiplierOn() internal {
+        _multiply = _MULTIPLIER_ON;
+    }
+
+    function _convert(uint256 amount) internal view returns (uint256) {
+        if (_multiply == _MULTIPLIER_ON) {
+            return _multiplyTokens(amount);
+        } else {
+            return amount;
+        }
+    }
+
+    function _multiplyTokens(uint256 amount) internal pure returns (uint256) {
+        return (amount * _CONVERSION_MULTIPLIER) / _CONVERSION_SCALE;
+    }
+
+    function toggleMultiplierOff() public {
+        // NOTE: Normally accesible as onlyFactory
+        _toggleMultiplierOff();
+    }
+
+    function toggleMultiplierOn() public {
+        // NOTE: Normally accesible as onlyFactory
+        _toggleMultiplierOn();
     }
 
     function allowMigration() public {
