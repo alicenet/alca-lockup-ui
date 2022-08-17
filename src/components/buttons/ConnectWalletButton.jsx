@@ -27,7 +27,7 @@ export function ConnectWalletButton() {
             secondary
             color="black"
             onClick={connect}
-            content={web3Connected ? 'Change Account' : 'Connect Web3'}
+            content={web3Connected ? 'Change Account' : 'Connect Wallet'}
         />
 
     );

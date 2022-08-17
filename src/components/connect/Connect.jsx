@@ -16,19 +16,23 @@ export function Connect() {
 
     return (
 
-        <Container className="flex flex-col justify-around items-center p-4 min-h-[240px]">
+        <>
 
-            <div className="text-sm text-center">
-                {web3Connected ? (
-                        <>
-                            ...{address.slice(32)} is connected
-                        </>
-                    ) :
-                    <ConnectWalletButton />
-                }
-            </div>
+            <Container className="flex flex-col justify-around items-center p-4 min-h-[240px]">
 
-            <div className="absolute right-0 top-[105%]">
+                <div className="text-sm text-center">
+                    {web3Connected ? (
+                            <>
+                                ...{address.slice(32)} is connected
+                            </>
+                        ) :
+                        <ConnectWalletButton />
+                    }
+                </div>
+
+            </Container>
+
+            <div className="absolute mt-4 right-0 top-[100%]">
                 <Button
                     color="green"
                     content="Continue"
@@ -40,7 +44,7 @@ export function Connect() {
                 />
             </div>
 
-        </Container>
+        </>
 
     );
 }

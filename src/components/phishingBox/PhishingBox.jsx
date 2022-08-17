@@ -3,6 +3,29 @@ import React, { useContext, useState } from "react";
 import config from "utils";
 import { TabPanesContext } from "context";
 
+const MadTokenContractAddress = process.env.REACT_APP__MadToken_CONTRACT_ADDRESS;
+const AToken_CONTRACT_ADDRESS = process.env.REACT_APP__AToken_CONTRACT_ADDRESS;
+
+const LinkedListItem = ({ text, link }) => {
+    const [hovered, setHovered] = useState(false);
+    return (
+        <List.Item className="py-3">
+            <List.Content className="flex flex-row justify-between items-center">
+                <div
+                    onMouseOver={() => setHovered(prevState => !prevState)}
+                    onMouseLeave={() => setHovered(prevState => !prevState)}
+                    className="flex flex-row gap-2 items-center cursor-pointer hover:opacity-80"
+                    onClick={() => window.open(link, '_blank').focus()}
+                >
+                    {text}
+                    {hovered && <Icon name="external" className="m-0 h-full" />}
+                </div>
+                <Icon color="green" name="check" className="m-0 h-full" />
+            </List.Content>
+        </List.Item>
+    );
+};
+
 export function PhishingBox() {
 
     const [checked, setChecked] = useState(false);
@@ -30,19 +53,15 @@ export function PhishingBox() {
                             </List.Content>
 
                             <List bulleted>
-                                <List.Item className="py-3">
-                                    <List.Content className="flex flex-row justify-between items-center">
-                                        <span>ALCA Contract Address</span>
-                                        <Icon color="green" name="check" className="m-0 h-full" />
-                                    </List.Content>
-                                </List.Item>
+                                <LinkedListItem
+                                    text="ALCA Contract Address"
+                                    link={`https://etherscan.io/address/${AToken_CONTRACT_ADDRESS}`}
+                                />
 
-                                <List.Item className="py-3">
-                                    <List.Content className="flex flex-row justify-between items-center">
-                                        <span>MadToken Contract Address</span>
-                                        <Icon color="green" name="check" className="m-0 h-full" />
-                                    </List.Content>
-                                </List.Item>
+                                <LinkedListItem
+                                    text="MadToken Contract Address"
+                                    link={`https://etherscan.io/address/${MadTokenContractAddress}`}
+                                />
                             </List>
 
                         </List.Item>
