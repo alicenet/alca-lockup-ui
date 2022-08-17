@@ -225,6 +225,22 @@ class EthAdapter {
     }
 
     /**
+     * Disconnect Web3 Wallet from window.ethereum
+     * @param { web3ConnectCallback } cb - Callback to run after a connection contains err if error
+     * @returns { String } - Connected Address
+     */
+    async disconnectWeb3Wallet(cb) {
+        try {
+            store.dispatch(APPLICATION_ACTIONS.setWeb3Connected(false));
+            store.dispatch(APPLICATION_ACTIONS.setConnectedAddress(""));
+            cb(null);
+        } catch (ex) {
+            console.error(ex);
+            cb({ error: ex.message });
+        }
+    }
+
+    /**
      * Get Ether balance
      * @param { Number } accountIndex - Account index of this.accounts[i] to check balance for
      * @returns { Promise<String> } - Ethereum balance of this.accounts[accountIndex] as formatted string

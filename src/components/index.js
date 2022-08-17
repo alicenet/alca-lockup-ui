@@ -2,7 +2,6 @@ export * from './about/About';
 export * from './actionTabs/ActonTabs';
 export * from './allowTokens/AllowTokens';
 export * from './balanceStatus/BalanceStatus';
-export * from './buttons/ConnectWalletButton';
 export * from './connect/Connect';
 export * from './footer/Footer';
 export * from './header/Header';
