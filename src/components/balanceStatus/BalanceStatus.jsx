@@ -26,7 +26,7 @@ export function BalanceStatus() {
                                 </span>
                                )}
                                <span className="text-gray-700">{loading ? "" : balances.alca} <span
-                                   className="ml-2 text-gray-500">ETH</span> </span>
+                                   className="ml-2 text-gray-500">ALCA</span> </span>
                            </Label>
                        </div>
                    }

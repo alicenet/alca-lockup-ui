@@ -1,10 +1,11 @@
-import { Button, Container, Header, Input } from "semantic-ui-react";
+import { Button, Container, Header, Input, Message } from "semantic-ui-react";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useContext, useState } from "react";
 import ethAdapter from "eth/ethAdapter";
 import { tabPanes } from "utils/constants";
 import { TabPanesContext } from "context";
 import * as ACTIONS from 'redux/actions/application';
+import { TOKEN_TYPES } from "redux/constants";
 
 export function SwapTokens() {
 
@@ -12,7 +13,7 @@ export function SwapTokens() {
     const dispatch = useDispatch();
 
     const [error, setError] = useState();
-    const [success, setSuccess] = useState();
+    const [success, setSuccess] = useState("");
     const [waiting, setWaiting] = useState(false);
     const { setActiveTabPane } = useContext(TabPanesContext);
 
@@ -35,6 +36,8 @@ export function SwapTokens() {
         await tx.wait();
         setSuccess("Tx Mined: " + tx.hash);
         setWaiting(false);
+        dispatch(ACTIONS.updateMigrationHash(tx.hash))
+        dispatch(ACTIONS.updateBalances(TOKEN_TYPES.ALL))
         setActiveTabPane(tabPanes.SUCCESS)
     }
 
@@ -88,13 +91,26 @@ export function SwapTokens() {
                     size="small"
                     content={`Migrate for ~${typeof (alcaExchangeRate) !== 'object' ? alcaExchangeRate : "0"} ALCA*`}
                     className="relative left-[2px] mt-4 w-[318px]"
-                    disabled={!web3Connected}
+                    disabled={!web3Connected || migrateAmount < 1}
                     onClick={initiateMigrate}
+                    loading={waiting}
                 />
             </div>
+
             <div className="text-center text-xs mt-4">
                 This is an approximate amount of tokens based on the current conversion rate.<br/> 
                 It is <b>not</b> guaranteed at transaction execution time
+            </div>
+
+            <div className="absolute left-0 top-[100%]">
+                <Message
+                    size="mini"
+                    content={success || error}
+                    success={success.length > 0}
+                    error={error}
+                    className="mt-4"
+                    hidden={!success && !error}
+                />
             </div>
 
         </Container>

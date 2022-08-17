@@ -192,7 +192,6 @@ class EthAdapter {
      * @param { Array } paramaters - Contract method parameters as an array  
      */
     async _trySend(contractName, methodName, params = []) {
-        console.log(contractName, methodName, params)
         return await this._getSignerContractInstance(contractName)[methodName](...params);
     }
 
