@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { Button, Popup } from "semantic-ui-react";
+import { Button } from "semantic-ui-react";
 import ethAdapter from "eth/ethAdapter";
 
 export function ConnectWalletButton() {
 
-    const { web3Connected } = useSelector(state => ({ web3Connected: state.application.web3Connected }))
+    const { web3Connected } = useSelector(state => ({ web3Connected: state.application.web3Connected }));
 
     const [error, setError] = useState(false);
 
@@ -20,21 +20,14 @@ export function ConnectWalletButton() {
 
     return (
 
-        <Popup
-            size="mini"
-            position="bottom right"
-            offset={[0, 4]}
-            content={Boolean(error) ? error : "Connect to browser web3 wallet"}
-            trigger={
-                <Button
-                    disabled={Boolean(web3Connected)}
-                    inverted={!web3Connected}
-                    secondary
-                    color="black"
-                    onClick={connect}
-                    content={web3Connected ? 'Change Account' : 'Connect Web3'}
-                />
-            }
+        <Button
+            className="m-0"
+            disabled={Boolean(web3Connected)}
+            inverted={!web3Connected}
+            secondary
+            color="black"
+            onClick={connect}
+            content={web3Connected ? 'Change Account' : 'Connect Web3'}
         />
 
     );

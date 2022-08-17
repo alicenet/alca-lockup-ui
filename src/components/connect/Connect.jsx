@@ -33,6 +33,7 @@ export function Connect() {
                     color="green"
                     content="Continue"
                     className={generic.classNames(
+                        "m-0",
                         { 'hidden': !web3Connected }
                     )}
                     onClick={() => setActiveTabPane(constants.tabPanes.ALLOW)}
