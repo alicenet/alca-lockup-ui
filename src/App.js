@@ -1,17 +1,19 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Container } from 'semantic-ui-react';
-import { Footer, Header, ActionTabs, About, TOS } from 'components';
+import React from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Container } from "semantic-ui-react";
+import { About, ActionTabs, Footer, Header, TOS } from "components";
+import { TabPanesProvider } from "context";
 
 function App() {
 
     const DefaultRoutes = () => {
-        return (<>
-            <Route exact path="/" element={<ActionTabs/>} />
-            <Route exact path="/about" element={<About/>} />
-            <Route exact path="/tos" element={<TOS/>} />
-
-        </>)
+        return (
+            <>
+                <Route exact path="/" element={<ActionTabs />} />
+                <Route exact path="/about" element={<About />} />
+                <Route exact path="/tos" element={<TOS />} />
+            </>
+        );
     }
 
     return (
@@ -21,10 +23,18 @@ function App() {
             <BrowserRouter>
 
                 <Header />
-                <Routes>
-                    {DefaultRoutes()}
-                </Routes>
-                <Footer/>
+
+                <TabPanesProvider>
+
+                    <Routes>
+
+                        {DefaultRoutes()}
+
+                    </Routes>
+
+                </TabPanesProvider>
+
+                <Footer />
 
             </BrowserRouter>
 

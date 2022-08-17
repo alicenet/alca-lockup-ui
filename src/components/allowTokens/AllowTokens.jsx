@@ -1,14 +1,17 @@
-import { Header, Container, Input, Button, Message } from "semantic-ui-react";
+import { Button, Container, Header, Input, Message } from "semantic-ui-react";
 import { useSelector } from "react-redux";
-import React from "react";
+import React, { useContext, useState } from "react";
 import ethAdapter from "eth/ethAdapter";
+import config from "utils";
+import { TabPanesContext } from "context";
 
-export function AllowTokens({setTabIdx}) {
+export function AllowTokens() {
 
-    const [allowanceAmount, setAllowanceAmount] = React.useState();
-    const [error, setError] = React.useState();
-    const [success, setSuccess] = React.useState();
-    const [waiting, setWaiting] = React.useState(false);
+    const { setActiveTabPane } = useContext(TabPanesContext);
+    const [allowanceAmount, setAllowanceAmount] = useState();
+    const [error, setError] = useState();
+    const [success, setSuccess] = useState("");
+    const [waiting, setWaiting] = useState(false);
 
     const { web3Connected, madBalance, madAllowance } = useSelector(state => ({
         web3Connected: state.application.web3Connected,
@@ -38,18 +41,19 @@ export function AllowTokens({setTabIdx}) {
             </div>
 
             <div className="text-left mt-8">
-                <Header sub className="mb-2">MadTokens to allow</Header>
+                <Header sub className="mb-2" content="MadTokens to allow" />
                 <Input
-                    className=""
                     disabled={!web3Connected}
                     placeholder="0x0"
                     value={allowanceAmount}
-                    onChange={(e) => { setAllowanceAmount(e.target.value) }}
+                    onChange={(e) =>
+                        setAllowanceAmount(e.target.value)
+                    }
                     action={{
                         disabled: !web3Connected,
                         content: "All",
                         secondary: true,
-                        onClick: () => { setAllowanceAmount(madBalance) }
+                        onClick: () => setAllowanceAmount(madBalance)
                     }}
                 />
             </div>
@@ -70,7 +74,7 @@ export function AllowTokens({setTabIdx}) {
                 <Button
                     size="small"
                     disabled={!web3Connected || !allowanceAmount || allowanceAmount <= 1}
-                    content='Approve'
+                    content="Approve"
                     className="relative left-[2px] mt-4 w-[318px]"
                     onClick={sendAllowanceReq}
                     loading={waiting}
@@ -81,7 +85,7 @@ export function AllowTokens({setTabIdx}) {
                 <Message
                     size="mini"
                     content={success || error}
-                    success={success}
+                    success={success.length > 0}
                     error={error}
                     className="mt-4"
                     hidden={!success && !error}
@@ -89,10 +93,13 @@ export function AllowTokens({setTabIdx}) {
             </div>
 
             <div className="absolute right-0 top-[105%]">
-                <Button color="green"
+                <Button
+                    color="green"
                     content="Continue"
-                    className={`${success ? "" : "hidden"}`}  
-                    onClick={() => setTabIdx(1)}                  
+                    className={config.generic.classNames(
+                        { 'hidden': !success }
+                    )}
+                    onClick={() => setActiveTabPane(config.constants.tabPanes.MIGRATE)}
                 />
             </div>
 

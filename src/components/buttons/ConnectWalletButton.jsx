@@ -20,11 +20,23 @@ export function ConnectWalletButton() {
 
     return (
 
-        <Popup size="mini" position="bottom right" offset={[0, 4]}
+        <Popup
+            size="mini"
+            position="bottom right"
+            offset={[0, 4]}
             content={Boolean(error) ? error : "Connect to browser web3 wallet"}
-            trigger={<Button disabled={Boolean(web3Connected)} inverted={!web3Connected} secondary color='black' onClick={connect} content={web3Connected ? 'Change Account' : 'Connect Web3'} />}
+            trigger={
+                <Button
+                    disabled={Boolean(web3Connected)}
+                    inverted={!web3Connected}
+                    secondary
+                    color="black"
+                    onClick={connect}
+                    content={web3Connected ? 'Change Account' : 'Connect Web3'}
+                />
+            }
         />
 
-    )
+    );
 
 }

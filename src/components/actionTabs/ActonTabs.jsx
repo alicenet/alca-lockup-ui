@@ -1,43 +1,59 @@
-import { SwapTokens, AllowTokens } from '../index';
+import { AllowTokens, Connect, PhishingBox, Success, SwapTokens } from "components";
 import { Container, Tab } from "semantic-ui-react";
-import React from 'react';
+import React, { useContext } from "react";
+import { TabPanesContext } from "context";
 
 export function ActionTabs() {
 
-    const [tabIdx, setTabIdx] = React.useState(0);
-
-    const handleTab = (data) => {
-        setTabIdx(data.activeIndex);
-    }
+    const { activeTabPane } = useContext(TabPanesContext);
 
     const panes = [
         {
-            menuItem: '1 - Phishing Notification',
-            render: () => <Tab.Pane attached={false} ><AllowTokens setTabIdx={ (idx) => setTabIdx(idx)} /></Tab.Pane>,
+            menuItem: 'Phishing Notification',
+            render: () =>
+                <Tab.Pane attached={false}>
+                    <PhishingBox />
+                </Tab.Pane>
         },
         {
-            menuItem: '2 - Connect',
-            render: () => <Tab.Pane attached={false} ><AllowTokens setTabIdx={ (idx) => setTabIdx(idx)} /></Tab.Pane>,
+            menuItem: 'Connect',
+            render: () =>
+                <Tab.Pane attached={false}>
+                    <Connect />
+                </Tab.Pane>
         },
         {
-            menuItem: '3 - Allow',
-            render: () => <Tab.Pane attached={false} ><AllowTokens setTabIdx={ (idx) => setTabIdx(idx)} /></Tab.Pane>,
+            menuItem: 'Allow',
+            render: () =>
+                <Tab.Pane attached={false}>
+                    <AllowTokens />
+                </Tab.Pane>
         },
         {
-            menuItem: '4 - Migrate',
-            render: () => <Tab.Pane attached={false}> <SwapTokens setTabIdx={ (idx) => setTabIdx(idx)} /></Tab.Pane>,
+            menuItem: 'Migrate',
+            render: () =>
+                <Tab.Pane attached={false}>
+                    <SwapTokens />
+                </Tab.Pane>
         },
         {
-            menuItem: '5 - Success',
-            render: () => <Tab.Pane attached={false}> <SwapTokens setTabIdx={ (idx) => setTabIdx(idx)} /></Tab.Pane>,
+            menuItem: 'Success',
+            render: () =>
+                <Tab.Pane attached={false}>
+                    <Success />
+                </Tab.Pane>
         },
 
-    ]
+    ];
 
     return (
-        <Container className="">
-            <Tab activeIndex={tabIdx} onTabChange={(e, data) => { handleTab(data)}} menu={{ secondary: true, pointing: false }} panes={panes} />
+        <Container>
+            <Tab
+                activeIndex={activeTabPane}
+                menu={{ secondary: true, pointing: false }}
+                panes={panes}
+            />
         </Container>
-    )
+    );
 
 }

@@ -1,18 +1,20 @@
-import { Header, Container, Input, Button } from "semantic-ui-react";
+import { Button, Container, Header, Input } from "semantic-ui-react";
 import { useSelector } from "react-redux";
-import React from "react";
+import React, { useContext, useState } from "react";
 import ethAdapter from "eth/ethAdapter";
-
+import { tabPanes } from "utils/constants";
+import { TabPanesContext } from "context";
 
 export function SwapTokens() {
 
-    const [migrateAmount, setMigrateAmount] = React.useState();
+    const [migrateAmount, setMigrateAmount] = useState(0);
 
-    const [error, setError] = React.useState();
-    const [success, setSuccess] = React.useState();
-    const [waiting, setWaiting] = React.useState(false);
+    const [error, setError] = useState();
+    const [success, setSuccess] = useState();
+    const [waiting, setWaiting] = useState(false);
+    const { setActiveTabPane } = useContext(TabPanesContext);
 
-    const { web3Connected,alcaBalance, madAllowance } = useSelector(state => ({
+    const { web3Connected, alcaBalance, madAllowance } = useSelector(state => ({
         web3Connected: state.application.web3Connected,
         madAllowance: state.application.allowances.mad,
         alcaBalance: state.application.balances.alca
@@ -30,9 +32,11 @@ export function SwapTokens() {
         await tx.wait();
         setSuccess("Tx Mined: " + tx.hash);
         setWaiting(false);
+        setActiveTabPane(tabPanes.SUCCESS)
     }
 
     return (
+
         <Container className="flex flex-col justify-around items-center p-4 min-h-[240px]">
 
             <div className="text-sm text-center">
@@ -42,10 +46,12 @@ export function SwapTokens() {
             <div className="text-left mt-8">
                 <Header sub className="mb-2">Amount of MadTokens to swap</Header>
                 <Input
-                    className=""
                     disabled={!web3Connected}
                     placeholder="0"
                     value={migrateAmount}
+                    onChange={(e) =>
+                        setMigrateAmount(e.target.value)
+                    }
                     action={{
                         content: "Max",
                         secondary: true,
@@ -68,7 +74,6 @@ export function SwapTokens() {
                 </div>
             </div>
 
-
             <div>
                 <Button
                     size="small"
@@ -80,5 +85,6 @@ export function SwapTokens() {
             </div>
 
         </Container>
+
     );
 }
