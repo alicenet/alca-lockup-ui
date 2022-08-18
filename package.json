@@ -34,9 +34,11 @@
     "transpile-abi": "node scripts/buildAbiAndContractNameFiles.js run",
     "transpile-bytecode": "node scripts/buildBytecodeFiles.js run",
     "transpile-all": "node scripts/buildOnStart.js startRun",
-    "ii": "rm -rf node_modules hardhat-env/node_modules && npm i && cd hardhat-env && npm i",
+    "ii": "rm -rf node_modules hardhat-env/node_modules alicenet/bridge/node_modules alicenet/bridge/artifacts && npm i && cd hardhat-env && npm i && cd ../alicenet && ./scripts/main.sh init 4",
     "hh-env": "cd hardhat-env && npx hardhat node",
-    "hh-deploy": "cd hardhat-env && npx hardhat run ./scripts/init.js --network localhost"
+    "hh-compile": "cd ./alicenet/bridge && npm run compile",
+    "hh-prep": "sed -i 's/NETWORK=${1:-\"dev\"}/NETWORK=${1:-\"localhost\"}/g' alicenet/scripts/base-scripts/deploy.sh & sed -i 's/legacyToken_ = \"0x546f99f244b7b58b855330ae0e2bc1b30b41302f\"/legacyToken_ = \"0x5B09A0371C1DA44A8E24D36Bf5DEb1141a84d875\"/g' alicenet/scripts/base-files/deploymentArgsTemplate",
+    "hh-deploy": "cd alicenet && ./scripts/base-scripts/deploy.sh && cd ../hardhat-env && npx hardhat run ./scripts/init.js --network localhost"
   },
   "eslintConfig": {
     "extends": [

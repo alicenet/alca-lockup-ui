@@ -11,19 +11,19 @@ async function main() {
 
     const MadTokenContract = new hre.ethers.Contract(madTokenAddress, madTokenAbi );
 
-    const AToken = await hre.ethers.getContractFactory("ATokenMock");
-    const aToken = await AToken.deploy(madTokenAddress);
+    // const AToken = await hre.ethers.getContractFactory("ATokenMock");
+    // const aToken = await AToken.deploy(madTokenAddress);
 
-    await aToken.deployed();
+    // await aToken.deployed();
 
-    console.log(`ATokenMock deployed to ${aToken.address} with legacyToken ${madTokenAddress} ... now initializing()...`);
+    // console.log(`ATokenMock deployed to ${aToken.address} with legacyToken ${madTokenAddress} ... now initializing()...`);
 
-    let initializeTx = await (await aToken.initialize()).wait();
-    console.log(`ATokenMock initialized() successfully w/ TxHash: ${initializeTx.transactionHash}`)
+    // let initializeTx = await (await aToken.initialize()).wait();
+    // console.log(`ATokenMock initialized() successfully w/ TxHash: ${initializeTx.transactionHash}`)
 
-    console.log("Setting _migrationAllowed = true...");
-    let allowMigrationTx = await (await aToken.allowMigration()).wait();
-    console.log(`Migration permitted with txHash: ${allowMigrationTx.transactionHash}`)
+    // console.log("Setting _migrationAllowed = true...");
+    // let allowMigrationTx = await (await aToken.allowMigration()).wait();
+    // console.log(`Migration permitted with txHash: ${allowMigrationTx.transactionHash}`)
 
     // Impersonate a MadToken holder and send tokens to .env TestingAddress
     console.log("Impersonating MadToken holder for transfer to testing address...");

@@ -9,9 +9,11 @@
     - ALCHEMY_API_KEY - An Alchemy API Key
     - MAD_TOKEN_HOLDER and MAD_TOKEN_ADDRESS can be left as defaults
 3. In project root run `npm run ii` to install all dependencies
-4. Start the development node with by running `npm run hh-env` from the project root
-5. Deploy contracts to the development node with `npm run hh-deploy` from the project root
-6. Start the UI with `npm start`
+4. Prep the Hardhat environment with `npm run hh-prep`
+5. Start the development node with by running `npm run hh-env` from the project root
+6. Compile the contracts with `npm run hh-compile`
+7. Deploy contracts to the development node with `npm run hh-deploy` from the project root
+8. Start the UI with `npm start`
 # Built from eth interface boilerplate
 
 ## Quick Start ( NO CREATE2 deterministic address generation support )
