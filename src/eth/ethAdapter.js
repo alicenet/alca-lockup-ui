@@ -6,13 +6,6 @@ import { APPLICATION_ACTIONS } from 'redux/actions';
 import { TOKEN_TYPES } from 'redux/constants';
 import { CONTRACT_ADDRESSES } from 'config/contracts';
 
-const madTokenContractAddress = "0x5b09a0371c1da44a8e24d36bf5deb1141a84d875";
-
-/** 
- * Re exported for easy importing
- */
-export const CONTRACT_NAMES = config.CONTRACT_NAMES;
-
 /**
  * Callback to run after establishing web3connection state pass or fail
  * @callback web3ConnectCallback
@@ -71,7 +64,7 @@ class EthAdapter {
 
     /**
      * Returns an ethers.js contract instance that has been instanced without a signer for read-only calls
-     * @param { ContractName } contractName - One of the available contract name strings from config  
+     * @param { contractName } contractName - One of the available contract name strings from config
      */
     _getReadonlyContractInstance(contractName) {
         this._requireContractExists(contractName);
@@ -82,7 +75,7 @@ class EthAdapter {
 
     /**
      * Returns an ethers.js contract instance that has been instanced with a signer ( this.signer )
-     * @param { ContractName } contractName - One of the available contract name strings from config  
+     * @param { contractName } contractName - One of the available contract name strings from config
      */
     _getSignerContractInstance(contractName) {
         this._requireContractExists(contractName);
@@ -93,10 +86,10 @@ class EthAdapter {
     }
 
     // TODO: FINISH DETERMINISTIC CONFIG SETUP
-    /** 
+    /**
      * Get deterministic create2 contract address by contract name
-     * @param { ContractName } contractName - One of the available contract name strings from config  
-     * @returns { web3.eth.Contract } 
+     * @param { ContractName } contractName - One of the available contract name strings from config
+     * @returns { web3.eth.Contract }
      */
     _getDeterministicContractAddress(contractName) {
         return `0x${this.web3.utils.sha3(`0x${[
@@ -109,34 +102,34 @@ class EthAdapter {
 
     /**
      * Throw exceptions
-     * @param { String } msg 
+     * @param { String } msg
      */
     async _throw(msg) {
-        throw new Error("eth/ethAdaper.js: " + msg);
+        throw new Error("eth/ethAdapter.js: " + msg);
     }
 
-    /** 
-     * Internal contract settings requirement helper for contract functions 
+    /**
+     * Internal contract settings requirement helper for contract functions
      * @param { String } contractName
      */
     _requireContractExists(contractName) {
         if (!this.contracts[contractName]) {
-            this._throw("Contract configuration for contract '" + contractName + "' nonexistant. Verify contract has been set in .env");
+            this._throw("Contract configuration for contract '" + contractName + "' nonexistent. Verify contract has been set in .env");
         }
     }
 
-    /** 
-     * Internal ABI requirement helper for contract functions 
+    /**
+     * Internal ABI requirement helper for contract functions
      * @param { String } contractName
      */
     _requireContractAbi(contractName) {
         if (!this.contracts[contractName].abi) {
-            this._throw("Requesting contract instance for contract '" + contractName + "' with nonexistant abi. Verify ABI has been set.");
+            this._throw("Requesting contract instance for contract '" + contractName + "' with nonexistent abi. Verify ABI has been set.");
         }
     }
 
-    /** 
-     * Internal contract address requirement helper for contract functions 
+    /**
+     * Internal contract address requirement helper for contract functions
      * @param { String } contractName
      */
     _requireContractAddress(contractName) {
@@ -145,8 +138,8 @@ class EthAdapter {
         }
     }
 
-    /** 
-     * Internal signer requirement helper for contract functions 
+    /**
+     * Internal signer requirement helper for contract functions
      * @param { String } contractName
      */
     _requireSigner(contractName) {
@@ -157,7 +150,7 @@ class EthAdapter {
 
     /**
      * Try a function, if it fails return the error with message nested as "error" in a plain object
-     * @param { Function } func 
+     * @param { Function } func
      * @returns { Promise } - Function result or error
      */
     async _try(func) {
@@ -171,9 +164,9 @@ class EthAdapter {
 
     /**
      * Attempt a call on a contract method
-     * @param { ContractName } contractName - One of the available contract name strings from config  
+     * @param { ContractName } contractName - One of the available contract name strings from config
      * @param { String } methodName - Exact smart contract method name as a string
-     * @param { Array } paramaters - Contract method parameters as an array  
+     * @param { Array } params - Contract method parameters as an array
      */
     async _tryCall(contractName, methodName, params = []) {
         let contract = this._getReadonlyContractInstance(contractName);
@@ -187,9 +180,9 @@ class EthAdapter {
 
     /**
      * Attempt a send on a contract method
-     * @param { ContractName } contractName - One of the available contract name strings from config  
+     * @param { ContractName } contractName - One of the available contract name strings from config
      * @param { String } methodName - Exact smart contract method name as a string
-     * @param { Array } paramaters - Contract method parameters as an array  
+     * @param { Array } params - Contract method parameters as an array
      */
     async _trySend(contractName, methodName, params = []) {
         return await this._getSignerContractInstance(contractName)[methodName](...params);
@@ -197,6 +190,7 @@ class EthAdapter {
 
     /////////////////////
     /* Public Methods  */
+
     ////////////////////
 
     /**
@@ -253,7 +247,7 @@ class EthAdapter {
 
     /**
      * Get ALCA balance
-     * @param {Number} accountIndex - Account index to get ALCA for 
+     * @param {Number} accountIndex - Account index to get ALCA for
      * @returns {String} - Balance of ALCA for given account index
      */
     async getAlcaBalance(accountIndex = 0) {
@@ -265,7 +259,7 @@ class EthAdapter {
 
     /**
      * Get mad token balance for an address
-     * @param {String} address - Ethereum address to which the balance should be fetched for 
+     * @param {String} address - Ethereum address to which the balance should be fetched for
      * @returns {String} - Balance of mad tokens held by the address
      */
     async getMadTokenBalance(accountIndex = 0) {
@@ -277,7 +271,7 @@ class EthAdapter {
 
     /**
      * Get mad token allowance for an address
-     * @param {String} address - Ethereum address to which the balance should be fetched for 
+     * @param {String} address - Ethereum address to which the balance should be fetched for
      * @returns {String} - Allowance of mad tokens held by the address
      */
     async getMadTokenAllowance(accountIndex = 0) {
@@ -296,7 +290,7 @@ class EthAdapter {
 
     /**
      * Request a network change to the active web wallet in window.ethereum
-     * @param { String } networkId - Network ID as a string -- Not Hexadecimal 
+     * @param { String } networkId - Network ID as a string -- Not Hexadecimal
      */
     async requestNetworkChange(networkId) {
         let hexChainId = "0x" + parseInt(networkId).toString(16);
@@ -331,7 +325,7 @@ class EthAdapter {
         });
     }
 
-    /** 
+    /**
      * Sign a simple string with this.signer
      * @param { String } message - The string to sign
      * @returns { String } -- Signed message
@@ -341,8 +335,8 @@ class EthAdapter {
         return await this.signer.signMessage(message);
     }
 
-    /** 
-     * Signs the bytes of message with this.signer -- Useful for signing hashes 
+    /**
+     * Signs the bytes of message with this.signer -- Useful for signing hashes
      * @param { String } message - The string to sign
      * @returns { String } -- Signed message
      */
@@ -352,13 +346,12 @@ class EthAdapter {
         return await this.signer.signMessage(msgBytes)
     }
 
-    /** 
+    /**
      * Sends dispatch to update the connected addresses ethereum balance
      */
     async updateBalances() {
         store.dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
     }
-
 
 }
 
