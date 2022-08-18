@@ -1,5 +1,5 @@
 export * from './about/About';
-export * from './actionTabs/ActonTabs';
+export * from './actionTabs/ActionTabs';
 export * from './allowTokens/AllowTokens';
 export * from './balanceStatus/BalanceStatus';
 export * from './connect/Connect';
