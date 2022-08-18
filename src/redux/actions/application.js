@@ -2,6 +2,7 @@ import config from 'config/_config';
 import ethAdapter from 'eth/ethAdapter';
 import { APPLICATION_ACTION_TYPES } from 'redux/constants';
 import { TOKEN_TYPES } from "redux/constants";
+import { APPLICATION_ACTIONS } from '.';
 
 /**
  * Set UI state for if a web3Wallet is connected
@@ -126,10 +127,27 @@ export const updateBalances = tokenType => {
 export const updateExchangeRate = (madTokenAmt) => {
     return async function (dispatch) {
         let exchangeRate = await ethAdapter.getMadTokenToALCAExchangeRate(madTokenAmt);
-        console.log(exchangeRate)
         dispatch({
             type: APPLICATION_ACTION_TYPES.UPDATE_EXCHANGE_RATE,
             payload: exchangeRate
+        })
+    }
+}
+
+export const updateApprovalHash = (txHash) => {
+    return async function(dispatch) {
+        dispatch({
+            type: APPLICATION_ACTION_TYPES.SET_APPROVAL_HASH,
+            payload: txHash
+        })
+    }
+}
+
+export const updateMigrationHash = (txHash) => {
+    return async function(dispatch) {
+        dispatch({
+            type: APPLICATION_ACTION_TYPES.SET_MIGRATION_HASH,
+            payload: txHash
         })
     }
 }
