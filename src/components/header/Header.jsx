@@ -1,7 +1,7 @@
 import React from "react";
 import { Menu } from "semantic-ui-react";
-import { ReactComponent as AlicenetLogo } from "assets/alicenet-logo.svg";
 import { Link } from "react-router-dom";
+import { Logo } from "components";
 
 const GITHUB_URL = process.env.REACT_APP_GITHUB_URL;
 const WHITE_PAPER_URL = process.env.REACT_APP_WHITE_PAPER_URL;
@@ -12,7 +12,7 @@ export function Header() {
         <Menu borderless className="top-0 left-0 bg-white w-full h-24 rounded-none">
             <Menu.Item className="items-center">
                 <Link to="/">
-                    <AlicenetLogo className="m-6 w-20" />
+                    <Logo className="m-6 w-20" />
                 </Link>
                 <div className="hidden md:block">ALCA Swapping Interface</div>
             </Menu.Item>

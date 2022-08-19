@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import React, { useContext, useState } from "react";
 import ethAdapter from "eth/ethAdapter";
 import config from "utils";
-import { TabPanesContext } from "context";
+import { TabPanesContext } from "contexts";
 import { ethers } from "ethers";
 import * as ACTIONS from 'redux/actions/application';
 import { TOKEN_TYPES } from "redux/constants";

@@ -1,7 +1,7 @@
 import { Container, Label } from "semantic-ui-react";
 import React, { useContext } from "react";
 import { tabPanes } from "utils/constants";
-import { TabPanesContext } from "context";
+import { TabPanesContext } from "contexts";
 import { useSelector } from "react-redux";
 
 export function Success() {

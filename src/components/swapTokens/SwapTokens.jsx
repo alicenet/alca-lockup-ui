@@ -3,8 +3,8 @@ import { useSelector, useDispatch } from "react-redux";
 import React, { useContext, useState } from "react";
 import ethAdapter from "eth/ethAdapter";
 import { tabPanes } from "utils/constants";
-import { TabPanesContext } from "context";
-import * as ACTIONS from 'redux/actions/application';
+import { TabPanesContext } from "contexts";
+import * as ACTIONS from "redux/actions/application";
 import { TOKEN_TYPES } from "redux/constants";
 
 export function SwapTokens() {

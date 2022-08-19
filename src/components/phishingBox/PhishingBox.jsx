@@ -1,7 +1,7 @@
 import { Button, Checkbox, Container, Header, Icon, Image, List, Popup } from "semantic-ui-react";
 import React, { useContext, useState } from "react";
 import config from "utils";
-import { TabPanesContext } from "context";
+import { TabPanesContext } from "contexts";
 
 const MadTokenContractAddress = process.env.REACT_APP__MadToken_CONTRACT_ADDRESS;
 const AToken_CONTRACT_ADDRESS = process.env.REACT_APP__AToken_CONTRACT_ADDRESS;

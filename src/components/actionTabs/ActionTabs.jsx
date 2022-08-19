@@ -1,10 +1,10 @@
 import { Button, Container, Icon, Popup, Tab } from "semantic-ui-react";
 import React, { useContext } from "react";
-import { TabPanesContext } from "context";
+import { DarkThemeContext, TabPanesContext } from "contexts";
 import config from "utils";
 import { useSelector } from "react-redux";
 import ethAdapter from "eth/ethAdapter";
-import { useDarkreader } from "react-darkreader";
+import "./ActionTabs.css";
 
 const TabPane = ({ name, component }) => {
     return {
@@ -18,8 +18,8 @@ const TabPane = ({ name, component }) => {
 
 export function ActionTabs() {
 
-    const [isDark, { toggle }] = useDarkreader(false);
     const { constants, string } = config;
+    const { isDark, toggle } = useContext(DarkThemeContext);
     const { activeTabPane, setActiveTabPane } = useContext(TabPanesContext);
     const { web3Connected, address } = useSelector(state => ({
         address: state.application.connectedAddress,
@@ -41,7 +41,7 @@ export function ActionTabs() {
 
     return (
         <Container className="relative">
-            <div className="absolute right-0 top-0 py-2">
+            <div className="absolute right-0 top-0 py-2 flex flex-row gap-3 items-center">
                 {web3Connected && address && (
                     <Popup
                         position="top center"
@@ -54,9 +54,20 @@ export function ActionTabs() {
                         }
                     />
                 )}
-                <button className="pr-0" type="button" onClick={toggle}>
-                    {isDark ? '🌜' : '🌞'}
-                </button>
+                <div className="field py-3">
+                    <div className="ui toggle checkbox">
+                        <input
+                            type="checkbox"
+                            value="any"
+                            onChange={toggle}
+                            checked={isDark}
+                        />
+                        <label
+                            className="coloring cursor-pointer"
+                            onClick={toggle}
+                        >{isDark ? '🌜' : '🌞'}</label>
+                    </div>
+                </div>
             </div>
             <Tab
                 activeIndex={activeTabPane}
