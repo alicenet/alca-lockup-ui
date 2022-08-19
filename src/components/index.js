@@ -5,6 +5,7 @@ export * from './balanceStatus/BalanceStatus';
 export * from './connect/Connect';
 export * from './footer/Footer';
 export * from './header/Header';
+export * from './logo/Logo';
 export * from './phishingBox/PhishingBox';
 export * from './success/Success';
 export * from './swapTokens/SwapTokens';

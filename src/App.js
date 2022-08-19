@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Container } from "semantic-ui-react";
 import { About, ActionTabs, Footer, Header, TOS } from "components";
-import { TabPanesProvider } from "context";
+import { DarkThemeProvider, TabPanesProvider } from "contexts";
 
 function App() {
 
@@ -22,19 +22,23 @@ function App() {
 
             <BrowserRouter>
 
-                <Header />
+                <DarkThemeProvider>
 
-                <TabPanesProvider>
+                    <Header />
 
-                    <Routes>
+                    <TabPanesProvider>
 
-                        {DefaultRoutes()}
+                        <Routes>
 
-                    </Routes>
+                            {DefaultRoutes()}
 
-                </TabPanesProvider>
+                        </Routes>
 
-                <Footer />
+                    </TabPanesProvider>
+
+                    <Footer />
+
+                </DarkThemeProvider>
 
             </BrowserRouter>
 

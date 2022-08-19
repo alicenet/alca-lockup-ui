@@ -1,0 +1,7 @@
+.ui.toggle.checkbox input:checked ~ .box:before,
+.ui.toggle.checkbox input:checked ~ .coloring:after {
+    background: #56b452 !important;
+}
+.ui.toggle.checkbox input:checked ~ .coloring:before {
+    background: #8c8989 !important;
+}

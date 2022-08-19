@@ -1,9 +1,8 @@
 import { Container, Label } from "semantic-ui-react";
 import React, { useContext } from "react";
 import { tabPanes } from "utils/constants";
-import { TabPanesContext } from "context";
+import { TabPanesContext } from "contexts";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 
 export function Success() {
 
@@ -38,12 +37,16 @@ export function Success() {
             </div>
 
             <div>
-                Approval Hash: {approvalHash ? (<a target="_blank" rel="noopener noreferrer" href={`https://etherscan.io/tx/${approvalHash}`}> {approvalHash} </a>) : "N/A"} <br/>
-                Migration Hash: {migrationHash ? (<a target="_blank" rel="noopener noreferrer" href={`https://etherscan.io/tx/${migrationHash}`}> {migrationHash} </a>) : "N/A"}
+                Approval Hash: {approvalHash ? (<a target="_blank" rel="noopener noreferrer"
+                                                   href={`https://etherscan.io/tx/${approvalHash}`}> {approvalHash} </a>) : "N/A"}
+                <br />
+                Migration Hash: {migrationHash ? (<a target="_blank" rel="noopener noreferrer"
+                                                     href={`https://etherscan.io/tx/${migrationHash}`}> {migrationHash} </a>) : "N/A"}
             </div>
 
             <div>
-                You can now navigate to <a target="_blank" rel="noopener noreferrer" href="https://alice.net"> alice.net</a> to learn more
+                You can now navigate to <a target="_blank" rel="noopener noreferrer"
+                                           href="https://alice.net"> alice.net</a> to learn more
             </div>
 
         </Container>
