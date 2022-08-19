@@ -3,7 +3,7 @@ import { AllowTokens, Connect, PhishingBox, Success, SwapTokens } from "componen
 export const tabPanes = {
     PHISHING: {
         index: 0,
-        name: 'Phishing Notification',
+        name: 'Security Notification',
         component: () => <PhishingBox />
     },
     CONNECT: {

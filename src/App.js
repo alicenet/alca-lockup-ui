@@ -1,9 +1,9 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Container } from "semantic-ui-react";
-import { About, SwapActions, StakeActions, Footer, Header, TOS } from "components";
-import { TabPanesProvider } from "context";
 import { useSelector } from "react-redux";
+import { SwapActions, StakeActions, Footer, Header } from "components";
+import { DarkThemeProvider, TabPanesProvider } from "contexts";
 
 function App() {
 
@@ -32,10 +32,8 @@ function App() {
                 <Route exact path="/" element={<SwapActions />} />
                 <Route exact path="/swap" element={<SwapActions />} />
                 <Route exact path="/stake" element={<StakeActions />} />
-                <Route exact path="/about" element={<About />} />
-                <Route exact path="/tos" element={<TOS />} />
             </>
-        );
+        )
     };
 
     return (
@@ -44,19 +42,23 @@ function App() {
 
             <BrowserRouter>
 
-                <Header />
+                <DarkThemeProvider>
 
-                <TabPanesProvider>
+                    <Header />
 
-                    <Routes>
+                    <TabPanesProvider>
 
-                        {DefaultRoutes()}
+                        <Routes>
 
-                    </Routes>
+                            {DefaultRoutes()}
 
-                </TabPanesProvider>
+                        </Routes>
 
-                <Footer />
+                    </TabPanesProvider>
+
+                    <Footer />
+
+                </DarkThemeProvider>
 
             </BrowserRouter>
 

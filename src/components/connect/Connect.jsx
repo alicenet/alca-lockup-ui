@@ -1,7 +1,7 @@
 import { Button, Container, Header, Icon, Message } from "semantic-ui-react";
 import React, { useContext, useState } from "react";
 import config from "utils";
-import { TabPanesContext } from "context";
+import { TabPanesContext } from "contexts";
 import { useSelector } from "react-redux";
 import ethAdapter from "eth/ethAdapter";
 
@@ -40,7 +40,6 @@ export function Connect() {
                                     icon
                                     labelPosition="left"
                                     className="m-0"
-                                    basic
                                     onClick={() => {
                                         string.copyText(address)
                                     }}
@@ -52,7 +51,6 @@ export function Connect() {
                                     icon
                                     labelPosition="left"
                                     className="m-0"
-                                    basic
                                     onClick={() => window.open(`https://etherscan.io/address/${address}`, '_blank').focus()}
                                 >
                                     <Icon name="external" />

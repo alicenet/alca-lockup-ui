@@ -1,10 +1,12 @@
 import { Button, Container, Header, Input, Message } from "semantic-ui-react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import React, { useContext, useState } from "react";
 import ethAdapter from "eth/ethAdapter";
 import config from "utils";
-import { TabPanesContext } from "context";
+import { TabPanesContext } from "contexts";
 import { ethers } from "ethers";
+import * as ACTIONS from 'redux/actions/application';
+import { TOKEN_TYPES } from "redux/constants";
 
 export function AllowTokens() {
 
@@ -13,6 +15,7 @@ export function AllowTokens() {
     const [error, setError] = useState();
     const [success, setSuccess] = useState("");
     const [waiting, setWaiting] = useState(false);
+    const dispatch = useDispatch();
 
     const { web3Connected, madBalance, madAllowance } = useSelector(state => ({
         web3Connected: state.application.web3Connected,
@@ -31,6 +34,8 @@ export function AllowTokens() {
         }
         await tx.wait();
         setSuccess("Tx Mined: " + tx.hash);
+        dispatch(ACTIONS.updateApprovalHash(tx.hash))
+        dispatch(ACTIONS.updateBalances(TOKEN_TYPES.ALL))
         setWaiting(false);
     }
 
@@ -88,7 +93,7 @@ export function AllowTokens() {
                     content="Use Existing Allowance"
                     className={config.generic.classNames(
                         {
-                            'hidden': !ethers.BigNumber.from(madAllowance).gte(ethers.BigNumber.from(1)),
+                            'hidden': success || !ethers.BigNumber.from(madAllowance).gte(ethers.BigNumber.from(1)),
                             "mt-4": true,
                         }
                     )}

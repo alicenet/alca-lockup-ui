@@ -22,6 +22,8 @@ const initialApplicationState = {
     },
     alcaExchangeRate: 0, // MadTokens => Alca :: Example... If this == 3... 1 MadToken == 3 ALCA || madTokens * alcaExchangeRate = estimateReturnedAlcaTokens
     connectedAddress: "",
+    approvalHash: "",
+    migrationHash: "",
     networkId: "",
     networkName: "",
     txStatuses: Object.keys(ACTION_TYPES).map(action => {
@@ -91,6 +93,16 @@ export default function applicationReducer(state = initialApplicationState, acti
         case APPLICATION_ACTION_TYPES.UPDATE_HAS_READ_TERMS:
             return Object.assign({}, state, {
                 hasReadTerms: action.payload
+            })
+
+        case APPLICATION_ACTION_TYPES.SET_APPROVAL_HASH:
+            return Object.assign({}, state, {
+                approvalHash: action.payload
+            })
+
+        case APPLICATION_ACTION_TYPES.SET_MIGRATION_HASH:
+            return Object.assign({}, state, {
+                migrationHash: action.payload
             })
 
         default:

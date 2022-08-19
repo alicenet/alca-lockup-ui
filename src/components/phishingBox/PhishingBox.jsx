@@ -1,14 +1,25 @@
 import { Button, Checkbox, Container, Header, Icon, Image, List, Popup } from "semantic-ui-react";
 import React, { useContext, useState } from "react";
 import config from "utils";
-import { TabPanesContext } from "context";
+import { TabPanesContext } from "contexts";
+import AliceCertPng from 'assets/aliceCert.png';
+import AluceUrlPng from 'assets/aliceUrl.png';
+import ContractVerifyPng from 'assets/contractPermission.png';
 
 const MadTokenContractAddress = process.env.REACT_APP__MadToken_CONTRACT_ADDRESS;
 const AToken_CONTRACT_ADDRESS = process.env.REACT_APP__AToken_CONTRACT_ADDRESS;
 
-const CheckIcon = ({isChecked}) => <Icon color={isChecked ? "green" : "red"} name={isChecked ? "check" : "x"} className="m-0 h-full" />
+const CheckIcon = ({ isChecked }) => {
+    return (
+        <Icon
+            color={isChecked ? "green" : "red"}
+            name={isChecked ? "check" : "x"}
+            className="m-0 h-full"
+        />
+    );
+};
 
-const LinkedListItem = ({ text, link }) => {
+const LinkedListItem = ({ text, link, isChecked }) => {
     const [hovered, setHovered] = useState(false);
     return (
         <List.Item className="py-3">
@@ -22,7 +33,7 @@ const LinkedListItem = ({ text, link }) => {
                     {text}
                     {hovered && <Icon name="external" className="m-0 h-full" />}
                 </div>
-                <CheckIcon isChecked/> 
+                <CheckIcon isChecked={isChecked} />
             </List.Content>
         </List.Item>
     );
@@ -30,7 +41,7 @@ const LinkedListItem = ({ text, link }) => {
 
 export function PhishingBox() {
 
-    const [checked, setChecked] = useState(false);
+    const [isChecked, setIsChecked] = useState(false);
     const { setActiveTabPane } = useContext(TabPanesContext);
     const { generic, constants } = config;
 
@@ -58,11 +69,13 @@ export function PhishingBox() {
                                 <LinkedListItem
                                     text={`ALCA Contract Address (${AToken_CONTRACT_ADDRESS})`}
                                     link={`https://etherscan.io/address/${AToken_CONTRACT_ADDRESS}`}
+                                    isChecked={isChecked}
                                 />
 
                                 <LinkedListItem
-                                    text="MadToken Contract Address"
+                                    text={`MadToken Contract Address (${MadTokenContractAddress})`}
                                     link={`https://etherscan.io/address/${MadTokenContractAddress}`}
+                                    isChecked={isChecked}
                                 />
                             </List>
 
@@ -74,13 +87,13 @@ export function PhishingBox() {
                                     position="top center"
                                     content={
                                         <Image
-                                            src='https://react.semantic-ui.com/images/wireframe/square-image.png'
+                                            src={ContractVerifyPng}
                                             rounded
                                         />
                                     }
                                     trigger={<span>Metamask contract verification</span>}
                                 />
-                                <CheckIcon isChecked />
+                                <CheckIcon isChecked={isChecked} />
                             </List.Content>
                         </List.Item>
 
@@ -90,13 +103,13 @@ export function PhishingBox() {
                                     position="top center"
                                     content={
                                         <Image
-                                            src='https://react.semantic-ui.com/images/wireframe/square-image.png'
+                                            src={AluceUrlPng}
                                             rounded
                                         />
                                     }
                                     trigger={<span>Verify URL</span>}
                                 />
-                                <CheckIcon isChecked />
+                                <CheckIcon isChecked={isChecked} />
                             </List.Content>
                         </List.Item>
 
@@ -106,13 +119,13 @@ export function PhishingBox() {
                                     position="top center"
                                     content={
                                         <Image
-                                            src='https://react.semantic-ui.com/images/wireframe/square-image.png'
+                                            src={AliceCertPng}
                                             rounded
                                         />
                                     }
                                     trigger={<span>Verify HTTPS Lock and Cert</span>}
                                 />
-                                <CheckIcon isChecked />
+                                <CheckIcon isChecked={isChecked} />
                             </List.Content>
                         </List.Item>
 
@@ -120,9 +133,9 @@ export function PhishingBox() {
 
                     <Header>
                         <Checkbox
-                            label="I Have read and addressed the noted concerns"
-                            onChange={(e, data) => setChecked(data.checked)}
-                            checked={checked}
+                            label="I have read and addressed the above security checklist"
+                            onChange={(e, data) => setIsChecked(data.checked)}
+                            checked={isChecked}
                         />
                     </Header>
 
@@ -134,10 +147,7 @@ export function PhishingBox() {
                 <Button
                     color="green"
                     content="Continue"
-                    className={generic.classNames(
-                        "m-0",
-                        { 'hidden': !checked }
-                    )}
+                    className={generic.classNames("m-0", { 'hidden': !isChecked })}
                     onClick={() => setActiveTabPane(constants.tabPanes.CONNECT)}
                 />
             </div>
