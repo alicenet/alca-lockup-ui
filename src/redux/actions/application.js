@@ -105,6 +105,9 @@ export const updateBalances = tokenType => {
         if (tokenType === TOKEN_TYPES.ALCA || tokenType === TOKEN_TYPES.ALL) {
             alcaBal = await ethAdapter.getAlcaBalance(0);
         }
+
+        let publicStakingAllowance = await ethAdapter.getPublicStakingAllowance();
+
         dispatch({
             type: APPLICATION_ACTION_TYPES.SET_BALANCES,
             payload: {
@@ -116,10 +119,11 @@ export const updateBalances = tokenType => {
         dispatch({
             type: APPLICATION_ACTION_TYPES.SET_ALLOWANCES,
             payload: {
-                mad: parseInt(madAllowance) || 0 // Fallback to 0 if token doesn't exist on network
+                mad: parseInt(madAllowance) || 0, // Fallback to 0 if token doesn't exist on network
+                alcaStakeAllowance: publicStakingAllowance || "0"
             }
         });
-      
+
     }
 };
 
@@ -133,3 +137,27 @@ export const updateExchangeRate = (madTokenAmt) => {
         })
     }
 }
+
+export const checkAgreeCookieState = (agreeCookie) => {
+    return async function (dispatch) {
+        if (agreeCookie.agreed === 'true') {
+            dispatch({
+                type: APPLICATION_ACTION_TYPES.UPDATE_HAS_READ_TERMS,
+                payload: true
+            })
+        } else {
+            console.log("DISPATCH NO GO")
+            dispatch({
+                type: APPLICATION_ACTION_TYPES.UPDATE_HAS_READ_TERMS,
+                payload: false
+            })
+        }
+    }
+}
+
+export const setAgreeStateTrue = () => {
+    return async function (dispatch) {
+        dispatch({ type: APPLICATION_ACTION_TYPES.UPDATE_HAS_READ_TERMS, payload: true });
+    }
+}
+

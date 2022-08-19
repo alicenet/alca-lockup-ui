@@ -40,6 +40,9 @@ async function main() {
     let sendToTesting = await (await madTokenContractImpersonated.transfer(testingAddress, hre.ethers.utils.parseEther("10000000"))).wait()
     console.log(`10m tokens sent to ${testingAddress} successfully w/ hash ${sendToTesting.transactionHash}`);
 
+    // Re-enable auto-mining
+    await network.provider.send("evm_setAutomine", [true]);
+
 }
 
 // We recommend this pattern to be able to use async/await everywhere

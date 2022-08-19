@@ -10,9 +10,15 @@ const initialApplicationState = {
         alcb: 0,
         ethereum: 0,
         mad: 0,
+        stakedAlca: 0,
     },
     allowances: {
         mad: 0,
+        alcaStakeAllowance: 0,
+    },
+    rewards: {
+        alca: 0,
+        eth: 0,
     },
     alcaExchangeRate: 0, // MadTokens => Alca :: Example... If this == 3... 1 MadToken == 3 ALCA || madTokens * alcaExchangeRate = estimateReturnedAlcaTokens
     connectedAddress: "",
@@ -27,6 +33,7 @@ const initialApplicationState = {
             errorMessage: "",
         }
     }),
+    hasReadTerms: false
 };
 
 export default function applicationReducer(state = initialApplicationState, action) {
@@ -79,6 +86,11 @@ export default function applicationReducer(state = initialApplicationState, acti
         case APPLICATION_ACTION_TYPES.UPDATE_EXCHANGE_RATE:
             return Object.assign({}, state, {
                 alcaExchangeRate: action.payload
+            })
+
+        case APPLICATION_ACTION_TYPES.UPDATE_HAS_READ_TERMS:
+            return Object.assign({}, state, {
+                hasReadTerms: action.payload
             })
 
         default:

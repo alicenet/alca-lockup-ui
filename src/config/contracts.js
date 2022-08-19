@@ -16,9 +16,6 @@ for (let environmentKey of Object.keys(process.env)) {
         let contractName = environmentKey.replace("_CONTRACT_ADDRESS", "").replace("REACT_APP__", "");
         CONTRACT_NAMES[contractName] = contractName;
         CONTRACT_ADDRESSES[contractName] = process.env[environmentKey];
-        console.log(contractName);
-        console.log(abis);
-        console.log(abis[contractName]);
         CONTRACT_ABIS[contractName] = JSON.parse(abis[contractName]);
         CONTRACTS[contractName] = {
             name: contractName,

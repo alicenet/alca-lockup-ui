@@ -176,6 +176,7 @@ class EthAdapter {
      * @param { Array } paramaters - Contract method parameters as an array  
      */
     async _tryCall(contractName, methodName, params = []) {
+        console.log(contractName, methodName, params)
         let contract = this._getReadonlyContractInstance(contractName);
         let result = await contract[methodName](...params);
         // If return is a BN parse and return the value string, else just return
@@ -195,6 +196,12 @@ class EthAdapter {
         console.log(contractName, methodName, params)
         return await this._getSignerContractInstance(contractName)[methodName](...params);
     }
+
+    async _lookupContractName(cName) {
+        let contractAddress = await this._tryCall("Factory", "lookup", [ethers.utils.formatBytes32String(cName)]);
+        return contractAddress;
+    }
+
 
     /////////////////////
     /* Public Methods  */
@@ -217,6 +224,8 @@ class EthAdapter {
             cb(null, connectedAddress);
             // Setup balance listener
             this._balanceLoop();
+            this.updateBalances();
+            // this._lookupContractName();
         } catch (ex) {
             console.error(ex);
             store.dispatch(APPLICATION_ACTIONS.setWeb3Connected(false));
@@ -259,7 +268,7 @@ class EthAdapter {
      */
     async getAlcaBalance(accountIndex = 0) {
         return this._try(async () => {
-            let balance = await this._tryCall("AToken", "balanceOf", [this._getAddressByIndex(accountIndex)]);
+            let balance = await this._tryCall("AToken", "balanceOf", [await this._getAddressByIndex(accountIndex)]);
             return ethers.utils.formatEther(balance);
         });
     }
@@ -271,7 +280,7 @@ class EthAdapter {
      */
     async getMadTokenBalance(accountIndex = 0) {
         return this._try(async () => {
-            let balance = await this._tryCall("MadToken", "balanceOf", [this._getAddressByIndex(accountIndex)])
+            let balance = await this._tryCall("MadToken", "balanceOf", [await this._getAddressByIndex(accountIndex)])
             return ethers.utils.formatEther(balance); // MadToken is an 18 Decimal balance like ETH, format it
         });
     }
@@ -283,8 +292,15 @@ class EthAdapter {
      */
     async getMadTokenAllowance(accountIndex = 0) {
         return this._try(async () => {
-            let allowance = await this._tryCall("MadToken", "allowance", [this._getAddressByIndex(accountIndex), CONTRACT_ADDRESSES.AToken]);
+            let allowance = await this._tryCall("MadToken", "allowance", [await this._getAddressByIndex(accountIndex), CONTRACT_ADDRESSES.AToken]);
             return ethers.utils.formatEther(allowance);
+        });
+    }
+
+    async getPublicStakingAllowance(accountIndex = 0) {
+        return this._try(async () => {
+            let allowance = await this._tryCall("AToken", "allowance", [await this._getAddressByIndex(accountIndex), CONTRACT_ADDRESSES.PublicStaking]);
+            return allowance.toString();
         });
     }
 
@@ -316,6 +332,21 @@ class EthAdapter {
     async sendAllowanceRequest(unformattedAmount) {
         return await this._try(async () => {
             let tx = await this._trySend("MadToken", "approve", [CONTRACT_ADDRESSES.AToken, ethers.utils.parseEther(unformattedAmount)]);
+            return tx;
+        })
+    }
+
+    async sendStakingAllowanceRequest() {
+        return await this._try(async () => {
+            let tx = await this._trySend("AToken", "approve", [CONTRACT_ADDRESSES.PublicStaking, ethers.BigNumber.from("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")])
+            return tx;
+        })
+    }
+
+    async openStakingPosition(amount) {
+        console.log(amount);
+        return await this._try(async () => {
+            let tx = await this._trySend("PublicStaking", "mint", [ethers.utils.parseEther(amount)])
             return tx;
         })
     }

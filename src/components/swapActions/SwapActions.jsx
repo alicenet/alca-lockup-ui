@@ -15,7 +15,7 @@ const TabPane = ({ name, component }) => {
     };
 }
 
-export function ActionTabs() {
+export function SwapActions() {
 
     const { constants, string } = config;
     const { activeTabPane, setActiveTabPane } = useContext(TabPanesContext);

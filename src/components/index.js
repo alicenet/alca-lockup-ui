@@ -1,5 +1,5 @@
 export * from './about/About';
-export * from './actionTabs/ActonTabs';
+export * from './swapActions/SwapActions';
 export * from './allowTokens/AllowTokens';
 export * from './balanceStatus/BalanceStatus';
 export * from './connect/Connect';
@@ -9,3 +9,8 @@ export * from './phishingBox/PhishingBox';
 export * from './success/Success';
 export * from './swapTokens/SwapTokens';
 export * from './tos/TOS';
+export * from './stakeActions/StakeActions';
+export * from "./stakeStake/StakeStake";
+export * from "./stakeUnstake/StakeUnstake";
+export * from "./stakeClaim/StakeClaim";
+export * from "./stakeWelcome/StakeWelcome";
