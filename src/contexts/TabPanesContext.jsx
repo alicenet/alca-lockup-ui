@@ -10,7 +10,7 @@ export const TabPanesContext = createContext(null);
  */
 export const TabPanesProvider = (props) => {
 
-    const [activeTabPane, setActiveTabPane] = useState(tabPanes.PHISHING.index);
+    const [activeTabPane, setActiveTabPane] = useState(tabPanes.INTRO.index);
 
     const handleSetActiveTabPane = tabPane => setActiveTabPane(tabPane.index);
 

@@ -1,30 +1,35 @@
-import { AllowTokens, Connect, PhishingBox, Success, SwapTokens } from "components";
+import { AllowTokens, Connect, PhishingBox, Success, SwapTokens, Introduction } from "components";
 
 export const tabPanes = {
-    PHISHING: {
+    INTRO: {
         index: 0,
+        name: 'Introduction',
+        component: () => <Introduction />
+    },
+    PHISHING: {
+        index: 1,
         name: 'Security Notification',
         component: () => <PhishingBox />
     },
     CONNECT: {
-        index: 1,
+        index: 2,
         name: 'Connect',
         component: () => <Connect />
     },
     ALLOW: {
-        index: 2,
+        index: 3,
         name: 'Allow',
         component: () => <AllowTokens />
 
     },
     MIGRATE: {
-        index: 3,
+        index: 4,
         name: 'Migrate',
         component: () => <SwapTokens />
 
     },
     SUCCESS: {
-        index: 4,
+        index: 5,
         name: 'Success',
         component: () => <Success />
     },
