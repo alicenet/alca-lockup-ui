@@ -24,29 +24,31 @@ export function Success() {
                 onClick={() => setActiveTabPane(tabPanes.PHISHING)}
             >
                 Thanks for migrating to ALCA. <br /> <br />
-                Your current balances and recent transactions are noted below:
+                <span className="underline">
+                Your current balances and recent transactions are noted below
+                    </span>
             </div>
 
-            <div>
-                <Label color="blue" size="large" as='a' image>
+            <div className="flex justify-between w-[320px] mt-8">
+                <Label size="large" as='a' image>
                     <div>MAD: {madBalance}</div>
                 </Label>
-                <Label color="blue" size="large" as='a' image>
+                <Label size="large" as='a' image>
                     <div>ALCA: {alcaBalance}</div>
                 </Label>
             </div>
 
-            <div>
-                Approval Hash: {approvalHash ? (<a target="_blank" rel="noopener noreferrer"
-                                                   href={`https://etherscan.io/tx/${approvalHash}`}> {approvalHash} </a>) : "N/A"}
-                <br />
-                Migration Hash: {migrationHash ? (<a target="_blank" rel="noopener noreferrer"
-                                                     href={`https://etherscan.io/tx/${migrationHash}`}> {migrationHash} </a>) : "N/A"}
+            <div className="py-8">
+                <b>Approval Hash:</b> {approvalHash ? (<a target="_blank" rel="noopener noreferrer"
+                    href={`https://etherscan.io/tx/${approvalHash}`}> {approvalHash} </a>) : "N/A"}
+                <br /><br />
+                <b>Migration Hash:</b> {migrationHash ? (<a target="_blank" rel="noopener noreferrer"
+                    href={`https://etherscan.io/tx/${migrationHash}`}> {migrationHash} </a>) : "N/A"}
             </div>
 
             <div>
-                You can now navigate to <a target="_blank" rel="noopener noreferrer"
-                                           href="https://alice.net"> alice.net</a> to learn more
+                Navigate to <a target="_blank" rel="noopener noreferrer" className="text-blue-500 underline"
+                    href="https://alice.net"> alice.net</a> to learn more!
             </div>
 
         </Container>

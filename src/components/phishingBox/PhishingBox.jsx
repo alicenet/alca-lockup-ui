@@ -16,7 +16,7 @@ const CheckIcon = ({ isChecked, toggleCheck }) => {
             color={isChecked ? "green" : ""}
             name={isChecked ? "check" : "square outline"}
             size={isChecked ? "large" : "large"}
-            className="m-0 h-full hover:cursor-pointer outline-none"
+            className="m-0 h-full hover:cursor-pointer outline-none p-1.5"
             onClick={toggleCheck}
         />
     );
@@ -88,7 +88,7 @@ export function PhishingBox() {
                         </Header.Subheader>
                     </Header>
 
-                    <List bulleted>
+                    <List >
 
                         <List.Item className="pt-3">
 
@@ -104,7 +104,7 @@ export function PhishingBox() {
                                 />
                             </List.Content>
 
-                            <List bulleted>
+                            <List>
                                 <br />
                                 <Header.Subheader>Verify the contract is the expected contract address and is verified on etherscan</Header.Subheader>
                                 <LinkedListItem

@@ -1,9 +1,7 @@
 import React from "react";
 import { Icon } from "semantic-ui-react";
 import { Link } from "react-router-dom";
-
-const TWITTER_URL = process.env.REACT_APP_TWITTER_URL;
-const DISCORD_URL = process.env.REACT_APP_DISCORD_URL;
+import { LINKS } from "utils/constants";
 
 export function Footer() {
 
@@ -15,16 +13,16 @@ export function Footer() {
                 <Icon
                     name="twitter"
                     className="cursor-pointer"
-                    onClick={() => window.open(TWITTER_URL, '_blank').focus()}
+                    onClick={() => window.open(LINKS.TWITTER, '_blank').focus()}
                 />
                 <Icon
                     name="discord"
                     className="cursor-pointer"
-                    onClick={() => window.open(DISCORD_URL, '_blank').focus()}
+                    onClick={() => window.open(LINKS.DISCORD, '_blank').focus()}
                 />
             </div>
             <div className="cursor-pointer gap-6 hidden md:flex">
-                <Link to="/about">About</Link>
+                {/* <Link to="/about">About</Link> */}
                 <Link to="/legal">Legal</Link>
                 <Link to="/tos">Terms of Service</Link>
                 <Link to="/">Alicenet Inc &copy; 2022</Link>

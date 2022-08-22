@@ -1,9 +1,12 @@
-import { Button, Container, Icon, Tab } from "semantic-ui-react";
+import { Button, Container, Icon, Popup, Tab } from "semantic-ui-react";
 import React, { useContext } from "react";
 import { TabPanesContext } from "contexts";
 import config from "utils";
 import { useSelector } from "react-redux";
 import ethAdapter from "eth/ethAdapter";
+import "./SwapActions.css";
+import { utils } from "ethers";
+import { splitStringWithEllipsis } from "utils/string";
 
 const TabPane = ({ name, component }) => {
     return {
@@ -39,14 +42,23 @@ export function SwapActions() {
 
     return (
         <Container className="relative">
-            {web3Connected && address && (
-                <div className="absolute right-0 top-0 py-2">
-                    <Button icon labelPosition="left" className="m-0" onClick={disconnect}>
-                        <Icon name="remove" size="small" />
-                        {`${string.splitStringWithEllipsis(address, 4)}`}
-                    </Button>
-                </div>
-            )}
+            <div className="absolute right-0 top-0 py-2 flex flex-row gap-3 items-center">
+                {web3Connected && address && (
+                    <Popup
+                        position="top center"
+                        content="Disconnect Wallet"
+                        trigger={
+                            <Button icon labelPosition="left" className="m-0" onClick={disconnect}>
+                                <Icon name="remove" size="small" />
+                                <div>
+                                    Connected:
+                                    {splitStringWithEllipsis(address, 4)}
+                                </div>
+                            </Button>
+                        }
+                    />
+                )}
+            </div>
             <Tab
                 activeIndex={activeTabPane}
                 menu={{ secondary: true }}
