@@ -54,20 +54,20 @@ export function Header() {
                 /> */}
             </Menu.Menu>
 
-            <div className="absolute right-4 top-24 field py-3">
-                    <div className="ui toggle checkbox">
-                        <input
-                            type="checkbox"
-                            value="any"
-                            onChange={toggle}
-                            checked={isDark}
-                        />
-                        <label
-                            className="coloring cursor-pointer"
-                            onClick={toggle}
-                        >{isDark ? '🌜' : '🌞'}</label>
-                    </div>
+            {/* <div className="absolute right-4 top-24 field py-3">
+                <div className="ui toggle checkbox">
+                    <input
+                        type="checkbox"
+                        value="any"
+                        onChange={toggle}
+                        checked={isDark}
+                    />
+                    <label
+                        className="coloring cursor-pointer"
+                        onClick={toggle}
+                    >{isDark ? '🌜' : '🌞'}</label>
                 </div>
+            </div> */}
 
         </Menu>
     )
