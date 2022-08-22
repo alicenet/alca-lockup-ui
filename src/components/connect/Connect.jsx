@@ -34,38 +34,20 @@ export function Connect() {
 
                 <div className="text-sm text-center">
                     {web3Connected ? (
-                            <div className="flex flex-col gap-3 items-center">
-                                <Header content={`Connected to: ${string.splitStringWithEllipsis(address, 4)}`} />
-                                <Button
-                                    icon
-                                    labelPosition="left"
-                                    className="m-0"
-                                    onClick={() => {
-                                        string.copyText(address)
-                                    }}
-                                >
-                                    <Icon name="copy" />
-                                    Copy Address
-                                </Button>
-                                <Button
-                                    icon
-                                    labelPosition="left"
-                                    className="m-0"
-                                    onClick={() => window.open(`https://etherscan.io/address/${address}`, '_blank').focus()}
-                                >
-                                    <Icon name="external" />
-                                    View on Explorer
-                                </Button>
-                            </div>
-                        ) :
+                        <Header content={`Connected to: ${address}`} />
+                    ) : <div>
+                        <div>
+                            Press the button below to connect your web3 wallet
+                        </div>
                         <Button
-                            className="m-0"
+                            className="m-0 mt-8"
                             inverted
                             secondary
                             color="black"
                             onClick={connect}
                             content="Connect Wallet"
                         />
+                    </div>
 
                     }
                 </div>

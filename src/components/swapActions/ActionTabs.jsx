@@ -49,7 +49,10 @@ export function ActionTabs() {
                         trigger={
                             <Button icon labelPosition="left" className="m-0" onClick={disconnect}>
                                 <Icon name="remove" size="small" />
-                                {`${string.splitStringWithEllipsis(address, 4)}`}
+                                <div>
+                                    Connected:
+                                    {address}
+                                </div>
                             </Button>
                         }
                     />

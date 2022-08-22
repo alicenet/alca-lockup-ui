@@ -5,6 +5,7 @@ import { TabPanesContext } from "contexts";
 import AliceCertPng from 'assets/aliceCert.png';
 import AluceUrlPng from 'assets/aliceUrl.png';
 import ContractVerifyPng from 'assets/contractPermission.png';
+import { classNames } from "utils/generic";
 
 const MadTokenContractAddress = process.env.REACT_APP__MadToken_CONTRACT_ADDRESS;
 const AToken_CONTRACT_ADDRESS = process.env.REACT_APP__AToken_CONTRACT_ADDRESS;
@@ -81,9 +82,9 @@ export function PhishingBox() {
                 <div className="text-sm">
 
                     <Header>
-                        Before proceeding with the migration please verify the following:
+                        Before proceeding with the migration please read the following tips
                         <Header.Subheader>
-                            Hover each bullet for possible additional information
+                            <span className="text-blue-500">Hover blue points</span> for additional information and check each box as you go
                         </Header.Subheader>
                     </Header>
 
@@ -94,9 +95,9 @@ export function PhishingBox() {
                             <List.Content className="flex flex-row justify-between items-center">
                                 <Popup
                                     position="top left"
-                                    content="Contracts should be verified on etherscan by comparing contract addresses to other published media by alice.net"
+                                    content={<div className="text-xs w-[320px]">Contracts should be verified on etherscan by comparing contract addresses to other published media by the contract author(s)</div>}
                                     trigger={(
-                                        <Header as="h5">
+                                        <Header as="h5" className="text-blue-500 cursor-default">
                                             <span>Verify both contract addresses on etherscan</span>
                                         </Header>
                                     )}
@@ -134,7 +135,7 @@ export function PhishingBox() {
                                         />
                                     }
                                     trigger={(
-                                        <Header as="h5">
+                                        <Header as="h5" className="text-blue-500 cursor-default">
                                             <span>Verify the URL</span>
                                             <br />
                                             <Header.Subheader className="opacity-60">Verify the url in your browser is https://alca.alice.net</Header.Subheader>
@@ -156,7 +157,7 @@ export function PhishingBox() {
                                         />
                                     }
                                     trigger={(
-                                        <Header as="h5">
+                                        <Header as="h5" className="text-blue-500 cursor-default">
                                             <span>Verify the HTTPS Certificate</span>
                                             <br />
                                             <Header.Subheader className="opacity-60">Check that the HTTPS certificate is for https://alca.alice.net</Header.Subheader>
@@ -171,12 +172,21 @@ export function PhishingBox() {
                                 <Popup
                                     position="top center"
                                     content={
-                                        <Image
-                                            src={ContractVerifyPng}
-                                            rounded
-                                        />
+                                        <div>
+                                            <div className="text-xs w-[320px]">When interacting with contracts verify the contract address</div>
+                                            <Image
+                                                src={ContractVerifyPng}
+                                                rounded
+                                            />
+                                        </div>
                                     }
-                                    trigger={<span>Verify contract interaction</span>}
+                                    trigger={
+                                        <Header as="h5" className="text-blue-500 cursor-default">
+                                            <span>Be aware of contract interaction</span>
+                                            <br />
+                                            <Header.Subheader className="opacity-60">During transaction check the contract being called by your wallet is correct</Header.Subheader>
+                                        </Header>
+                                    }
                                 />
                                 <CheckIcon isChecked={checkState[3]} toggleCheck={() => toggleCheck(3)} />
                             </List.Content>
@@ -184,12 +194,15 @@ export function PhishingBox() {
 
                     </List>
 
-                    <Header>
-                        <Checkbox
-                            label="I have addressed the above security checklist"
-                            checked={allChecked}
-                        />
-                    </Header>
+                    <div className="text-[14px] font-bold flex justify-between items-center mt-8">
+                        <span className={classNames({
+                            "text-red-400": !allChecked,
+                            "text-green-500": allChecked
+                        })}>
+                            - I have addressed the above security tips
+                        </span>
+                        <Icon name={allChecked ? "check" : "x"} color={allChecked ? "green" : "red"} size="large"  className="ml-6 m-0 h-full text-2xl" />
+                    </div>
 
                 </div>
 
