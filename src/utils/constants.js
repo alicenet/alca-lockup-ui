@@ -1,21 +1,29 @@
-import { AllowTokens, Connect, PhishingBox, Success, SwapTokens } from "components";
+import { AllowTokens, Connect, PhishingBox, Success, SwapTokens, Introduction } from "components";
+
+export const LINKS = {
+    GITHUB: "https://github.com/alicenet",
+    WHITEPAPER: "",
+    COMMUNITY: "",
+    DISCORD: "https://discord.gg/bkhW2KUWDu",
+    TWITTER: "https://mobile.twitter.com/AliceNetChain",
+    MEDIUM: "",
+}
 
 export const tabPanes = {
-    PHISHING: {
+    INTRO: {
         index: 0,
+        name: 'Introduction',
+        component: () => <Introduction />
+    },
+    PHISHING: {
+        index: 1,
         name: 'Security Notification',
         component: () => <PhishingBox />
     },
     CONNECT: {
-        index: 1,
+        index: 2,
         name: 'Connect',
         component: () => <Connect />
-    },
-    ALLOW: {
-        index: 2,
-        name: 'Allow',
-        component: () => <AllowTokens />
-
     },
     MIGRATE: {
         index: 3,

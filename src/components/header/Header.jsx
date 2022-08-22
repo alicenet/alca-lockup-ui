@@ -2,11 +2,12 @@ import React from "react";
 import { Menu, Header as SHeader } from "semantic-ui-react";
 import { Link, useLocation } from "react-router-dom";
 import { Logo } from "components";
-
-const GITHUB_URL = process.env.REACT_APP_GITHUB_URL;
-const WHITE_PAPER_URL = process.env.REACT_APP_WHITE_PAPER_URL;
+import { DarkThemeContext } from "contexts";
+import { LINKS } from "utils/constants";
 
 export function Header() {
+
+    const { isDark, toggle } = React.useContext(DarkThemeContext);
 
     const location = useLocation();
 
@@ -38,20 +39,36 @@ export function Header() {
             <Menu.Menu position="right" className="hidden md:flex">
                 <Menu.Item
                     className="cursor-pointer"
-                    onClick={() => window.open(GITHUB_URL, '_blank').focus()}
+                    onClick={() => window.open(LINKS.GITHUB, '_blank').focus()}
                     content="Github"
                 />
                 <Menu.Item
                     className="cursor-pointer"
-                    onClick={() => window.open(WHITE_PAPER_URL, '_blank').focus()}
+                    onClick={() => window.open(LINKS.WHITEPAPER, '_blank').focus()}
                     content="Whitepaper"
                 />
-                <Menu.Item
+                {/* <Menu.Item
                     className="cursor-pointer"
-                    onClick={() => window.open(WHITE_PAPER_URL, '_blank').focus()}
+                    onClick={() => window.open(LINKS.COMMUNITY, '_blank').focus()}
                     content="Community"
-                />
+                /> */}
             </Menu.Menu>
+
+            <div className="absolute right-4 top-24 field py-3">
+                    <div className="ui toggle checkbox">
+                        <input
+                            type="checkbox"
+                            value="any"
+                            onChange={toggle}
+                            checked={isDark}
+                        />
+                        <label
+                            className="coloring cursor-pointer"
+                            onClick={toggle}
+                        >{isDark ? '🌜' : '🌞'}</label>
+                    </div>
+                </div>
+
         </Menu>
     )
 }

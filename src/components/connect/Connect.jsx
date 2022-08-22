@@ -1,4 +1,4 @@
-import { Button, Container, Header, Icon, Message } from "semantic-ui-react";
+import { Button, Container, Header, Label, Message } from "semantic-ui-react";
 import React, { useContext, useState } from "react";
 import config from "utils";
 import { TabPanesContext } from "contexts";
@@ -10,9 +10,11 @@ export function Connect() {
     const { generic, constants, string } = config;
     const [error, setError] = useState("");
     const { setActiveTabPane } = useContext(TabPanesContext);
-    const { web3Connected, address } = useSelector(state => ({
+    const { web3Connected, address, alcaBalance, madBalance } = useSelector(state => ({
         address: state.application.connectedAddress,
-        web3Connected: state.application.web3Connected
+        web3Connected: state.application.web3Connected,
+        madBalance: state.application.balances.mad,
+        alcaBalance: state.application.balances.alca
     }));
 
     const connect = () => {
@@ -33,39 +35,35 @@ export function Connect() {
             <Container className="flex flex-col justify-around items-center p-4 min-h-[240px]">
 
                 <div className="text-sm text-center">
-                    {web3Connected ? (
-                            <div className="flex flex-col gap-3 items-center">
-                                <Header content={`Connected to: ${string.splitStringWithEllipsis(address, 4)}`} />
-                                <Button
-                                    icon
-                                    labelPosition="left"
-                                    className="m-0"
-                                    onClick={() => {
-                                        string.copyText(address)
-                                    }}
-                                >
-                                    <Icon name="copy" />
-                                    Copy Address
-                                </Button>
-                                <Button
-                                    icon
-                                    labelPosition="left"
-                                    className="m-0"
-                                    onClick={() => window.open(`https://etherscan.io/address/${address}`, '_blank').focus()}
-                                >
-                                    <Icon name="external" />
-                                    View on Explorer
-                                </Button>
-                            </div>
-                        ) :
+                    {web3Connected ? (<div>
+                        <Header content={`Connected to: ${address}`} />
+
+                        <Header.Subheader>
+                            Connected Wallet balances noted below
+                        </Header.Subheader>
+
+                        <div className="flex justify-between w-full mt-6">
+                            <Label size="large" as='a' image>
+                                <div>MAD: {madBalance}</div>
+                            </Label>
+                            <Label size="large" as='a' image>
+                                <div>ALCA: {alcaBalance}</div>
+                            </Label>
+                        </div>
+                    </div>
+                    ) : <div>
+                        <div>
+                            Press the button below to connect your web3 wallet
+                        </div>
                         <Button
-                            className="m-0"
+                            className="m-0 mt-8"
                             inverted
                             secondary
                             color="black"
                             onClick={connect}
                             content="Connect Wallet"
                         />
+                    </div>
 
                     }
                 </div>
@@ -87,7 +85,7 @@ export function Connect() {
                     color="green"
                     content="Continue"
                     className={generic.classNames("m-0", { 'hidden': !web3Connected })}
-                    onClick={() => setActiveTabPane(constants.tabPanes.ALLOW)}
+                    onClick={() => setActiveTabPane(constants.tabPanes.MIGRATE)}
                 />
             </div>
 

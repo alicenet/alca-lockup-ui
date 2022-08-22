@@ -5,21 +5,24 @@ import { TabPanesContext } from "contexts";
 import AliceCertPng from 'assets/aliceCert.png';
 import AluceUrlPng from 'assets/aliceUrl.png';
 import ContractVerifyPng from 'assets/contractPermission.png';
+import { classNames } from "utils/generic";
 
 const MadTokenContractAddress = process.env.REACT_APP__MadToken_CONTRACT_ADDRESS;
 const AToken_CONTRACT_ADDRESS = process.env.REACT_APP__AToken_CONTRACT_ADDRESS;
 
-const CheckIcon = ({ isChecked }) => {
+const CheckIcon = ({ isChecked, toggleCheck }) => {
     return (
         <Icon
-            color={isChecked ? "green" : "red"}
-            name={isChecked ? "check" : "x"}
-            className="m-0 h-full"
+            color={isChecked ? "green" : ""}
+            name={isChecked ? "check" : "square outline"}
+            size={isChecked ? "large" : "large"}
+            className="m-0 h-full hover:cursor-pointer outline-none p-1.5"
+            onClick={toggleCheck}
         />
     );
 };
 
-const LinkedListItem = ({ text, link, isChecked }) => {
+const LinkedListItem = ({ text, link, isChecked, toggleCheck }) => {
     const [hovered, setHovered] = useState(false);
     return (
         <List.Item className="py-3">
@@ -27,13 +30,13 @@ const LinkedListItem = ({ text, link, isChecked }) => {
                 <div
                     onMouseOver={() => setHovered(prevState => !prevState)}
                     onMouseLeave={() => setHovered(prevState => !prevState)}
-                    className="flex flex-row gap-2 items-center cursor-pointer hover:opacity-80"
+                    className="flex flex-row gap-2 items-center cursor-pointer hover:opacity-80 h-6"
                     onClick={() => window.open(link, '_blank').focus()}
                 >
                     {text}
                     {hovered && <Icon name="external" className="m-0 h-full" />}
                 </div>
-                <CheckIcon isChecked={isChecked} />
+                <CheckIcon isChecked={isChecked} toggleCheck={toggleCheck} />
             </List.Content>
         </List.Item>
     );
@@ -41,9 +44,34 @@ const LinkedListItem = ({ text, link, isChecked }) => {
 
 export function PhishingBox() {
 
-    const [isChecked, setIsChecked] = useState(false);
     const { setActiveTabPane } = useContext(TabPanesContext);
     const { generic, constants } = config;
+
+    const [checkState, setCheckState] = useState({
+        1: false,
+        2: false,
+        3: false,
+        4: false,
+        5: false,
+    });
+
+    const allChecked = (() => {
+        let missingCheck;
+        Object.values(checkState).forEach(value => {
+            if (value === false) {
+                missingCheck = true;
+            }
+        });
+        return !!missingCheck ? false : true;
+    })()
+
+    console.log(allChecked);
+
+    const toggleCheck = (checkNum) => {
+        setCheckState(s => ({ ...s, [checkNum]: !s[checkNum] }));
+    };
+
+
 
     return (
 
@@ -54,28 +82,43 @@ export function PhishingBox() {
                 <div className="text-sm">
 
                     <Header>
-                        Before proceeding with the migration please verify the following:
+                        Before proceeding with the migration please read the following tips
+                        <Header.Subheader>
+                            <span className="text-blue-500">Hover blue points</span> for additional information and check each box as you go
+                        </Header.Subheader>
                     </Header>
 
-                    <List bulleted>
+                    <List >
 
                         <List.Item className="pt-3">
 
                             <List.Content className="flex flex-row justify-between items-center">
-                                <span>Verify both contract addresses:</span>
+                                <Popup
+                                    position="top left"
+                                    content={<div className="text-xs w-[320px]">Contracts should be verified on etherscan by comparing contract addresses to other published media by the contract author(s)</div>}
+                                    trigger={(
+                                        <Header as="h5" className="text-blue-500 cursor-default">
+                                            <span>Verify both contract addresses on etherscan</span>
+                                        </Header>
+                                    )}
+                                />
                             </List.Content>
 
-                            <List bulleted>
+                            <List>
+                                <br />
+                                <Header.Subheader>Verify the contract is the expected contract address and is verified on etherscan</Header.Subheader>
                                 <LinkedListItem
                                     text={`ALCA Contract Address (${AToken_CONTRACT_ADDRESS})`}
                                     link={`https://etherscan.io/address/${AToken_CONTRACT_ADDRESS}`}
-                                    isChecked={isChecked}
+                                    isChecked={checkState[1]} toggleCheck={() => toggleCheck(1)}
                                 />
 
+                                <br />
+                                <Header.Subheader>Verify the contract is the expected contract address and is verified on etherscan</Header.Subheader>
                                 <LinkedListItem
                                     text={`MadToken Contract Address (${MadTokenContractAddress})`}
                                     link={`https://etherscan.io/address/${MadTokenContractAddress}`}
-                                    isChecked={isChecked}
+                                    isChecked={checkState[2]} toggleCheck={() => toggleCheck(2)}
                                 />
                             </List>
 
@@ -84,32 +127,22 @@ export function PhishingBox() {
                         <List.Item className="py-3">
                             <List.Content className="flex flex-row justify-between items-center">
                                 <Popup
-                                    position="top center"
-                                    content={
-                                        <Image
-                                            src={ContractVerifyPng}
-                                            rounded
-                                        />
-                                    }
-                                    trigger={<span>Metamask contract verification</span>}
-                                />
-                                <CheckIcon isChecked={isChecked} />
-                            </List.Content>
-                        </List.Item>
-
-                        <List.Item className="py-3">
-                            <List.Content className="flex flex-row justify-between items-center">
-                                <Popup
-                                    position="top center"
+                                    position="top left"
                                     content={
                                         <Image
                                             src={AluceUrlPng}
                                             rounded
                                         />
                                     }
-                                    trigger={<span>Verify URL</span>}
+                                    trigger={(
+                                        <Header as="h5" className="text-blue-500 cursor-default">
+                                            <span>Verify the URL</span>
+                                            <br />
+                                            <Header.Subheader className="opacity-60">Verify the url in your browser is https://alca.alice.net</Header.Subheader>
+                                        </Header>
+                                    )}
                                 />
-                                <CheckIcon isChecked={isChecked} />
+                                <CheckIcon isChecked={checkState[4]} toggleCheck={() => toggleCheck(4)} />
                             </List.Content>
                         </List.Item>
 
@@ -123,21 +156,53 @@ export function PhishingBox() {
                                             rounded
                                         />
                                     }
-                                    trigger={<span>Verify HTTPS Lock and Cert</span>}
+                                    trigger={(
+                                        <Header as="h5" className="text-blue-500 cursor-default">
+                                            <span>Verify the HTTPS Certificate</span>
+                                            <br />
+                                            <Header.Subheader className="opacity-60">Check that the HTTPS certificate is for https://alca.alice.net</Header.Subheader>
+                                        </Header>
+                                    )} />
+                                <CheckIcon isChecked={checkState[5]} toggleCheck={() => toggleCheck(5)} />
+                            </List.Content>
+                        </List.Item>
+
+                        <List.Item className="py-3">
+                            <List.Content className="flex flex-row justify-between items-center">
+                                <Popup
+                                    position="top center"
+                                    content={
+                                        <div>
+                                            <div className="text-xs w-[320px]">When interacting with contracts verify the contract address</div>
+                                            <Image
+                                                src={ContractVerifyPng}
+                                                rounded
+                                            />
+                                        </div>
+                                    }
+                                    trigger={
+                                        <Header as="h5" className="text-blue-500 cursor-default">
+                                            <span>Be aware of contract interaction</span>
+                                            <br />
+                                            <Header.Subheader className="opacity-60">During transaction check the contract being called by your wallet is correct</Header.Subheader>
+                                        </Header>
+                                    }
                                 />
-                                <CheckIcon isChecked={isChecked} />
+                                <CheckIcon isChecked={checkState[3]} toggleCheck={() => toggleCheck(3)} />
                             </List.Content>
                         </List.Item>
 
                     </List>
 
-                    <Header>
-                        <Checkbox
-                            label="I have read and addressed the above security checklist"
-                            onChange={(e, data) => setIsChecked(data.checked)}
-                            checked={isChecked}
-                        />
-                    </Header>
+                    <div className="text-[14px] font-bold flex justify-between items-center mt-8">
+                        <span className={classNames({
+                            "text-red-400": !allChecked,
+                            "text-green-500": allChecked
+                        })}>
+                            - I have addressed the above security tips
+                        </span>
+                        <Icon name={allChecked ? "check" : "x"} color={allChecked ? "green" : "red"} size="large"  className="ml-6 m-0 h-full text-2xl" />
+                    </div>
 
                 </div>
 
@@ -147,7 +212,8 @@ export function PhishingBox() {
                 <Button
                     color="green"
                     content="Continue"
-                    className={generic.classNames("m-0", { 'hidden': !isChecked })}
+                    disabled={!allChecked}
+                    className={generic.classNames("m-0", { 'opacity-20': !allChecked })}
                     onClick={() => setActiveTabPane(constants.tabPanes.CONNECT)}
                 />
             </div>
