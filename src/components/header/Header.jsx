@@ -14,14 +14,9 @@ export function Header() {
     return (
         <Menu borderless className="top-0 left-0 bg-white w-full h-24 rounded-none">
             <Menu.Item className="items-center">
-                <Link to="/">
-                    <Logo className="m-6 w-20" />
+                <Link to="/" className="m-6 w-20 flex justify-start items-start">
+                    <Logo />
                 </Link>
-                <div className="hidden md:block">
-                    <SHeader>
-                        ALCA Interface
-                    </SHeader>
-                </div>
             </Menu.Item>
 
             <Menu.Item position="right" className="items-center" >
