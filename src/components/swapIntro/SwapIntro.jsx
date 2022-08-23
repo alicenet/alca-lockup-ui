@@ -22,13 +22,13 @@ export function Introduction() {
                 After reading each step please press the button below to continue
             </Container>
 
-            <Header content="Security Notification" as="h4" />
+            <Header content="1 - Security Notification" as="h4" />
             <Container>You will be asked to verify information regarding application security to help prevent phishing.</Container>
 
-            <Header content="Connect" as="h4" />
+            <Header content="2 - Connect" as="h4" />
             <Container>To migrate tokens you will be asked to connect the wallet that has the MAD tokens you wish to migrate</Container>
 
-            <Header content="Migrate" as="h4" />
+            <Header content="3 - Migrate" as="h4" />
             <Container>
                 You will be asked the amount of MAD to migrate as well as requested to sign two transactions with your web3 wallet:
                 <br /> <br />
@@ -37,13 +37,13 @@ export function Introduction() {
                 - The second transaction will migrate your tokens from MAD => ALCA
             </Container>
 
-            <Header content="Success" as="h4" />
+            <Header content="4 - Success" as="h4" />
             <Container>
                 This step will present you with your closing balances of MAD and ALCA tokens.
             </Container>
 
             <div className="absolute right-0 top-[100%]">
-                <Button content="Continue" className="mt-4" color="green"
+                <Button primary content="Continue" className="mt-4" 
                     onClick={() => { setActiveTabPane(tabPanes.PHISHING) }} />
             </div>
 

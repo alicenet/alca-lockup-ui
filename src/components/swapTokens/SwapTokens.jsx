@@ -82,6 +82,7 @@ export function SwapTokens() {
 
                 <div>
                     <Button
+                        primary
                         size="small"
                         content={
                             <div className="m-4">

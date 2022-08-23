@@ -57,7 +57,6 @@ export function Connect() {
                         </div>
                         <Button
                             className="m-0 mt-8"
-                            inverted
                             secondary
                             color="black"
                             onClick={connect}
@@ -82,7 +81,7 @@ export function Connect() {
 
             <div className="absolute mt-4 right-0 top-[100%]">
                 <Button
-                    color="green"
+                    primary
                     content="Continue"
                     className={generic.classNames("m-0", { 'hidden': !web3Connected })}
                     onClick={() => setActiveTabPane(constants.tabPanes.MIGRATE)}

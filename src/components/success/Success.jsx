@@ -21,7 +21,6 @@ export function Success() {
 
             <div
                 className="text-sm text-center"
-                onClick={() => setActiveTabPane(tabPanes.PHISHING)}
             >
                 Thanks for migrating to ALCA. <br /> <br />
                 <span className="underline">
