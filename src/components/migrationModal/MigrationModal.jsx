@@ -1,10 +1,11 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Button, Header, Icon, Modal, Message } from "semantic-ui-react";
+import { Button, Header, Icon, Modal, Message, Popup } from "semantic-ui-react";
 import ethAdapter from "eth/ethAdapter";
 import * as ACTIONS from 'redux/actions/application';
 import { TOKEN_TYPES } from "redux/constants";
 import { ethers } from "ethers";
+import { waitFor } from "utils/generic";
 
 export function MigrationModal({ migrationAmount, isOpen, successAction, closeModal }) {
 
@@ -48,11 +49,18 @@ export function MigrationModal({ migrationAmount, isOpen, successAction, closeMo
         madBalance: madBalance,
         migrationAmount: migrationAmount,
         migrationStep: migrationStep,
-        migrationSuccess: migrationSuccess
+        migrationSuccess: migrationSuccess,
+        error: error,
+        success: success,
+        latestTxHash: latestTxHash,
+        waiting: waiting
     })
 
     // NOTE: User must send additional allowance request if allowance < desired migration amount
     const sendAllowanceReq = async () => {
+        setLatestTxHash(false);
+        setSuccess(false);
+        setError(false);
         setWaiting(WAIT_TYPES.ALLOWANCE)
         let tx = await ethAdapter.sendAllowanceRequest(String(migrationAmount));
         if (tx.error) {
@@ -60,9 +68,10 @@ export function MigrationModal({ migrationAmount, isOpen, successAction, closeMo
             setWaiting(false);
             return;
         }
+        setLatestTxHash(tx.hash);
+        await waitFor(5000, "txMining")
         await tx.wait();
         setSuccess("Tx Mined: " + tx.hash);
-        setLatestTxHash(tx.hash);
         dispatch(ACTIONS.updateApprovalHash(tx.hash))
         dispatch(ACTIONS.updateBalances(TOKEN_TYPES.ALL))
         setWaiting(false);
@@ -70,6 +79,9 @@ export function MigrationModal({ migrationAmount, isOpen, successAction, closeMo
 
     // Should onyl be set of allowance >= migrationAmount
     const initiateMigrate = async () => {
+        setLatestTxHash(false);
+        setSuccess(false);
+        setError(false);
         setWaiting(WAIT_TYPES.MIGRATION)
         let tx = await ethAdapter.sendMigrateRequest(String(migrationAmount));
         if (tx.error) {
@@ -77,10 +89,12 @@ export function MigrationModal({ migrationAmount, isOpen, successAction, closeMo
             setWaiting(false);
             return;
         }
+        setLatestTxHash(tx.hash);
+        waitFor()
+        await waitFor(5000, "txMining")
         await tx.wait();
         setSuccess("Tx Mined: " + tx.hash);
         setWaiting(false);
-        setLatestTxHash(tx.hash);
         dispatch(ACTIONS.updateMigrationHash(tx.hash))
         dispatch(ACTIONS.updateBalances(TOKEN_TYPES.ALL))
         setMigrationSuccess(true);
@@ -103,27 +117,46 @@ export function MigrationModal({ migrationAmount, isOpen, successAction, closeMo
 
     const SuccessMsg = () => (
         <div>
-            You have successfully migrated {migrationAmount} MAD {"=>"} {alcaExchangeRate}. <br />
+            You have successfully migrated {migrationAmount} MAD {"=>"} {alcaExchangeRate} ALCA. <br />
             Click the Summary button below to view a summary of your migration.
         </div>
     )
 
-    const successLink = () => (
+    const SuccessLink = ({pending}) => (
         <div
-            onMouseOver={() => setHovered(prevState => !prevState)}
-            onMouseLeave={() => setHovered(prevState => !prevState)}
             className="flex flex-row gap-2 items-center cursor-pointer hover:opacity-80 h-6"
             onClick={() => window.open("https://etherscan.io/tx/" + latestTxHash, '_blank').focus()}
         >
-            {latestTxHash}
-            {hovered && <Icon name="external" className="m-0 h-full" />}
+            <Popup
+                content="View on Etherscan"
+                position="top left"
+                offset={[-13, 15]}
+                size="mini"
+                trigger={(<div>
+                    {pending ? !latestTxHash ? "Awaiting Web3 Wallet": "Mining: " : "Tx Mined:"} {latestTxHash}
+                    <Icon name="external" className="m-0 h-full absolute right-3 top-2.5" />
+                </div>)}
+            />
         </div>
     )
 
     return (
-        <Modal closeIcon size="small" open={isOpen} onClose={() => { closeModal(); setError(false); setSuccess(false); }}>
+        <Modal closeIcon={!migrationSuccess} size="small" open={isOpen} closeOnDimmerClick={!migrationSuccess}
+            onClose={() => { closeModal(); setError(false); setSuccess(false); }}
+        >
 
-            <Modal.Header>
+            <Modal.Header className="pt-[27px]">
+                <div className="text-sm relative right-1 -top-3">
+                    <Message
+                        size="mini"
+                        content={!!waiting ? (<SuccessLink pending={waiting}/>) : success ? <SuccessLink/> : error}
+                        success={success.length > 0}
+                        error={error}
+                        warning={!!waiting}
+                        className="mt-0"
+                        hidden={!success && !error && !waiting}
+                    />
+                </div>
                 <div>Migrate {migrationAmount} MAD {"=>"} {alcaExchangeRate} ALCA</div>
             </Modal.Header>
 
@@ -133,23 +166,12 @@ export function MigrationModal({ migrationAmount, isOpen, successAction, closeMo
 
                 {migrationSuccess && <SuccessMsg />}
 
-                <div className="absolute left-0 top-[100%]">
-                    <Message
-                        size="mini"
-                        content={successLink || error}
-                        success={success.length > 0}
-                        error={error}
-                        className="mt-4"
-                        hidden={!success && !error}
-                    />
-                </div>
-
             </Modal.Content>
 
             <Modal.Actions className="flex justify-between">
 
                 <div>
-                    <Button size="small"
+                    <Button size="small" primary
                         disabled={migrationStep === 2 || migrationSuccess}
                         onClick={sendAllowanceReq}
                         loading={waiting === WAIT_TYPES.ALLOWANCE}
@@ -160,7 +182,7 @@ export function MigrationModal({ migrationAmount, isOpen, successAction, closeMo
                         }
                     />
 
-                    <Button size="small"
+                    <Button size="small" primary
                         disabled={migrationStep === 1 || migrationSuccess}
                         className="ml-4"
                         content={
@@ -173,7 +195,7 @@ export function MigrationModal({ migrationAmount, isOpen, successAction, closeMo
                     />
                 </div>
 
-                <Button
+                <Button secondary
                     disabled={!migrationSuccess}
                     content="View Summary"
                     color={migrationSuccess ? "green" : "gray"}

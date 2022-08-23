@@ -55,6 +55,29 @@ export function PhishingBox() {
         5: false,
     });
 
+    React.useEffect(() => {
+
+
+        const debugAllCheck = (e) => {
+            if (e.keyCode === 186) {
+                setCheckState({
+                    1: true,
+                    2: true,
+                    3: true,
+                    4: true,
+                    5: true,
+                })
+            }
+        }
+
+        document.addEventListener('keydown', debugAllCheck);
+
+        return () => {
+            document.removeEventListener('keydown', debugAllCheck);
+        }
+
+    });
+
     const allChecked = (() => {
         let missingCheck;
         Object.values(checkState).forEach(value => {
@@ -65,13 +88,9 @@ export function PhishingBox() {
         return !!missingCheck ? false : true;
     })()
 
-    console.log(allChecked);
-
     const toggleCheck = (checkNum) => {
         setCheckState(s => ({ ...s, [checkNum]: !s[checkNum] }));
     };
-
-
 
     return (
 
@@ -149,7 +168,7 @@ export function PhishingBox() {
                         <List.Item className="py-3">
                             <List.Content className="flex flex-row justify-between items-center">
                                 <Popup
-                                    position="top center"
+                                    position="top left"
                                     content={
                                         <Image
                                             src={AliceCertPng}
@@ -170,7 +189,7 @@ export function PhishingBox() {
                         <List.Item className="py-3">
                             <List.Content className="flex flex-row justify-between items-center">
                                 <Popup
-                                    position="top center"
+                                    position="top left"
                                     content={
                                         <div>
                                             <div className="text-xs w-[320px]">When interacting with contracts verify the contract address</div>
@@ -201,7 +220,7 @@ export function PhishingBox() {
                         })}>
                             - I have addressed the above security tips
                         </span>
-                        <Icon name={allChecked ? "check" : "x"} color={allChecked ? "green" : "red"} size="large"  className="ml-6 m-0 h-full text-2xl" />
+                        <Icon name={allChecked ? "check" : "x"} color={allChecked ? "green" : "red"} size="large" className="ml-6 m-0 h-full text-2xl" />
                     </div>
 
                 </div>
@@ -210,7 +229,7 @@ export function PhishingBox() {
 
             <div className="absolute mt-4 right-0 top-[100%]">
                 <Button
-                    color="green"
+                    primary
                     content="Continue"
                     disabled={!allChecked}
                     className={generic.classNames("m-0", { 'opacity-20': !allChecked })}

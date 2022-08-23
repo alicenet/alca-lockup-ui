@@ -17,23 +17,23 @@ export const tabPanes = {
     },
     PHISHING: {
         index: 1,
-        name: 'Security Notification',
+        name: '1 - Security Notification',
         component: () => <PhishingBox />
     },
     CONNECT: {
         index: 2,
-        name: 'Connect',
+        name: '2 - Connect',
         component: () => <Connect />
     },
     MIGRATE: {
         index: 3,
-        name: 'Migrate',
+        name: '3 - Migrate',
         component: () => <SwapTokens />
 
     },
     SUCCESS: {
         index: 4,
-        name: 'Success',
+        name: '4 - Success',
         component: () => <Success />
     },
 };
