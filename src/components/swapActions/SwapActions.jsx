@@ -1,17 +1,15 @@
-import { Button, Container, Icon, Popup, Tab } from "semantic-ui-react";
+import { Button, Container, Icon, Menu, Popup, Tab } from "semantic-ui-react";
 import React, { useContext } from "react";
 import { TabPanesContext } from "contexts";
 import config from "utils";
 import { useSelector } from "react-redux";
 import ethAdapter from "eth/ethAdapter";
 import "./SwapActions.css";
-import { utils } from "ethers";
 import { splitStringWithEllipsis } from "utils/string";
-import { classNames } from "utils/generic";
 
-const TabPane = ({ name, component, className }) => {
+const TabPane = ({ name, component, className, activeTabPane, tabPaneIndex }) => {
     return {
-        menuItem: name,
+        menuItem: <Menu.Item content={name} active={activeTabPane === tabPaneIndex} disabled={tabPaneIndex < activeTabPane}/>,
         render: () =>
             <Tab.Pane className={className}>
                 {component()}
@@ -31,6 +29,8 @@ export function SwapActions() {
     const panes = Object.keys(constants.tabPanes).map(tabPane => TabPane({
         name: constants.tabPanes[tabPane].name,
         component: constants.tabPanes[tabPane].component,
+        tabPaneIndex: constants.tabPanes[tabPane].index,
+        activeTabPane: activeTabPane
     }));
 
     const disconnect = () => {
