@@ -38,7 +38,7 @@ function App() {
 
     return (
 
-        <Container fluid>
+        <Container fluid className="">
 
             <BrowserRouter>
 
@@ -46,15 +46,19 @@ function App() {
 
                     <Header />
 
-                    <TabPanesProvider>
+                    <div className="overflow-auto pb-[112px] ">
 
-                        <Routes>
+                        <TabPanesProvider>
 
-                            {DefaultRoutes()}
+                            <Routes>
 
-                        </Routes>
+                                {DefaultRoutes()}
 
-                    </TabPanesProvider>
+                            </Routes>
+
+                        </TabPanesProvider>
+                    
+                    </div>
 
                     <Footer />
 

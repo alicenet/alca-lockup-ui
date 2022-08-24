@@ -6,10 +6,11 @@ import { useSelector } from "react-redux";
 import ethAdapter from "eth/ethAdapter";
 import "./SwapActions.css";
 import { splitStringWithEllipsis } from "utils/string";
+import { classNames } from "utils/generic";
 
 const TabPane = ({ name, component, className, activeTabPane, tabPaneIndex }) => {
     return {
-        menuItem: <Menu.Item content={name} active={activeTabPane === tabPaneIndex} disabled={tabPaneIndex < activeTabPane}/>,
+        menuItem: <Menu.Item className={classNames("hover:cursor-default pointer-events-none", )} content={name} active={activeTabPane === tabPaneIndex} disabled={tabPaneIndex < activeTabPane}/>,
         render: () =>
             <Tab.Pane className={className}>
                 {component()}

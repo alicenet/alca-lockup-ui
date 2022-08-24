@@ -69,7 +69,7 @@ export function MigrationModal({ migrationAmount, isOpen, successAction, closeMo
             return;
         }
         setLatestTxHash(tx.hash);
-        await waitFor(5000, "txMining")
+        await waitFor(2750, "txMining")
         await tx.wait();
         setSuccess("Tx Mined: " + tx.hash);
         dispatch(ACTIONS.updateApprovalHash(tx.hash))
@@ -91,7 +91,7 @@ export function MigrationModal({ migrationAmount, isOpen, successAction, closeMo
         }
         setLatestTxHash(tx.hash);
         waitFor()
-        await waitFor(5000, "txMining")
+        await waitFor(2750, "txMining")
         await tx.wait();
         setSuccess("Tx Mined: " + tx.hash);
         setWaiting(false);
@@ -132,16 +132,18 @@ export function MigrationModal({ migrationAmount, isOpen, successAction, closeMo
                 position="top left"
                 offset={[-13, 15]}
                 size="mini"
-                trigger={(<div>
+                trigger={(<div className="text-sm">
                     {pending ? !latestTxHash ? "Awaiting Web3 Wallet": "Mining: " : "Tx Mined:"} {latestTxHash}
-                    <Icon name="external" className="m-0 h-full absolute right-3 top-2.5" />
+                    {latestTxHash && (
+                        <Icon name="external" className="m-0 h-full absolute right-3 top-2.5" />
+                    )}
                 </div>)}
             />
         </div>
     )
 
     return (
-        <Modal closeIcon={!migrationSuccess} size="small" open={isOpen} closeOnDimmerClick={!migrationSuccess}
+        <Modal closeIcon={!migrationSuccess && !waiting} size="small" open={isOpen} closeOnDimmerClick={!migrationSuccess && !waiting}
             onClose={() => { closeModal(); setError(false); setSuccess(false); }}
         >
 

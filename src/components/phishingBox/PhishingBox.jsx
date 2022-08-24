@@ -103,7 +103,7 @@ export function PhishingBox() {
                     <Header>
                         Before proceeding with the migration please read the following tips
                         <Header.Subheader>
-                            <span className="text-blue-500">Hover blue points</span> for additional information and check each box as you go
+                            <span className="text-alice-blue">Hover blue points</span> for additional information and check each box as you go
                         </Header.Subheader>
                     </Header>
 
@@ -116,7 +116,7 @@ export function PhishingBox() {
                                     position="top left"
                                     content={<div className="text-xs w-[320px]">Contracts should be verified on etherscan by comparing contract addresses to other published media by the contract author(s)</div>}
                                     trigger={(
-                                        <Header as="h5" className="text-blue-500 cursor-default">
+                                        <Header as="h5" className="text-alice-blue cursor-default">
                                             <span>Verify both contract addresses on etherscan</span>
                                         </Header>
                                     )}
@@ -154,7 +154,7 @@ export function PhishingBox() {
                                         />
                                     }
                                     trigger={(
-                                        <Header as="h5" className="text-blue-500 cursor-default">
+                                        <Header as="h5" className="text-alice-blue cursor-default">
                                             <span>Verify the URL</span>
                                             <br />
                                             <Header.Subheader className="opacity-60">Verify the url in your browser is https://alca.alice.net</Header.Subheader>
@@ -176,7 +176,7 @@ export function PhishingBox() {
                                         />
                                     }
                                     trigger={(
-                                        <Header as="h5" className="text-blue-500 cursor-default">
+                                        <Header as="h5" className="text-alice-blue cursor-default">
                                             <span>Verify the HTTPS Certificate</span>
                                             <br />
                                             <Header.Subheader className="opacity-60">Check that the HTTPS certificate is for https://alca.alice.net</Header.Subheader>
@@ -200,7 +200,7 @@ export function PhishingBox() {
                                         </div>
                                     }
                                     trigger={
-                                        <Header as="h5" className="text-blue-500 cursor-default">
+                                        <Header as="h5" className="text-alice-blue cursor-default">
                                             <span>Be aware of contract interaction</span>
                                             <br />
                                             <Header.Subheader className="opacity-60">During transaction check the contract being called by your wallet is correct</Header.Subheader>

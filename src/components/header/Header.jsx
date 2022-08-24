@@ -12,7 +12,7 @@ export function Header() {
     const location = useLocation();
 
     return (
-        <Menu borderless className="top-0 left-0 bg-white w-full h-24 rounded-none">
+        <Menu borderless className="top-0 left-0 bg-white w-full h-24 rounded-none sticky">
             <Menu.Item className="items-center">
                 <Link to="/" className="m-6 w-20 flex justify-start items-start">
                     <Logo />
