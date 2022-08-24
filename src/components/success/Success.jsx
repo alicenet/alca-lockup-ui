@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 
 export function Success() {
 
-    const { setActiveTabPane } = useContext(TabPanesContext);
+    const { activeTabPane, setActiveTabPane } = useContext(TabPanesContext);
 
     const { alcaBalance, madBalance, approvalHash, migrationHash } = useSelector(state => ({
         approvalHash: state.application.approvalHash,
@@ -15,6 +15,8 @@ export function Success() {
         madBalance: state.application.balances.mad
     }))
 
+    console.log(tabPanes.MIGRATE.index)
+
     return (
 
         <Container className="flex flex-col justify-around items-center p-4 min-h-[240px] text-sm">
@@ -22,7 +24,9 @@ export function Success() {
             <div
                 className="text-sm text-center"
             >
-                Thanks for migrating to ALCA. <br /> <br />
+                <div className="text-xl">
+                Thank you for migrating to ALCA <br /> <br />
+                </div>
                 <span className="underline">
                 Your current balances and recent transactions are noted below
                     </span>
@@ -47,7 +51,7 @@ export function Success() {
 
             <div>
                 Navigate to <a target="_blank" rel="noopener noreferrer" className="text-blue-500 underline"
-                    href="https://alice.net"> alice.net</a> to learn more!
+                    href="https://alice.net"> alice.net</a> to learn more, or <span className="text-blue-500 underline cursor-pointer" onClick={() => setActiveTabPane(tabPanes.MIGRATE)}>migrate more tokens.</span>
             </div>
 
         </Container>
