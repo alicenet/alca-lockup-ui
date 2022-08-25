@@ -17,6 +17,7 @@
     "react-redux": "7.2.6",
     "react-router-dom": "6.2.1",
     "react-scripts": "5.0.0",
+    "react-toastify": "^9.0.8",
     "redux-thunk": "2.4.1",
     "sass": "^1.54.5",
     "semantic-ui-css": "2.4.1",

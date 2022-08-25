@@ -216,7 +216,6 @@ class EthAdapter {
             cb(null, connectedAddress);
             // Setup balance listener
             this._balanceLoop();
-            this.updateBalances();
             // this._lookupContractName();
         } catch (ex) {
             console.error(ex);
