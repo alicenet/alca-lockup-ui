@@ -27,14 +27,12 @@ export function StakeStake() {
         let rec = await tx.wait();
         setWaiting(false)
         dispatch(APPLICATION_ACTIONS.updateBalances())
-        console.log(rec)
     }
 
     const stake = async () => {
         setWaiting(true)
         let tx = await ethAdapter.openStakingPosition(stakeAmt);
         let rec = await tx.wait();
-        console.log(rec)
         setWaiting(false)
         dispatch(APPLICATION_ACTIONS.updateBalances())
     }

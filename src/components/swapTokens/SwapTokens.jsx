@@ -5,6 +5,7 @@ import { tabPanes } from "utils/constants";
 import { TabPanesContext } from "contexts";
 import * as ACTIONS from "redux/actions/application";
 import { MigrationModal } from "components/migrationModal/MigrationModal";
+import { ethers } from "ethers";
 
 export function SwapTokens() {
 
@@ -27,8 +28,8 @@ export function SwapTokens() {
     }));
 
     const updateMigrateAmt = (amt) => {
-        dispatch(ACTIONS.updateExchangeRate(amt));
         setMigrateAmount(amt);
+        dispatch(ACTIONS.updateExchangeRate(ethers.utils.parseEther(amt)));
     }
 
     // Called by modal on success to move forwards

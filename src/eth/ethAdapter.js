@@ -169,7 +169,6 @@ class EthAdapter {
      * @param { Array } params - Contract method parameters as an array
      */
     async _tryCall(contractName, methodName, params = []) {
-        console.log(contractName, methodName, params)
         let contract = this._getReadonlyContractInstance(contractName);
         let result = await contract[methodName](...params);
         // If return is a BN parse and return the value string, else just return
@@ -297,10 +296,10 @@ class EthAdapter {
         });
     }
 
-    async getMadTokenToALCAExchangeRate(alcaAmount) {
+    async getMadTokenToALCAExchangeRate(madAmt) {
         return this._try(async () => {
-            let exchangeRate = await this._tryCall("AToken", "convert", [ethers.BigNumber.from(alcaAmount)]);
-            return exchangeRate.toString();
+            let exchangeRate = await this._tryCall("AToken", "convert", [madAmt]);
+            return ethers.utils.formatEther(exchangeRate).toString();
         });
     }
 
@@ -337,7 +336,6 @@ class EthAdapter {
     }
 
     async openStakingPosition(amount) {
-        console.log(amount);
         return await this._try(async () => {
             let tx = await this._trySend("PublicStaking", "mint", [ethers.utils.parseEther(amount)])
             return tx;

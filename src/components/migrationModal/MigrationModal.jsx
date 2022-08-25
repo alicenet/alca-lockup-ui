@@ -9,8 +9,6 @@ import { waitFor } from "utils/generic";
 
 export function MigrationModal({ migrationAmount, isOpen, successAction, closeModal }) {
 
-    console.log(isOpen)
-
     const dispatch = useDispatch();
 
     const WAIT_TYPES = {
@@ -35,26 +33,26 @@ export function MigrationModal({ migrationAmount, isOpen, successAction, closeMo
         madBalance: state.application.balances.mad
     }));
 
-    const madAllowanceBN = ethers.BigNumber.from(madAllowance ? madAllowance : 0);
-    const migrationAmtBN = ethers.BigNumber.from(migrationAmount ? migrationAmount : 0);
+    const madAllowanceBN = ethers.BigNumber.from(madAllowance ? ethers.utils.parseEther(String(madAllowance)).toString() : 0);
+    const migrationAmtBN = ethers.BigNumber.from(migrationAmount ? ethers.utils.parseEther(migrationAmount) : 0);
 
     // 1 = allow, 2 = swap
     const migrationStep = madAllowanceBN.gte(migrationAmtBN) ? 2 : 1;
 
-    console.log({
-        web3Connected: web3Connected,
-        madAllowance: madAllowance,
-        alcaBalance: alcaBalance,
-        alcaExchangeRate: alcaExchangeRate,
-        madBalance: madBalance,
-        migrationAmount: migrationAmount,
-        migrationStep: migrationStep,
-        migrationSuccess: migrationSuccess,
-        error: error,
-        success: success,
-        latestTxHash: latestTxHash,
-        waiting: waiting
-    })
+    // console.log({
+    //     web3Connected: web3Connected,
+    //     madAllowance: madAllowance,
+    //     alcaBalance: alcaBalance,
+    //     alcaExchangeRate: alcaExchangeRate,
+    //     madBalance: madBalance,
+    //     migrationAmount: migrationAmount,
+    //     migrationStep: migrationStep,
+    //     migrationSuccess: migrationSuccess,
+    //     error: error,
+    //     success: success,
+    //     latestTxHash: latestTxHash,
+    //     waiting: waiting
+    // })
 
     // NOTE: User must send additional allowance request if allowance < desired migration amount
     const sendAllowanceReq = async () => {

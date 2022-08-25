@@ -2,8 +2,9 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { Image, Label, Loader, Popup } from "semantic-ui-react";
 import aIcon from "assets/alicenet-logo.svg";
+import { classNames } from "utils/generic";
 
-export function BalanceStatus() {
+export function BalanceStatus({ row }) {
     const { balances, loading } = useSelector(state => (
         {
             loading: state.application.balancesLoading,
@@ -11,26 +12,19 @@ export function BalanceStatus() {
         }
     ));
 
+    const BalanceLabel = ({ balanceType }) => (
+        <Label size className="flex justify-start items-center ml-2 mr-2 h-10">
+            <div className="text-gray-500 mr-2">{balanceType.toUpperCase()}</div>
+            <div className="text-gray-700">{loading ? "" : balances[balanceType]} </div>
+        </Label>
+    )
+
     return (
         <div className="w-70 flex justify-end cursor-default">
-            <Popup size="mini" position="bottom left" offset={[0, 4]}
-                   content="These are your token balances"
-                   trigger={
-                       <div className="flex">
-                           <Label size="mini" className="flex justify-start items-center w-28 mr-2">
-                               {loading ? (
-                                   <Loader className="extra-small-balance-loader" size="mini" active inline />
-                               ) : (
-                                   <span>
-                                    <Image inline size="mini" src={aIcon} className="w-2 mr-2" />
-                                </span>
-                               )}
-                               <span className="text-gray-700">{loading ? "" : balances.alca} <span
-                                   className="ml-2 text-gray-500">ALCA</span> </span>
-                           </Label>
-                       </div>
-                   }
-            />
+            <div className={classNames("w-full flex justify-between h-24", { "flex-col": !row, "flex-row": row })}>
+                <BalanceLabel balanceType={"mad"} />
+                <BalanceLabel balanceType={"alca"} />
+            </div>
         </div>
     );
 }
