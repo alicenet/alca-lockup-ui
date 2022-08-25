@@ -3,6 +3,7 @@ import React, { useContext } from "react";
 import { tabPanes } from "utils/constants";
 import { TabPanesContext } from "contexts";
 import { useSelector } from "react-redux";
+import { BalanceStatus } from "components/balanceStatus/BalanceStatus";
 
 export function Success() {
 
@@ -14,8 +15,6 @@ export function Success() {
         alcaBalance: state.application.balances.alca,
         madBalance: state.application.balances.mad
     }))
-
-    console.log(tabPanes.MIGRATE.index)
 
     return (
 
@@ -32,13 +31,8 @@ export function Success() {
                     </span>
             </div>
 
-            <div className="flex justify-between w-[320px] mt-8">
-                <Label size="large" as='a' image>
-                    <div>MAD: {madBalance}</div>
-                </Label>
-                <Label size="large" as='a' image>
-                    <div>ALCA: {alcaBalance}</div>
-                </Label>
+            <div className="flex justify-between  mt-8">
+                <BalanceStatus/>
             </div>
 
             <div className="py-8">

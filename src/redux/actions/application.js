@@ -110,9 +110,9 @@ export const updateBalances = tokenType => {
         dispatch({
             type: APPLICATION_ACTION_TYPES.SET_BALANCES,
             payload: {
-                ethereum: parseFloat(ethBalance).toFixed(4),
-                mad: parseInt(madBal) || 0, // Fallback to 0 if token doesn't exist on network
-                alca: parseInt(alcaBal) || 0 // Fallback to 0 if token doesn't exist on network
+                ethereum: ethBalance,
+                mad: madBal || 0, // Fallback to 0 if token doesn't exist on network
+                alca: alcaBal || 0 // Fallback to 0 if token doesn't exist on network
             }
         });
         dispatch({
@@ -144,7 +144,6 @@ export const checkAgreeCookieState = (agreeCookie) => {
                 payload: true
             })
         } else {
-            console.log("DISPATCH NO GO")
             dispatch({
                 type: APPLICATION_ACTION_TYPES.UPDATE_HAS_READ_TERMS,
                 payload: false

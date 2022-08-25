@@ -4,6 +4,7 @@ import config from "utils";
 import { TabPanesContext } from "contexts";
 import { useSelector } from "react-redux";
 import ethAdapter from "eth/ethAdapter";
+import { BalanceStatus } from "components/balanceStatus/BalanceStatus";
 
 export function Connect() {
 
@@ -36,20 +37,16 @@ export function Connect() {
 
                 <div className="text-sm text-center">
                     {web3Connected ? (<div>
-                        <Header content={`Connected to: ${address}`} />
+                        <Header as='h5' content={`${address} connected`} />
 
                         <Header.Subheader>
-                            Connected Wallet balances noted below
+                            Connected balances noted below
                         </Header.Subheader>
 
-                        <div className="flex justify-between w-full mt-6">
-                            <Label size="large" as='a' image>
-                                <div>MAD: {madBalance}</div>
-                            </Label>
-                            <Label size="large" as='a' image>
-                                <div>ALCA: {alcaBalance}</div>
-                            </Label>
+                        <div className="flex justify-center mt-6">
+                            <BalanceStatus row />
                         </div>
+
                     </div>
                     ) : <div>
                         <div>
