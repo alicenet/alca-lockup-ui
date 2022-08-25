@@ -4,6 +4,7 @@ import { Container } from "semantic-ui-react";
 import { useSelector } from "react-redux";
 import { SwapActions, StakeActions, Footer, Header } from "components";
 import { DarkThemeProvider, TabPanesProvider } from "contexts";
+import { ToastContainer } from 'react-toastify';
 
 function App() {
 
@@ -57,10 +58,13 @@ function App() {
                             </Routes>
 
                         </TabPanesProvider>
-                    
+
+                        <ToastContainer />
+
                     </div>
 
                     <Footer />
+
 
                 </DarkThemeProvider>
 

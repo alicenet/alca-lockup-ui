@@ -1,6 +1,7 @@
 import config from 'config/_config';
 import ethAdapter from 'eth/ethAdapter';
 import { APPLICATION_ACTION_TYPES, TOKEN_TYPES } from 'redux/constants';
+import { toast } from 'react-toastify';
 
 /**
  * Set UI state for if a web3Wallet is connected
@@ -107,6 +108,23 @@ export const updateBalances = tokenType => {
 
         let publicStakingAllowance = await ethAdapter.getPublicStakingAllowance();
 
+        if (ethBalance.error) {
+            toast("Error fetching ETH balance.", { type: "error", position: "bottom-center", autoClose: 1000 })
+        }
+
+        if (madBal.error || madAllowance.error) {
+            toast("Error fetching MAD balance.", { type: "error", position: "bottom-center", autoClose: 1000 })
+        }
+
+        if (alcaBal.error || publicStakingAllowance.error) {
+            toast("Error fetching ALCA balance.", { type: "error", position: "bottom-center", autoClose: 1000 })
+        }
+        
+        if (ethBalance.error || madBal.error || madAllowance.error || alcaBal.error || publicStakingAllowance.error) {
+            console.log("Contract error, are you on the correct network?");
+            return; 
+        }
+
         dispatch({
             type: APPLICATION_ACTION_TYPES.SET_BALANCES,
             payload: {
@@ -129,6 +147,10 @@ export const updateBalances = tokenType => {
 export const updateExchangeRate = (madTokenAmt) => {
     return async function (dispatch) {
         let exchangeRate = await ethAdapter.getMadTokenToALCAExchangeRate(madTokenAmt);
+        if (exchangeRate.error) {
+            toast("Error fetching ALCA exchange rate.", { type: "error", position: "bottom-center",autoClose: 1000 })
+            return;
+        }
         dispatch({
             type: APPLICATION_ACTION_TYPES.UPDATE_EXCHANGE_RATE,
             payload: exchangeRate

@@ -95,7 +95,7 @@ export function SwapTokens() {
                                 {typeof (alcaExchangeRate) !== 'object' ? Number(alcaExchangeRate).toLocaleString() : "0"} ALCA
                             </div>}
                         className="relative left-[2px] mt-4 min-w-[318px] p-2"
-                        disabled={!web3Connected || migrateAmount < 1}
+                        disabled={!web3Connected || migrateAmount < 1 || !alcaExchangeRate}
                         onClick={() => setModalOpen(true)}
                         loading={waiting}
                     />
