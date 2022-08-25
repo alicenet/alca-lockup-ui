@@ -280,12 +280,12 @@ class EthAdapter {
     /**
      * Get mad token allowance for an address
      * @param {String} address - Ethereum address to which the balance should be fetched for
-     * @returns {String} - Allowance of mad tokens held by the address
+     * @returns {String} - Allowance of mad tokens in non-decimal (wei) value held by the address
      */
     async getMadTokenAllowance(accountIndex = 0) {
         return this._try(async () => {
             let allowance = await this._tryCall("MadToken", "allowance", [await this._getAddressByIndex(accountIndex), CONTRACT_ADDRESSES.AToken]);
-            return ethers.utils.formatEther(allowance);
+            return allowance;
         });
     }
 
@@ -322,6 +322,7 @@ class EthAdapter {
      * @returns {ethers.Transaction} - Ethers Tx -- can call wait() for mining
      */
     async sendAllowanceRequest(unformattedAmount) {
+        console.log("unformattedall", unformattedAmount)
         return await this._try(async () => {
             let tx = await this._trySend("MadToken", "approve", [CONTRACT_ADDRESSES.AToken, ethers.utils.parseEther(unformattedAmount)]);
             return tx;

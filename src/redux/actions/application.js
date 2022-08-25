@@ -118,7 +118,7 @@ export const updateBalances = tokenType => {
         dispatch({
             type: APPLICATION_ACTION_TYPES.SET_ALLOWANCES,
             payload: {
-                mad: parseInt(madAllowance) || 0, // Fallback to 0 if token doesn't exist on network
+                mad: madAllowance ? madAllowance : "0", // Fallback to 0 if token doesn't exist on network
                 alcaStakeAllowance: publicStakingAllowance || "0"
             }
         });
