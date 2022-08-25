@@ -33,7 +33,7 @@ export function MigrationModal({ migrationAmount, isOpen, successAction, closeMo
         madBalance: state.application.balances.mad
     }));
 
-    const madAllowanceBN = ethers.BigNumber.from(madAllowance ? ethers.utils.parseEther(String(madAllowance)).toString() : 0);
+    const madAllowanceBN = ethers.BigNumber.from(madAllowance ? madAllowance : 0);
     const migrationAmtBN = ethers.BigNumber.from(migrationAmount ? ethers.utils.parseEther(migrationAmount) : 0);
 
     // 1 = allow, 2 = swap
@@ -42,10 +42,12 @@ export function MigrationModal({ migrationAmount, isOpen, successAction, closeMo
     // console.log({
     //     web3Connected: web3Connected,
     //     madAllowance: madAllowance,
+    //     madAllowanceBN: madAllowanceBN.toString(),
     //     alcaBalance: alcaBalance,
     //     alcaExchangeRate: alcaExchangeRate,
     //     madBalance: madBalance,
     //     migrationAmount: migrationAmount,
+    //     migrationAmtBN: migrationAmtBN.toString(),
     //     migrationStep: migrationStep,
     //     migrationSuccess: migrationSuccess,
     //     error: error,
