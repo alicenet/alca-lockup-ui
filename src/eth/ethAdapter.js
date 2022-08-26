@@ -321,7 +321,6 @@ class EthAdapter {
      * @returns {ethers.Transaction} - Ethers Tx -- can call wait() for mining
      */
     async sendAllowanceRequest(unformattedAmount) {
-        console.log("unformattedall", unformattedAmount)
         return await this._try(async () => {
             let tx = await this._trySend("MadToken", "approve", [CONTRACT_ADDRESSES.AToken, ethers.utils.parseEther(unformattedAmount)]);
             return tx;

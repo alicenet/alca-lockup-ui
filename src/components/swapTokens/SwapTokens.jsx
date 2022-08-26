@@ -28,8 +28,15 @@ export function SwapTokens() {
     }));
 
     const updateMigrateAmt = (amt) => {
-        if (amt === ".") {
+        if (amt === "." || amt === "") {
             return setMigrateAmount("");
+        }
+        if (!/^[+-]?([0-9]+\.?[0-9]*|\.[0-9]+)$/.test(amt)) {
+            return;
+        }
+        let split = amt.split(".");
+        if (split[0].length >= 12 || (split[1] && split[1].length > 18) ) {
+            return
         }
         setMigrateAmount(amt);
         dispatch(ACTIONS.updateExchangeRate(ethers.utils.parseEther(amt)));
