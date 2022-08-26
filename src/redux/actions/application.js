@@ -121,7 +121,7 @@ export const updateBalances = tokenType => {
         }
         
         if (ethBalance.error || madBal.error || madAllowance.error || alcaBal.error || publicStakingAllowance.error) {
-            console.log("Contract error, are you on the correct network?");
+            console.error("Contract error, are you on the correct network?");
             return; 
         }
 
