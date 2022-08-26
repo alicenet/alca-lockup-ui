@@ -30,7 +30,7 @@ const LinkedListItem = ({ text, link, isChecked, toggleCheck }) => {
                 <div
                     onMouseOver={() => setHovered(prevState => !prevState)}
                     onMouseLeave={() => setHovered(prevState => !prevState)}
-                    className="flex flex-row gap-2 items-center cursor-pointer hover:opacity-80 h-6"
+                    className="flex text-blue-500 underline flex-row gap-2 items-center cursor-pointer hover:opacity-80 h-6"
                     onClick={() => window.open(link, '_blank').focus()}
                 >
                     {text}

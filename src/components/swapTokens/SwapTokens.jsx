@@ -28,6 +28,9 @@ export function SwapTokens() {
     }));
 
     const updateMigrateAmt = (amt) => {
+        if (amt === ".") {
+            return setMigrateAmount("");
+        }
         setMigrateAmount(amt);
         dispatch(ACTIONS.updateExchangeRate(ethers.utils.parseEther(amt)));
     }
