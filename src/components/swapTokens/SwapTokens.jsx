@@ -14,9 +14,6 @@ export function SwapTokens() {
 
     const [modalOpen, setModalOpen] = useState(false);
 
-    const [error, setError] = useState();
-    const [success, setSuccess] = useState("");
-    const [waiting, setWaiting] = useState(false);
     const { setActiveTabPane } = useContext(TabPanesContext);
 
     const { web3Connected, alcaBalance, madBalance, alcaExchangeRate } = useSelector(state => ({
@@ -43,6 +40,8 @@ export function SwapTokens() {
 
     // Update prev balance states here
     const openMigrationModal = () => {
+        dispatch(ACTIONS.updateStartingBalances(madBalance, alcaBalance));
+        dispatch(ACTIONS.updateMigrationAmount(migrateAmount));
         setModalOpen(true)
     }
 
@@ -58,7 +57,7 @@ export function SwapTokens() {
 
             <Container className="flex flex-col justify-around items-center p-4 min-h-[240px]">
 
-                <div className="text-sm text-center">
+                <div className="text-sm text-center mb-4">
                     Migrating your tokens requires signing two transactions with your web3 wallet
                     <br /> <br />
                     Please follow the on screen instructions to complete the migration
@@ -77,21 +76,7 @@ export function SwapTokens() {
                     inputSubText={`Migrate ${Number(migrateAmount).toLocaleString(false, {maximumFractionDigits: 4})} MAD to ${Number(alcaExchangeRate).toLocaleString(false, {maximumFractionDigits: 4})} ALCA`}
                     buttonOnClick={openMigrationModal}
                     buttonDisabled={!web3Connected || migrateAmount < 1 || !alcaExchangeRate}
-                    loading={waiting}
                 />
-
-                {/* postTextHeader, buttonDisabled, buttonOnClick, hideButton, hideInput, inputOnChange, inputValue, inputDisabled, inputBtnOnClick, loading }) { */}
-
-                <div className="absolute left-0 top-[100%]">
-                    <Message
-                        size="mini"
-                        content={success || error}
-                        success={success.length > 0}
-                        error={error}
-                        className="mt-4"
-                        hidden={!success && !error}
-                    />
-                </div>
 
             </Container>
 

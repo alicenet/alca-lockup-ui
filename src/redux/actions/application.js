@@ -119,10 +119,10 @@ export const updateBalances = tokenType => {
         if (alcaBal.error || publicStakingAllowance.error) {
             toast("Error fetching ALCA balance.", { type: "error", position: "bottom-center", autoClose: 1000 })
         }
-        
+
         if (ethBalance.error || madBal.error || madAllowance.error || alcaBal.error || publicStakingAllowance.error) {
             console.error("Contract error, are you on the correct network?");
-            return; 
+            return;
         }
 
         dispatch({
@@ -148,7 +148,7 @@ export const updateExchangeRate = (madTokenAmt) => {
     return async function (dispatch) {
         let exchangeRate = await ethAdapter.getMadTokenToALCAExchangeRate(madTokenAmt);
         if (exchangeRate.error) {
-            toast("Error fetching ALCA exchange rate.", { type: "error", position: "bottom-center",autoClose: 1000 })
+            toast("Error fetching ALCA exchange rate.", { type: "error", position: "bottom-center", autoClose: 1000 })
             return;
         }
         dispatch({
@@ -195,5 +195,25 @@ export const updateMigrationHash = (txHash) => {
             type: APPLICATION_ACTION_TYPES.SET_MIGRATION_HASH,
             payload: txHash
         })
+    }
+}
+
+export const updateStartingBalances = (sMad, sAlca) => {
+    return async function (dispatch, getState) {
+        let state = getState();
+        let startingMad = state.application.startingBalances.mad;
+        let startingAlca = state.application.startingBalances.alca;
+        dispatch({
+            type: APPLICATION_ACTION_TYPES.UPDATE_STARTING_BALANCES, payload: {
+                mad: sMad || startingMad,
+                alca: sAlca || startingAlca
+            }
+        })
+    }
+}
+
+export const updateMigrationAmount = (migrationAmount) => {
+    return async function (dispatch) {
+        dispatch({ type: APPLICATION_ACTION_TYPES.UPDATE_MIGRATION_AMOUNT, payload: migrationAmount });
     }
 }

@@ -1,19 +1,25 @@
-import { Container, Label } from "semantic-ui-react";
+import { Button, Container, Header } from "semantic-ui-react";
 import React, { useContext } from "react";
 import { tabPanes } from "utils/constants";
 import { TabPanesContext } from "contexts";
 import { useSelector } from "react-redux";
 import { BalanceStatus } from "components/balanceStatus/BalanceStatus";
+import { MigrationPanel } from "components/migrationPanel/MigrationPanel";
+import { Link } from "react-router-dom";
 
 export function Success() {
 
     const { activeTabPane, setActiveTabPane } = useContext(TabPanesContext);
 
-    const { alcaBalance, madBalance, approvalHash, migrationHash } = useSelector(state => ({
+    const { alcaBalance, madBalance, approvalHash, migrationHash, migrationAmount, alcaExchangeRate, prevMadBal, prevAlcaBal } = useSelector(state => ({
         approvalHash: state.application.approvalHash,
         migrationHash: state.application.migrationHash,
+        prevAlcaBal: state.application.startingBalances.alca,
         alcaBalance: state.application.balances.alca,
-        madBalance: state.application.balances.mad
+        prevMadBal: state.application.startingBalances.mad,
+        madBalance: state.application.balances.mad,
+        migrationAmount: state.application.migrationAmount,
+        alcaExchangeRate: state.application.alcaExchangeRate,
     }))
 
     return (
@@ -24,15 +30,22 @@ export function Success() {
                 className="text-sm text-center"
             >
                 <div className="text-xl">
-                Thank you for migrating to ALCA <br /> <br />
+                    <div className="text-sm mb-2">
+                        Thank you for migrating to ALCA
+                    </div>
+                    <div className="font-bold">
+                        You have migrated {migrationAmount} MAD to {Number(alcaExchangeRate).toLocaleString(false, { maximumFractionDigits: 2 })} ALCA
+                    </div>
                 </div>
-                <span className="underline">
-                Your current balances and recent transactions are noted below
-                    </span>
             </div>
 
             <div className="flex justify-between  mt-8">
-                <BalanceStatus/>
+                <MigrationPanel preTextHeader="Previous Balance" postTextHeader="Current Balance" quadrants={[
+                    { title: "MAD Balance", value: Number(prevMadBal).toLocaleString(false, { maximumFractionDigits: 2 }), valueName: "MAD" },
+                    { title: "ALCA Balance", value: Number(prevAlcaBal).toLocaleString(false, { maximumFractionDigits: 2 }), valueName: "ALCA" },
+                    { title: "MAD Balance", value: Number(madBalance).toLocaleString(false, { maximumFractionDigits: 2 }), valueName: "MAD" },
+                    { title: "ALCA Balance", value: Number(alcaBalance).toLocaleString(false, { maximumFractionDigits: 2 }), valueName: "ALCA" }
+                ]} hideButton hideInput disableLeft />
             </div>
 
             <div className="py-8">
@@ -43,9 +56,13 @@ export function Success() {
                     href={`https://etherscan.io/tx/${migrationHash}`}> {migrationHash} </a>) : "N/A"}
             </div>
 
-            <div>
-                Navigate to <a target="_blank" rel="noopener noreferrer" className="text-blue-500 underline"
-                    href="https://alice.net"> alice.net</a> to learn more, or <span className="text-blue-500 underline cursor-pointer" onClick={() => setActiveTabPane(tabPanes.MIGRATE)}>migrate more tokens</span>
+            <div className="flex justify-between min-w-[420px]">
+                <div>
+                    <Button secondary as={"a"} content="Visit alice.net" target="_blank" rel="noopener noreferrer" href="https://alice.net" />
+                </div>
+                <div>
+                    <Button secondary content="Migrate More Tokens" onClick={() => setActiveTabPane(tabPanes.MIGRATE)} />
+                </div>
             </div>
 
         </Container>

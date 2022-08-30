@@ -16,9 +16,10 @@ import { Header, Segment, Input, Button, Icon } from "semantic-ui-react";
  * @prop {function} inputBtnOnClick - Input btn on click
  * @prop {function} inputSubText - Input sub text
  * @prop {bool} loading - is something loading
+ * @prop {bool} disableLeft - Disable left styling on left column?
  * @returns 
  */
-export function MigrationPanel({ quadrants, preTextHeader, postTextHeader, buttonDisabled, buttonOnClick, inputSubText, hideButton, hideInput, inputOnChange, inputValue, inputDisabled, inputBtnOnClick, loading }) {
+export function MigrationPanel({ quadrants, preTextHeader, postTextHeader, disableLeft, buttonDisabled, buttonOnClick, inputSubText, hideButton, hideInput, inputOnChange, inputValue, inputDisabled, inputBtnOnClick, loading }) {
 
     const MigrationStatus = () => {
 
@@ -57,8 +58,14 @@ export function MigrationPanel({ quadrants, preTextHeader, postTextHeader, butto
                     <div className={classNames("flex flex-col w-full justify-start items-start border-gray-300 px-9 py-4", {
                         "border-r-[1px]": i === 0,
                         // "pl-8": i !== 0,
+                        "border-t-2": disableLeft,
+                        "bg-gray-100": i===0 && disableLeft,
+                        "text-gray-300": i===0 && disableLeft,
+                        "border-t-blue-200": i===1,
+                        "rounded-tr-lg": i===1 && disableLeft,
+                        "rounded-tl-lg": i===0 && disableLeft,
                     })}>
-                        <Header as="h5">{i === 0 ? preTextHeader : postTextHeader}</Header>
+                        <Header as="h5" className={classNames({"text-gray-400": disableLeft && i===0})}>{i === 0 ? preTextHeader : postTextHeader}</Header>
                         {parsedQuadrants[i]}
                     </div>
                 )
@@ -70,7 +77,7 @@ export function MigrationPanel({ quadrants, preTextHeader, postTextHeader, butto
             <div className="relative justify-center items-center flex flex-row ">
                 {getCols()}
                 <div className="centerabsarrow z-20 drop-shadow-sm  p-3 flex justify-center items-center bg-white">
-                    <Icon name='arrow circle right' className="bg-red-100"  className="relative bottom-[1px] left-[1px] text-[#235979]"/>
+                    <Icon name='arrow circle right' className="bg-red-100" className="relative bottom-[1px] left-[1px] text-[#235979]" />
                 </div>
             </div>
         )
@@ -78,46 +85,47 @@ export function MigrationPanel({ quadrants, preTextHeader, postTextHeader, butto
     }
 
     return (
-        <Segment color="blue" className={"mt-8 p-0 alice-blue-segment w-[434px]"}>
+        <Segment color={!disableLeft ? "blue" : ""} className={"p-0 w-[434px] border-t-0"}>
 
-            <div className="text-left p-6 bg-gray-50 border border-b-stone-200">
-                <Header sub className="mb-2">Enter amount of MadTokens to migrate</Header>
-                <Input fluid
-                    disabled={inputDisabled}
-                    placeholder="0"
-                    value={inputValue}
-                    onChange={inputOnChange}
-                    action={{
-                        content: "Max",
-                        secondary: true,
-                        size: "mini",
-                        onClick: inputBtnOnClick,
-                        disabled: inputDisabled
-                    }}
-                />
-                {inputSubText && (
-                    <div className="text-xs relative top-1 left-1 text-gray-700">
-                        {inputSubText}
-                    </div>
-                )}
-
-            </div>
+            {!hideInput && (
+                <div className="text-left p-6 bg-gray-50 border border-b-stone-200">
+                    <Header sub className="mb-2">Enter amount of MadTokens to migrate</Header>
+                    <Input fluid
+                        disabled={inputDisabled}
+                        placeholder="0"
+                        value={inputValue}
+                        onChange={inputOnChange}
+                        action={{
+                            content: "Max",
+                            secondary: true,
+                            size: "mini",
+                            onClick: inputBtnOnClick,
+                            disabled: inputDisabled
+                        }}
+                    />
+                    {inputSubText && (
+                        <div className="text-xs relative top-1 left-1 text-gray-700">
+                            {inputSubText}
+                        </div>
+                    )}
+                </div>
+            )}
 
             <div>
                 <MigrationStatus />
             </div>
 
-            <div>
-
-                <Button primary size="small" fluid
-                    className="relative rounded-t-none"
-                    disabled={buttonDisabled}
-                    onClick={buttonOnClick}
-                    loading={loading}
-                    content="Start Migration"
-                />
-
-            </div>
+            {!hideButton && (
+                <div>
+                    <Button primary size="small" fluid
+                        className="relative rounded-t-none"
+                        disabled={buttonDisabled}
+                        onClick={buttonOnClick}
+                        loading={loading}
+                        content="Start Migration"
+                    />
+                </div>
+            )}
 
         </Segment>
     );
