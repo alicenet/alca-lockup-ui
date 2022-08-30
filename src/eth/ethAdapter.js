@@ -29,7 +29,13 @@ class EthAdapter {
     /**
      * Listen for balance updates
      */
-    _balanceLoop() {
+    async _balanceLoop() {
+        let accts = await this.provider.send("eth_requestAccounts", []); // Request accounts
+        if (accts.length === 0) {
+            console.log("balfail")
+            return;
+        }
+        console.log("BALANCE")
         this.updateBalances();
         setTimeout(this._balanceLoop.bind(this), this.timeBetweenBalancePolls);
     }

@@ -17,3 +17,4 @@ export * from "./stakeClaim/StakeClaim";
 export * from "./stakeWelcome/StakeWelcome";
 export * from "./swapIntro/SwapIntro";
 export * from "./migrationModal/MigrationModal";
+export * from './migrationPanel/MigrationPanel';
