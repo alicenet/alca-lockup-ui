@@ -64,10 +64,10 @@ export function SwapTokens() {
                 </div>
 
                 <MigrationPanel preTextHeader="Before Migration" postTextHeader="After Migration" quadrants={[
-                    { title: "Current MAD Balance", value: Number(madBalance).toLocaleString(false, { maximumFractionDigits: 2 }), valueName: "MAD" },
-                    { title: "Current ALCA Balance", value: Number(alcaBalance).toLocaleString(false, { maximumFractionDigits: 2 }), valueName: "ALCA" },
-                    { title: "Future MAD Balance", value: (Number(madBalance) - Number(migrateAmount ? migrateAmount : 0)).toLocaleString(false, {maximumFractionDigits: 2}), valueName: "MAD" },
-                    { title: "Future ALCA Balance", value: (Number(alcaBalance) + Number(migrateAmount ? alcaExchangeRate : 0)).toLocaleString(false, {maximumFractionDigits: 2}), valueName: "ALCA" }
+                    { title: "Current MAD Balance", value: Number(madBalance).toLocaleString(false, { maximumFractionDigits: 4 }), valueName: "MAD" },
+                    { title: "Current ALCA Balance", value: Number(alcaBalance).toLocaleString(false, { maximumFractionDigits: 4 }), valueName: "ALCA" },
+                    { title: "Future MAD Balance", value: (Number(madBalance) - Number(migrateAmount ? migrateAmount : 0)).toLocaleString(false, {maximumFractionDigits: 4}), valueName: "MAD" },
+                    { title: "Future ALCA Balance", value: (Number(alcaBalance) + Number(migrateAmount ? alcaExchangeRate : 0)).toLocaleString(false, {maximumFractionDigits: 4}), valueName: "ALCA" }
                 ]}
                     inputValue={migrateAmount}
                     inputOnChange={(e) => updateMigrateAmt(e.target.value)}

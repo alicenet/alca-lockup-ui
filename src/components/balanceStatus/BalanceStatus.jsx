@@ -13,7 +13,7 @@ export function BalanceStatus({ row }) {
     const BalanceLabel = ({ balanceType }) => (
         <div size className="flex flex-col justify-start items-start ml-2 mr-2 h-10 text-left">
             <div className="text-gray-500 text-xs font-bold">Current {balanceType.toUpperCase()} Balance</div>
-            <div className="text-gray-700 text-xl mt-1">{loading ? "" : Number(balances[balanceType]).toLocaleString(false, { maximumFractionDigits: 2 })} </div>
+            <div className="text-gray-700 text-xl mt-1">{loading ? "" : Number(balances[balanceType]).toLocaleString(false, { maximumFractionDigits: 4 })} </div>
         </div>
     )
 

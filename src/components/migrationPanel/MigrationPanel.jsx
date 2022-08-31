@@ -85,7 +85,7 @@ export function MigrationPanel({ quadrants, preTextHeader, postTextHeader, disab
     }
 
     return (
-        <Segment color={!disableLeft ? "blue" : ""} className={"p-0 w-[480px] border-t-0"}>
+        <Segment color={!disableLeft ? "blue" : ""} className={"p-0 w-[500px] border-t-0"}>
 
             {!hideInput && (
                 <div className="text-left p-6 bg-gray-50 border border-b-stone-200">

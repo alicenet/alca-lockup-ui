@@ -34,17 +34,17 @@ export function Success() {
                         Thank you for migrating to ALCA
                     </div>
                     <div className="font-bold">
-                        You have migrated {migrationAmount} MAD to {Number(alcaExchangeRate).toLocaleString(false, { maximumFractionDigits: 2 })} ALCA
+                        You have migrated {migrationAmount} MAD to {Number(alcaExchangeRate).toLocaleString(false, { maximumFractionDigits: 4 })} ALCA
                     </div>
                 </div>
             </div>
 
             <div className="flex justify-between  mt-8">
                 <MigrationPanel preTextHeader="Previous Balance" postTextHeader="Current Balance" quadrants={[
-                    { title: "MAD Balance", value: Number(prevMadBal).toLocaleString(false, { maximumFractionDigits: 2 }), valueName: "MAD" },
-                    { title: "ALCA Balance", value: Number(prevAlcaBal).toLocaleString(false, { maximumFractionDigits: 2 }), valueName: "ALCA" },
-                    { title: "MAD Balance", value: Number(madBalance).toLocaleString(false, { maximumFractionDigits: 2 }), valueName: "MAD" },
-                    { title: "ALCA Balance", value: Number(alcaBalance).toLocaleString(false, { maximumFractionDigits: 2 }), valueName: "ALCA" }
+                    { title: "MAD Balance", value: Number(prevMadBal).toLocaleString(false, { maximumFractionDigits: 4 }), valueName: "MAD" },
+                    { title: "ALCA Balance", value: Number(prevAlcaBal).toLocaleString(false, { maximumFractionDigits: 4 }), valueName: "ALCA" },
+                    { title: "MAD Balance", value: Number(madBalance).toLocaleString(false, { maximumFractionDigits: 4 }), valueName: "MAD" },
+                    { title: "ALCA Balance", value: Number(alcaBalance).toLocaleString(false, { maximumFractionDigits: 4 }), valueName: "ALCA" }
                 ]} hideButton hideInput disableLeft />
             </div>
 

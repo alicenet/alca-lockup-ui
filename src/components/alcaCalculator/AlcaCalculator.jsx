@@ -12,7 +12,7 @@ export function AlcaCalculator() {
 
         const updateExcAmount = async (amt) => {
             let exchAmount = await ethAdapter.getMadTokenToALCAExchangeRate(ethers.utils.parseEther(amt))
-            setExcAmount(Number(exchAmount).toLocaleString(false, {maximumFractionDigits: 2}) + " ALCA");
+            setExcAmount(Number(exchAmount).toLocaleString(false, {maximumFractionDigits: 4}) + " ALCA");
         }
 
         let amt = e.target.value;
