@@ -18,3 +18,4 @@ export * from "./stakeWelcome/StakeWelcome";
 export * from "./swapIntro/SwapIntro";
 export * from "./migrationModal/MigrationModal";
 export * from './migrationPanel/MigrationPanel';
+export * from "./alcaCalculator/AlcaCalculator"

@@ -9,6 +9,8 @@ export const CONTRACT_ABIS = {};
 // Simplified access to all contract data
 export const CONTRACTS = {};
 
+export const RPC = {URL: ""};
+
 // Extract names from process.env
 for (let environmentKey of Object.keys(process.env)) {
     // Only parse _CONTRACT_ADDRESS keys for the contract name
@@ -25,4 +27,13 @@ for (let environmentKey of Object.keys(process.env)) {
     }
 }
 
+// Extract RPC
+switch (process.env.REACT_APP__ENV) {
+    case "LOCAL": RPC.URL = process.env.REACT_APP__ETHEREUM_ENDPOINT_LOCAL; break;
+    case "STAGING": RPC.URL = process.env.REACT_APP__ETHEREUM_ENDPOINT_STAGING; break;
+    case "PRODUCTION": RPC.URL = process.env.REACT_APP__ETHEREUM_ENDPOINT_PRODUCTION; break;
+    default: RPC.URL = process.env.REACT_APP__ETHEREUM_ENDPOINT_STAGING; break; 
+}
+
 console.debug("Parsed contract information .env", CONTRACTS);
+console.debug("Parsed RPC information", RPC);

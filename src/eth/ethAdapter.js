@@ -21,9 +21,13 @@ class EthAdapter {
         this.provider = null; // Web3 Provider -- Populated on successful _connectToWeb3Wallet()
         this.signer = null; // Web3 Signer -- Populated on successful _connectToWeb3Wallet()
         this.contracts = config.CONTRACTS; // Contracts from config
-        console.debug("EthAdapter Init: ", this);
         this._setupWeb3Listeners();
         this.timeBetweenBalancePolls = 7500;
+        
+        // Setup RPC provider
+        this.provider = new ethers.providers.JsonRpcProvider(config.RPC.URL);
+        
+        console.debug("EthAdapter Init: ", this);
     }
 
     /**

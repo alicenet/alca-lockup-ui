@@ -1,8 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { Image, Label, Loader, Popup } from "semantic-ui-react";
-import aIcon from "assets/alicenet-logo.svg";
-import { classNames } from "utils/generic";
+import { Segment, Label, } from "semantic-ui-react";
 
 export function BalanceStatus({ row }) {
     const { balances, loading } = useSelector(state => (
@@ -13,18 +11,21 @@ export function BalanceStatus({ row }) {
     ));
 
     const BalanceLabel = ({ balanceType }) => (
-        <Label size className="flex justify-start items-center ml-2 mr-2 h-10">
-            <div className="text-gray-500 mr-2">{balanceType.toUpperCase()}</div>
-            <div className="text-gray-700">{loading ? "" : balances[balanceType]} </div>
-        </Label>
+        <div size className="flex flex-col justify-start items-start ml-2 mr-2 h-10 text-left">
+            <div className="text-gray-500 text-xs font-bold">Current {balanceType.toUpperCase()} Balance</div>
+            <div className="text-gray-700 text-xl mt-1">{loading ? "" : Number(balances[balanceType]).toLocaleString(false, { maximumFractionDigits: 2 })} </div>
+        </div>
     )
 
     return (
-        <div className="w-70 flex justify-end cursor-default">
-            <div className={classNames("w-full flex justify-between h-24", { "flex-col": !row, "flex-row": row })}>
+        <Segment color='blue' className="alice-segment-blue flex justify-between p-0 h-full w-full">
+            <div className="w-full p-4 border-r-2 border-r-gray-200">
                 <BalanceLabel balanceType={"mad"} />
+            </div>
+            <div className="w-full p-4 pb-5">
                 <BalanceLabel balanceType={"alca"} />
             </div>
-        </div>
+        </Segment>
     );
+
 }

@@ -7,6 +7,7 @@ const configuration = {
     CONTRACT_ADDRESSES: contractsConfig.CONTRACT_ADDRESSES,
     CONTRACT_NAMES: contractsConfig.CONTRACT_NAMES,
     METAMASK_NETWORKS: networkTypes.METAMASK_NETWORKS,
+    RPC: contractsConfig.RPC
 }
 
 export default configuration;

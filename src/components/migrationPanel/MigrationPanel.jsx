@@ -34,8 +34,8 @@ export function MigrationPanel({ quadrants, preTextHeader, postTextHeader, disab
                 })}>
                     <div className="text-xs font-bold text-gray-500">{title}</div>
                     <div className="flex items-end mt-2">
-                        <div className="flex items-end text-xl">{value}</div>
-                        <div className="flex items-end ml-1">{valueName.toUpperCase()}</div>
+                        <div className="flex items-end text-lg">{value}</div>
+                        <div className="flex items-end ml-1 relative -top-[2px] font-bold">{valueName.toUpperCase()}</div>
                     </div>
                 </div>
             )
@@ -85,7 +85,7 @@ export function MigrationPanel({ quadrants, preTextHeader, postTextHeader, disab
     }
 
     return (
-        <Segment color={!disableLeft ? "blue" : ""} className={"p-0 w-[434px] border-t-0"}>
+        <Segment color={!disableLeft ? "blue" : ""} className={"p-0 w-[480px] border-t-0"}>
 
             {!hideInput && (
                 <div className="text-left p-6 bg-gray-50 border border-b-stone-200">

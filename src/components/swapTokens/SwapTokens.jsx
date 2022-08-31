@@ -31,7 +31,7 @@ export function SwapTokens() {
             return;
         }
         let split = amt.split(".");
-        if (split[0].length >= 12 || (split[1] && split[1].length > 18)) {
+        if (split[0].length >= 10 || (split[1] && split[1].length > 18)) {
             return
         }
         setMigrateAmount(amt);
@@ -66,8 +66,8 @@ export function SwapTokens() {
                 <MigrationPanel preTextHeader="Before Migration" postTextHeader="After Migration" quadrants={[
                     { title: "Current MAD Balance", value: Number(madBalance).toLocaleString(false, { maximumFractionDigits: 2 }), valueName: "MAD" },
                     { title: "Current ALCA Balance", value: Number(alcaBalance).toLocaleString(false, { maximumFractionDigits: 2 }), valueName: "ALCA" },
-                    { title: "Future MAD Balance", value: (Number(madBalance) - Number(migrateAmount)).toLocaleString(false, {maximumFractionDigits: 2}), valueName: "MAD" },
-                    { title: "Future ALCA Balance", value: (Number(alcaBalance) + Number(alcaExchangeRate)).toLocaleString(false, {maximumFractionDigits: 2}), valueName: "ALCA" }
+                    { title: "Future MAD Balance", value: (Number(madBalance) - Number(migrateAmount ? migrateAmount : 0)).toLocaleString(false, {maximumFractionDigits: 2}), valueName: "MAD" },
+                    { title: "Future ALCA Balance", value: (Number(alcaBalance) + Number(migrateAmount ? alcaExchangeRate : 0)).toLocaleString(false, {maximumFractionDigits: 2}), valueName: "ALCA" }
                 ]}
                     inputValue={migrateAmount}
                     inputOnChange={(e) => updateMigrateAmt(e.target.value)}
