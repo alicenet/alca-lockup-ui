@@ -43,9 +43,9 @@ export function AlcaCalculator() {
             </div>
 
             <div className="mt-4">
-                <Input placeholder={"MAD To Migrate"} size="small" value={input} onChange={updateExchangeAmount} />
+                <Input placeholder={"MAD To Migrate"} size="small" value={input} className="calcInput" onChange={updateExchangeAmount} />
                 <Icon name="arrow circle right" className="mx-4" />
-                <Input disabled placeholder={"ALCA Received"} value={excAmount} size="small" />
+                <Input disabled placeholder={"ALCA Received"} value={excAmount} size="small" className="calcInput"/>
             </div>
 
         </div>
