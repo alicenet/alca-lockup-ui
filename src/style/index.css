@@ -69,3 +69,16 @@ i {
     margin-right: auto; 
     width: 37px; /* Need a specific value to work */
 }
+
+.ui.input.calcInput input {
+    border: 1px solid grey;
+    color: #555;
+}
+
+.ui.input.calcInput input::placeholder {
+    color: #555;
+}
+
+.ui.input.calcInput.disabled input {
+    color: #000 !important;
+}
