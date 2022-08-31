@@ -17,10 +17,11 @@ export function AlcaCalculator() {
 
         let amt = e.target.value;
         if (amt === "." || amt === "") {
-            updateExcAmount(0);
+            updateExcAmount("0");
             return setInput("");
         }
         if (!/^[+-]?([0-9]+\.?[0-9]*|\.[0-9]+)$/.test(amt)) {
+            updateExcAmount("0");
             return;
         }
         let split = amt.split(".");
@@ -42,7 +43,7 @@ export function AlcaCalculator() {
             </div>
 
             <div className="mt-4">
-                <Input size="small" value={input} onChange={updateExchangeAmount} />
+                <Input placeholder={"MAD To Migrate"} size="small" value={input} onChange={updateExchangeAmount} />
                 <Icon name="arrow circle right" className="mx-4" />
                 <Input disabled placeholder={"ALCA Received"} value={excAmount} size="small" />
             </div>
