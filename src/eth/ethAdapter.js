@@ -21,15 +21,25 @@ class EthAdapter {
         this.provider = null; // Web3 Provider -- Populated on successful _connectToWeb3Wallet()
         this.signer = null; // Web3 Signer -- Populated on successful _connectToWeb3Wallet()
         this.contracts = config.CONTRACTS; // Contracts from config
-        console.debug("EthAdapter Init: ", this);
         this._setupWeb3Listeners();
         this.timeBetweenBalancePolls = 7500;
+        
+        // Setup RPC provider
+        this.provider = new ethers.providers.JsonRpcProvider(config.RPC.URL);
+        
+        console.debug("EthAdapter Init: ", this);
     }
 
     /**
      * Listen for balance updates
      */
-    _balanceLoop() {
+    async _balanceLoop() {
+        let accts = await this.provider.send("eth_requestAccounts", []); // Request accounts
+        if (accts.length === 0) {
+            console.log("balfail")
+            return;
+        }
+        console.log("BALANCE")
         this.updateBalances();
         setTimeout(this._balanceLoop.bind(this), this.timeBetweenBalancePolls);
     }

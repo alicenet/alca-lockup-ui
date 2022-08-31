@@ -1,11 +1,11 @@
-import { Button, Container, Header, Icon, Input, Message } from "semantic-ui-react";
+import { Button, Container, Header, Icon, Input, Message, Segment } from "semantic-ui-react";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useContext, useState } from "react";
 import { tabPanes } from "utils/constants";
 import { TabPanesContext } from "contexts";
 import * as ACTIONS from "redux/actions/application";
-import { MigrationModal } from "components/migrationModal/MigrationModal";
 import { ethers } from "ethers";
+import { MigrationPanel, MigrationModal } from "components";
 
 export function SwapTokens() {
 
@@ -14,14 +14,10 @@ export function SwapTokens() {
 
     const [modalOpen, setModalOpen] = useState(false);
 
-    const [error, setError] = useState();
-    const [success, setSuccess] = useState("");
-    const [waiting, setWaiting] = useState(false);
     const { setActiveTabPane } = useContext(TabPanesContext);
 
-    const { web3Connected, alcaBalance, madBalance, madAllowance, alcaExchangeRate } = useSelector(state => ({
+    const { web3Connected, alcaBalance, madBalance, alcaExchangeRate } = useSelector(state => ({
         web3Connected: state.application.web3Connected,
-        madAllowance: state.application.allowances.mad,
         alcaBalance: state.application.balances.alca,
         alcaExchangeRate: state.application.alcaExchangeRate,
         madBalance: state.application.balances.mad
@@ -35,11 +31,18 @@ export function SwapTokens() {
             return;
         }
         let split = amt.split(".");
-        if (split[0].length >= 12 || (split[1] && split[1].length > 18) ) {
+        if (split[0].length >= 10 || (split[1] && split[1].length > 18)) {
             return
         }
         setMigrateAmount(amt);
         dispatch(ACTIONS.updateExchangeRate(ethers.utils.parseEther(amt)));
+    }
+
+    // Update prev balance states here
+    const openMigrationModal = () => {
+        dispatch(ACTIONS.updateStartingBalances(madBalance, alcaBalance));
+        dispatch(ACTIONS.updateMigrationAmount(migrateAmount));
+        setModalOpen(true)
     }
 
     // Called by modal on success to move forwards
@@ -48,79 +51,32 @@ export function SwapTokens() {
         setActiveTabPane(tabPanes.SUCCESS);
     }
 
+
     return (
         <>
 
             <Container className="flex flex-col justify-around items-center p-4 min-h-[240px]">
 
-                <div className="text-sm text-center">
-                    After inputting the amount of tokens you wish to migrate you will be requested to sign two transactions with your web3 wallet.
+                <div className="text-sm text-center mb-4">
+                    Migrating your tokens requires signing two transactions with your web3 wallet
                     <br /> <br />
                     Please follow the on screen instructions to complete the migration
                 </div>
 
-                <div className="text-left mt-8">
-                    <Header sub className="mb-2">Amount of MadTokens to migrate</Header>
-                    <Input
-                        disabled={!web3Connected}
-                        placeholder="0"
-                        value={migrateAmount}
-                        onChange={(e) =>
-                            updateMigrateAmt(e.target.value)
-
-                        }
-                        action={{
-                            content: "Max",
-                            secondary: true,
-                            size: "mini",
-                            onClick: () => updateMigrateAmt(madBalance),
-                            disabled: !web3Connected
-                        }}
-                    />
-                </div>
-
-                <div className="flex flex-row text-xs w-[314px] justify-between mt-2">
-                    <div>
-                        <span className="font-bold">Mad Balance:</span> {Number(madBalance).toLocaleString()}
-                    </div>
-                    <div className="font-bold">
-                        |
-                    </div>
-                    <div>
-                        <span className="font-bold">ALCA Balance:</span> {Number(alcaBalance).toLocaleString()}
-                    </div>
-                </div>
-
-                <div>
-                    <Button
-                        primary
-                        size="small"
-                        content={
-                            <div className="m-4">
-                                <div>
-                                    Start Migration
-                                </div>
-                                {migrateAmount ? Number(migrateAmount).toLocaleString() : 0} MAD
-                                <Icon name="arrow circle right ml-2 mr-2 mt-4" />
-                                {typeof (alcaExchangeRate) !== 'object' ? Number(alcaExchangeRate).toLocaleString() : "0"} ALCA
-                            </div>}
-                        className="relative left-[2px] mt-4 min-w-[318px] p-2"
-                        disabled={!web3Connected || migrateAmount < 1 || !alcaExchangeRate}
-                        onClick={() => setModalOpen(true)}
-                        loading={waiting}
-                    />
-                </div>
-
-                <div className="absolute left-0 top-[100%]">
-                    <Message
-                        size="mini"
-                        content={success || error}
-                        success={success.length > 0}
-                        error={error}
-                        className="mt-4"
-                        hidden={!success && !error}
-                    />
-                </div>
+                <MigrationPanel preTextHeader="Before Migration" postTextHeader="After Migration" quadrants={[
+                    { title: "Current MAD Balance", value: Number(madBalance).toLocaleString(false, { maximumFractionDigits: 4 }), valueName: "MAD" },
+                    { title: "Current ALCA Balance", value: Number(alcaBalance).toLocaleString(false, { maximumFractionDigits: 4 }), valueName: "ALCA" },
+                    { title: "Future MAD Balance", value: (Number(madBalance) - Number(migrateAmount ? migrateAmount : 0)).toLocaleString(false, {maximumFractionDigits: 4}), valueName: "MAD" },
+                    { title: "Future ALCA Balance", value: (Number(alcaBalance) + Number(migrateAmount ? alcaExchangeRate : 0)).toLocaleString(false, {maximumFractionDigits: 4}), valueName: "ALCA" }
+                ]}
+                    inputValue={migrateAmount}
+                    inputOnChange={(e) => updateMigrateAmt(e.target.value)}
+                    inputDisabled={!web3Connected}
+                    inputBtnOnClick={(e) => updateMigrateAmt(madBalance)}
+                    inputSubText={`Migrate ${Number(migrateAmount).toLocaleString(false, {maximumFractionDigits: 4})} MAD to ${Number(alcaExchangeRate).toLocaleString(false, {maximumFractionDigits: 4})} ALCA`}
+                    buttonOnClick={openMigrationModal}
+                    buttonDisabled={!web3Connected || migrateAmount < 1 || !alcaExchangeRate}
+                />
 
             </Container>
 

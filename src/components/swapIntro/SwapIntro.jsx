@@ -3,7 +3,7 @@ import { Header, Container, Button } from "semantic-ui-react";
 import { useContext } from "react";
 import { TabPanesContext } from "contexts/TabPanesContext";
 import { tabPanes } from "utils/constants";
-
+import { AlcaCalculator } from 'components'
 export function Introduction() {
 
     const { setActiveTabPane } = useContext(TabPanesContext);
@@ -43,8 +43,12 @@ export function Introduction() {
             </Container>
 
             <div className="absolute right-0 top-[100%]">
-                <Button primary content="Continue" className="mt-4" 
+                <Button primary content="Continue" className="mt-4"
                     onClick={() => { setActiveTabPane(tabPanes.PHISHING) }} />
+            </div>
+
+            <div className="mt-8">
+                <AlcaCalculator />
             </div>
 
 

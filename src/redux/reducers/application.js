@@ -12,6 +12,10 @@ const initialApplicationState = {
         mad: 0,
         stakedAlca: 0,
     },
+    startingBalances: {
+        mad: 0,
+        alca: 0
+    },
     allowances: {
         mad: 0,
         alcaStakeAllowance: 0,
@@ -24,6 +28,7 @@ const initialApplicationState = {
     connectedAddress: "",
     approvalHash: "",
     migrationHash: "",
+    migrationAmount: 0,
     networkId: "",
     networkName: "",
     txStatuses: Object.keys(ACTION_TYPES).map(action => {
@@ -103,6 +108,17 @@ export default function applicationReducer(state = initialApplicationState, acti
         case APPLICATION_ACTION_TYPES.SET_MIGRATION_HASH:
             return Object.assign({}, state, {
                 migrationHash: action.payload
+            })
+
+        case APPLICATION_ACTION_TYPES.UPDATE_STARTING_BALANCES:
+            return Object.assign({}, state, {
+                startingBalances: action.payload
+            })
+
+
+        case APPLICATION_ACTION_TYPES.UPDATE_MIGRATION_AMOUNT:
+            return Object.assign({}, state, {
+                migrationAmount: action.payload
             })
 
         default:
