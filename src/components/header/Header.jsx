@@ -25,9 +25,9 @@ export function Header() {
                     MAD => ALCA Token Migration
                 </Menu.Item>
 
-                {/* <Menu.Item as={Link} to="/stake" active={location.pathname == "/stake"}>
+                <Menu.Item as={Link} to="/stake" active={location.pathname == "/stake"}>
                     Stake
-                </Menu.Item> */}
+                </Menu.Item>
 
             </Menu.Item>
 
