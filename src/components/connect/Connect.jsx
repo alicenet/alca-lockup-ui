@@ -5,6 +5,7 @@ import { TabPanesContext } from "contexts";
 import { useSelector } from "react-redux";
 import ethAdapter from "eth/ethAdapter";
 import { BalanceStatus } from "components/balanceStatus/BalanceStatus";
+import { useCookies } from "react-cookie";
 
 export function Connect() {
 
@@ -17,6 +18,8 @@ export function Connect() {
         madBalance: state.application.balances.mad,
         alcaBalance: state.application.balances.alca
     }));
+
+    const [agreeCookie, _] = useCookies(['agreed']);
 
     const connect = () => {
         ethAdapter.connectToWeb3Wallet((err) => {
@@ -49,16 +52,20 @@ export function Connect() {
 
                     </div>
                     ) : <div>
-                        <div>
-                            Press the button below to connect your web3 wallet
-                        </div>
-                        <Button
-                            className="m-0 mt-8"
-                            secondary
-                            color="black"
-                            onClick={connect}
-                            content="Connect Wallet"
-                        />
+                        <>{(agreeCookie?.agreed) ? 
+                            <>
+                                <div>
+                                    Press the button below to connect your web3 wallet arg
+                                </div>
+                                <Button
+                                    className="m-0 mt-8"
+                                    secondary
+                                    color="black"
+                                    onClick={connect}
+                                    content="Connect Wallet"
+                                />
+                            </> : "Please read and agree to Staking T&C first"}
+                        </>
                     </div>
 
                     }

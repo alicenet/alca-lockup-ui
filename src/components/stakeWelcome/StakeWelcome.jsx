@@ -48,28 +48,28 @@ export function StakeWelcome({ stepForward }) {
         setCheckState(s => ({ ...s, [checkType]: bool }))
     }
 
-    const stakeAll = checkState.stake1 && checkState.stake2 && checkState.stake3;
+    const stakeAll = agreeCookie?.agreed || checkState.stake1 && checkState.stake2 && checkState.stake3;
     const unstakeAll = checkState.unstake1 && checkState.unstake2 && checkState.unstake3;
     const allCheck = stakeAll && unstakeAll;
 
     const StakingAgreement = () => {
 
-        const segmentDisabled = { disabled: stakeAll || !web3Connected }
+        const segmentDisabled = { disabled: stakeAll };
 
         return (
             <Segment {...segmentDisabled} className="flex flex-col justify-between h-full">
                 <div>
                     <Header>Staking Terms</Header>
                     <div>
-                        <Checkbox {...segmentDisabled} checked={checkState.stake1} onChange={(e, data) => updateCheckState("stake1", data.checked)}
+                        <Checkbox {...segmentDisabled} checked={agreeCookie?.agreed || checkState.stake1} onChange={(e, data) => updateCheckState("stake1", data.checked)}
                             label="laoreet suspendisse interdum consectetur libero id faucibus nisl tincidunt eget nullam non nisi est sit amet facilisis magna etiam tempor orci eu" />
                     </div>
                     <div className="mt-8">
-                        <Checkbox {...segmentDisabled} checked={checkState.stake2} onChange={(e, data) => updateCheckState("stake2", data.checked)}
+                        <Checkbox {...segmentDisabled} checked={agreeCookie?.agreed || checkState.stake2} onChange={(e, data) => updateCheckState("stake2", data.checked)}
                             label="laoreet suspendisse interdum consectetur libero id faucibus nisl tincidunt eget nullam non nisi est sit amet facilisis magna etiam tempor orci eu" />
                     </div>
                     <div className="mt-8">
-                        <Checkbox {...segmentDisabled} checked={checkState.stake3} onChange={(e, data) => updateCheckState("stake3", data.checked)}
+                        <Checkbox {...segmentDisabled} checked={agreeCookie?.agreed || checkState.stake3} onChange={(e, data) => updateCheckState("stake3", data.checked)}
                             label="laoreet suspendisse interdum consectetur libero id faucibus nisl tincidunt eget nullam non nisi est sit amet facilisis magna etiam tempor orci eu" />
                     </div>
                 </div>
@@ -81,28 +81,28 @@ export function StakeWelcome({ stepForward }) {
 
 
     const UnstakingAgreement = () => {
-        const segmentDisabled = { disabled: !stakeAll || unstakeAll }
+        const segmentDisabled = { disabled: agreeCookie?.agreed || !stakeAll || unstakeAll }
         return (
             <Segment {...segmentDisabled} className="flex flex-col justify-between h-full">
 
                 <div>
                     <Header>Unstaking Terms</Header>
                     <div>
-                        <Checkbox {...segmentDisabled} checked={checkState.unstake1} onChange={(e, data) => updateCheckState("unstake1", data.checked)}
+                        <Checkbox {...segmentDisabled} checked={agreeCookie?.agreed || checkState.unstake1} onChange={(e, data) => updateCheckState("unstake1", data.checked)}
                             label="laoreet suspendisse interdum consectetur libero id faucibus nisl tincidunt eget nullam non nisi est sit amet facilisis magna etiam tempor orci eu" />
                     </div>
                     <div className="mt-8">
-                        <Checkbox {...segmentDisabled} checked={checkState.unstake2} onChange={(e, data) => updateCheckState("unstake2", data.checked)}
+                        <Checkbox {...segmentDisabled} checked={agreeCookie?.agreed || checkState.unstake2} onChange={(e, data) => updateCheckState("unstake2", data.checked)}
                             label="laoreet suspendisse interdum consectetur libero id faucibus nisl tincidunt eget nullam non nisi est sit amet facilisis magna etiam tempor orci eu" />
                     </div>
                     <div className="mt-8">
-                        <Checkbox {...segmentDisabled} checked={checkState.unstake3} onChange={(e, data) => updateCheckState("unstake3", data.checked)}
+                        <Checkbox {...segmentDisabled} checked={agreeCookie?.agreed || checkState.unstake3} onChange={(e, data) => updateCheckState("unstake3", data.checked)}
                             label="laoreet suspendisse interdum consectetur libero id faucibus nisl tincidunt eget nullam non nisi est sit amet facilisis magna etiam tempor orci eu" />
                     </div>
                 </div>
 
                 <div>
-                    <Checkbox {...segmentDisabled} checked={unstakeAll} label={unstakeAll ? "Thanks!" : "Check all above boxes to continue"} />
+                    <Checkbox {...segmentDisabled} checked={agreeCookie?.agreed || unstakeAll} label={unstakeAll ? "Thanks!" : "Check all above boxes to continue"} />
                 </div>
 
             </Segment>
@@ -110,7 +110,7 @@ export function StakeWelcome({ stepForward }) {
     }
 
     const FinalAgreement = () => {
-        const segmentDisabled = { disabled: !stakeAll || !unstakeAll };
+        const segmentDisabled = { disabled: agreeCookie?.agreed || !stakeAll || !unstakeAll };
         return (
             <Segment {...segmentDisabled}>
                 <Header>Summary</Header>
@@ -119,7 +119,7 @@ export function StakeWelcome({ stepForward }) {
                         <div className="">
                             <Checkbox {...segmentDisabled} onChange={(e, data) => updateCheckState("finalCheck", data.checked)}
                                 label="I have read and agreed to all of the above terms and conditions"
-                                checked={checkState.finalCheck}
+                                checked={agreeCookie?.agreed || checkState.finalCheck}
                             />
                         </div>
                     </div>

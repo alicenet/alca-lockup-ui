@@ -94,7 +94,7 @@ export function StakeActions() {
                         </Grid.Column>
 
                         <Grid.Column stretched width={13}>
-                            <Segment disabled={!web3Connected}>
+                            <Segment>
                                 {getActiveTab()}
                             </Segment>
                         </Grid.Column>
