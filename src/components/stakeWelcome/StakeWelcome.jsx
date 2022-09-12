@@ -4,7 +4,6 @@ import { Header, Grid, Checkbox, Segment, Button } from 'semantic-ui-react'
 import { useCookies } from 'react-cookie';
 import { useDispatch } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
-import { useNavigate } from "react-router";
 import { setAgreeCookieTrue } from "redux/actions/application";
 
 export function StakeWelcome({ stepForward }) {
