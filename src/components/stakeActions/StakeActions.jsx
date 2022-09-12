@@ -58,7 +58,7 @@ export function StakeActions() {
                                     content={<>
                                         <Header className={classNames({ "opacity-40": !hasReadTerms })}>Stake</Header>
                                         <div className="text-xs">
-                                            {alcaBalance} ALCA Available
+                                            {Number(alcaBalance).toLocaleString(false, {maximumFractionDigits: 4})} ALCA Available
                                         </div>
                                     </>}
                                     disabled={!hasReadTerms}
