@@ -39,9 +39,40 @@ class EthAdapter {
             console.log("balfail")
             return;
         }
+        // TODO remove console logs
         console.log("BALANCE")
         this.updateBalances();
+        await this._fetchOwnerIDS();
         setTimeout(this._balanceLoop.bind(this), this.timeBetweenBalancePolls);
+    }
+
+    async _fetchOwnerIDS() {
+        // console.log(this.contracts)
+        let ids = [];
+        let fetching = true;
+        let idx = 0;
+        const address = await this._getAddressByIndex(0);
+
+        let id = await this._tryCall("PublicStaking", "tokenOfOwnerByIndex", [address, idx]);
+        // get IDS
+        // while (fetching) {
+        //     let id = await this._tryCall("PublicStaking", "tokenOfOwnerByIndex", [await this._getAddressByIndex(0), idx]);
+        //     idx++;
+        //     if (id) {
+        //         ids.push(id);
+        //     } else {
+        //         fetching = false;
+        //     }
+        // }
+
+        console.log({ ids, idx })
+
+        // get meta
+        // let meta = {};
+        // for (let id of ids) {
+        // let metadata = getTokenURI(id);
+        //     meta[id] = metadata;
+        // }
     }
 
     /**
@@ -167,7 +198,7 @@ class EthAdapter {
         try {
             return await func();
         } catch (ex) {
-            console.error(ex);
+            console.error({ ex });
             return { error: ex.message };
         }
     }

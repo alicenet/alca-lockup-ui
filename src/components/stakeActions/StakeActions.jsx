@@ -14,7 +14,6 @@ export function StakeActions() {
         hasReadTerms: state.application.hasReadTerms,
         alcaBalance: state.application.balances.alca,
         web3Connected: state.application.web3Connected,
-        hasReadTerms: state.application.hasReadTerms,
         stakedAlca: state.application.balances.stakedAlca,
         ethRewards: state.application.rewards.eth,
         alcaRewards: state.application.rewards.alca

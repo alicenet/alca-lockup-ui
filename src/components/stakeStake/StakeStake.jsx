@@ -2,8 +2,7 @@
 import ethAdapter from "eth/ethAdapter";
 import { ethers } from "ethers";
 import React from "react";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
 import { Grid, Header, Input, Button } from 'semantic-ui-react'
 import { classNames } from "utils/generic";
@@ -25,6 +24,8 @@ export function StakeStake() {
         setWaiting(true)
         let tx = await ethAdapter.sendStakingAllowanceRequest();
         let rec = await tx.wait();
+        // TODO remove
+        console.log({ rec });
         setWaiting(false)
         dispatch(APPLICATION_ACTIONS.updateBalances())
     }
@@ -32,7 +33,11 @@ export function StakeStake() {
     const stake = async () => {
         setWaiting(true)
         let tx = await ethAdapter.openStakingPosition(stakeAmt);
+        // TODO remove
+        console.log({ tx, value: tx.value.toString() });
         let rec = await tx.wait();
+        // TODO remove
+        console.log({ rec });
         setWaiting(false)
         dispatch(APPLICATION_ACTIONS.updateBalances())
     }
