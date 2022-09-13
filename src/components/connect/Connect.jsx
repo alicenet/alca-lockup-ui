@@ -1,22 +1,20 @@
-import { Button, Container, Header, Label, Message } from "semantic-ui-react";
+import { Button, Container, Header, Message } from "semantic-ui-react";
 import React, { useContext, useState } from "react";
 import config from "utils";
-import { TabPanesContext } from "contexts";
 import { useSelector } from "react-redux";
 import ethAdapter from "eth/ethAdapter";
-import { BalanceStatus } from "components/balanceStatus/BalanceStatus";
+import { useCookies } from "react-cookie";
 
 export function Connect() {
 
-    const { generic, constants, string } = config;
+    const { generic } = config;
     const [error, setError] = useState("");
-    const { setActiveTabPane } = useContext(TabPanesContext);
-    const { web3Connected, address, alcaBalance, madBalance } = useSelector(state => ({
+    const { web3Connected, address } = useSelector(state => ({
         address: state.application.connectedAddress,
         web3Connected: state.application.web3Connected,
-        madBalance: state.application.balances.mad,
-        alcaBalance: state.application.balances.alca
     }));
+
+    const [agreeCookie, _] = useCookies(['agreed']);
 
     const connect = () => {
         ethAdapter.connectToWeb3Wallet((err) => {
@@ -40,25 +38,25 @@ export function Connect() {
                         <Header as='h5' content={`${address} connected`} />
 
                         <Header.Subheader>
-                            Connected balances noted below
+                            Connected {address}
                         </Header.Subheader>
-
-                        <div className="flex justify-center mt-6">
-                            <BalanceStatus row />
-                        </div>
 
                     </div>
                     ) : <div>
-                        <div>
-                            Press the button below to connect your web3 wallet
-                        </div>
-                        <Button
-                            className="m-0 mt-8"
-                            secondary
-                            color="black"
-                            onClick={connect}
-                            content="Connect Wallet"
-                        />
+                        <>{(agreeCookie?.agreed) ? 
+                            <>
+                                <div>
+                                    Press the button below to connect your web3 wallet arg
+                                </div>
+                                <Button
+                                    className="m-0 mt-8"
+                                    secondary
+                                    color="black"
+                                    onClick={connect}
+                                    content="Connect Wallet"
+                                />
+                            </> : "Please read and agree to Staking T&C first"}
+                        </>
                     </div>
 
                     }
@@ -81,7 +79,7 @@ export function Connect() {
                     primary
                     content="Continue"
                     className={generic.classNames("m-0", { 'hidden': !web3Connected })}
-                    onClick={() => setActiveTabPane(constants.tabPanes.MIGRATE)}
+                    onClick={() => {}}
                 />
             </div>
 

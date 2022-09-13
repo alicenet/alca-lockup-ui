@@ -2,8 +2,7 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Container } from "semantic-ui-react";
 import { useSelector } from "react-redux";
-import { SwapActions, StakeActions, Footer, Header } from "components";
-import { DarkThemeProvider, TabPanesProvider } from "contexts";
+import { StakeActions, Footer, Header } from "components";
 import { ToastContainer } from 'react-toastify';
 
 function App() {
@@ -30,9 +29,7 @@ function App() {
     const DefaultRoutes = () => {
         return (
             <>
-                <Route exact path="/" element={<SwapActions />} />
-                <Route exact path="/swap" element={<SwapActions />} />
-                <Route exact path="/stake" element={<StakeActions />} />
+                <Route exact path="/" element={<StakeActions />} />
             </>
         )
     };
@@ -40,36 +37,18 @@ function App() {
     return (
 
         <Container fluid className="">
-
             <BrowserRouter>
+                <Header />
+                <div className="overflow-auto pb-[112px] ">
+                        <Routes>
 
-                <DarkThemeProvider>
+                            {DefaultRoutes()}
 
-                    <Header />
-
-                    <div className="overflow-auto pb-[112px] ">
-
-                        <TabPanesProvider>
-
-                            <Routes>
-
-                                {DefaultRoutes()}
-
-                            </Routes>
-
-                        </TabPanesProvider>
-
-                        <ToastContainer />
-
-                    </div>
-
-                    <Footer />
-
-
-                </DarkThemeProvider>
-
+                        </Routes>
+                    <ToastContainer />
+                </div>
+                <Footer />
             </BrowserRouter>
-
         </Container>
 
     );

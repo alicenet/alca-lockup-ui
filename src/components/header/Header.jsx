@@ -2,12 +2,9 @@ import React from "react";
 import { Menu, Header as SHeader } from "semantic-ui-react";
 import { Link, useLocation } from "react-router-dom";
 import { Logo } from "components";
-import { DarkThemeContext } from "contexts";
 import { LINKS } from "utils/constants";
 
 export function Header() {
-
-    const { isDark, toggle } = React.useContext(DarkThemeContext);
 
     const location = useLocation();
 
@@ -21,12 +18,12 @@ export function Header() {
 
             <Menu.Item position="right" className="items-center" >
 
-                <Menu.Item as={Link} to="/swap" active={location.pathname == "/" || location.pathname == "/swap"}>
+                {/* <Menu.Item as={Link} to="/swap" active={location.pathname == "/" || location.pathname == "/swap"}>
                     MAD => ALCA Token Migration
-                </Menu.Item>
+                </Menu.Item> */}
 
-                <Menu.Item as={Link} to="/stake" active={location.pathname == "/stake"}>
-                    Stake
+                <Menu.Item as={Link} to="/stake" active={location.pathname == "/"}>
+                    ALCA Staking
                 </Menu.Item>
 
             </Menu.Item>
