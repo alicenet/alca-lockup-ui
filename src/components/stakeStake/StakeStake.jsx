@@ -26,8 +26,11 @@ export function StakeStake() {
             if(!stakeAmt) return;
             setMessage("");
             setAllowanceMet(ethers.BigNumber.from(alcaStakeAllowance || 0).gt(ethers.utils.parseUnits(stakeAmt || "0", DECIMALS)));
+            if(ethers.utils.parseUnits(stakeAmt || "0", DECIMALS).gt(ethers.utils.parseUnits(alcaBalance || "0", DECIMALS))){
+                setMessage("Stake amount higher than current balance");
+            }
         } catch (exc) {
-            setMessage("There was a problem with your input, please verify")
+            setMessage("There was a problem with your input, please verify");
         }
     }, [stakeAmt]);
 
