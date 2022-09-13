@@ -1,12 +1,12 @@
-
+import React from "react";
 import ethAdapter from "eth/ethAdapter";
 import { ethers } from "ethers";
-import React from "react";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
-import { Grid, Header, Input, Button } from 'semantic-ui-react'
+import { Grid, Header, Input, Button } from "semantic-ui-react";
 import { classNames } from "utils/generic";
+
+const DECIMALS = 18;
 
 export function StakeStake() {
 
@@ -18,23 +18,47 @@ export function StakeStake() {
     const dispatch = useDispatch();
     const [stakeAmt, setStakeAmt] = React.useState();
     const [waiting, setWaiting] = React.useState(false);
+    const [message, setMessage] = React.useState("");
+    const [allowanceMet, setAllowanceMet] = React.useState(false);
 
-    const allowanceMet = ethers.BigNumber.from(alcaStakeAllowance || 0).gt(ethers.BigNumber.from(stakeAmt || 0));
+    React.useEffect(() => {
+        try {
+            if(!stakeAmt) return;
+            setMessage("");
+            setAllowanceMet(ethers.BigNumber.from(alcaStakeAllowance || 0).gt(ethers.utils.parseUnits(stakeAmt || "0", DECIMALS)));
+        } catch (exc) {
+            setMessage("There was a problem with your input, please verify")
+        }
+    }, [stakeAmt]);
 
     const approveStaking = async () => {
-        setWaiting(true)
-        let tx = await ethAdapter.sendStakingAllowanceRequest();
-        let rec = await tx.wait();
-        setWaiting(false)
-        dispatch(APPLICATION_ACTIONS.updateBalances())
+        try {
+            setMessage("");
+            setWaiting(true)
+            let tx = await ethAdapter.sendStakingAllowanceRequest();
+            await tx.wait();
+            setWaiting(false);
+            dispatch(APPLICATION_ACTIONS.updateBalances());
+            setMessage("Stake request sent!");
+        } catch (exc) {
+            setWaiting(false);
+            setMessage("There was a problem with your request, please verify or try again later");
+        }
     }
 
     const stake = async () => {
-        setWaiting(true)
-        let tx = await ethAdapter.openStakingPosition(stakeAmt);
-        let rec = await tx.wait();
-        setWaiting(false)
-        dispatch(APPLICATION_ACTIONS.updateBalances())
+        try {
+            setMessage("");
+            setWaiting(true)
+            let tx = await ethAdapter.openStakingPosition(stakeAmt);
+            let rec = await tx.wait();
+            setWaiting(false);
+            dispatch(APPLICATION_ACTIONS.updateBalances());
+            setMessage("Approve staking sent!");
+        } catch (exc) {
+            setWaiting(false);
+            setMessage("There was a problem with your request, please verify or try again later");
+        }
     }
 
     return (
@@ -73,6 +97,10 @@ export function StakeStake() {
                         disabled={!stakeAmt}
                         loading={waiting}
                     />
+                </div>
+
+                <div className={classNames("text-xs mt-8")}>
+                    {message}
                 </div>
 
                 <div className={classNames("text-xs mt-8", { hidden: allowanceMet })}>
