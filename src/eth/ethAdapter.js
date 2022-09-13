@@ -34,45 +34,15 @@ class EthAdapter {
      * Listen for balance updates
      */
     async _balanceLoop() {
-        let accts = await this.provider.send("eth_requestAccounts", []); // Request accounts
+        // Request accounts
+        const accts = await this.provider.send("eth_requestAccounts", []); 
         if (accts.length === 0) {
             console.log("balfail")
             return;
         }
-        // TODO remove console logs
-        console.log("BALANCE")
+
         this.updateBalances();
-        await this._fetchOwnerIDS();
         setTimeout(this._balanceLoop.bind(this), this.timeBetweenBalancePolls);
-    }
-
-    async _fetchOwnerIDS() {
-        // console.log(this.contracts)
-        let ids = [];
-        let fetching = true;
-        let idx = 0;
-        const address = await this._getAddressByIndex(0);
-
-        let id = await this._tryCall("PublicStaking", "tokenOfOwnerByIndex", [address, idx]);
-        // get IDS
-        // while (fetching) {
-        //     let id = await this._tryCall("PublicStaking", "tokenOfOwnerByIndex", [await this._getAddressByIndex(0), idx]);
-        //     idx++;
-        //     if (id) {
-        //         ids.push(id);
-        //     } else {
-        //         fetching = false;
-        //     }
-        // }
-
-        console.log({ ids, idx })
-
-        // get meta
-        // let meta = {};
-        // for (let id of ids) {
-        // let metadata = getTokenURI(id);
-        //     meta[id] = metadata;
-        // }
     }
 
     /**
@@ -341,6 +311,46 @@ class EthAdapter {
             let exchangeRate = await this._tryCall("AToken", "convert", [madAmt]);
             return ethers.utils.formatEther(exchangeRate).toString();
         });
+    }
+
+    /**
+     * Get staked ALCA
+     * @param {Number} accountIndex - Account index to 
+     * @returns {String} - Lowest staked amount
+     */
+    async getStakedAlca(accountIndex = 0) {
+        const ids = [];
+        let fetching = true;
+        let idx = 0;
+        const address = await this._getAddressByIndex(accountIndex);
+
+        // Get Token Ids
+        while (fetching) {
+            try {
+                const tokenID = await this._tryCall("PublicStaking", "tokenOfOwnerByIndex", [address, idx]);
+                if (tokenID) {
+                    ids.push(tokenID);
+                    idx++;
+                }
+            } catch (error) {
+                fetching = false;
+            }
+        }
+
+        // Get Metadata
+        let meta = {};
+        const shares = [];
+        for (let id of ids) {
+            let metadata = await this._tryCall("PublicStaking", "tokenURI", [id]);
+            meta[id] = metadata;
+            const metaEncoded = metadata.split("data:application/json;base64,")[1];
+            const metaParsed = JSON.parse(window.atob(metaEncoded));
+            // TODO: This needs refactor to get shares from a separate property
+            shares.push(metaParsed.description.split("\n")[2].replace(' Shares: ', ''));
+        }
+
+        const stakedAlca = Math.min(...shares).toString();
+        return ethers.utils.formatEther(stakedAlca);
     }
 
     /**

@@ -24,8 +24,6 @@ export function StakeStake() {
         setWaiting(true)
         let tx = await ethAdapter.sendStakingAllowanceRequest();
         let rec = await tx.wait();
-        // TODO remove
-        console.log({ rec });
         setWaiting(false)
         dispatch(APPLICATION_ACTIONS.updateBalances())
     }
@@ -33,11 +31,7 @@ export function StakeStake() {
     const stake = async () => {
         setWaiting(true)
         let tx = await ethAdapter.openStakingPosition(stakeAmt);
-        // TODO remove
-        console.log({ tx, value: tx.value.toString() });
         let rec = await tx.wait();
-        // TODO remove
-        console.log({ rec });
         setWaiting(false)
         dispatch(APPLICATION_ACTIONS.updateBalances())
     }
