@@ -168,7 +168,7 @@ class EthAdapter {
         try {
             return await func();
         } catch (ex) {
-            console.error({ ex });
+            console.error(ex);
             return { error: ex.message };
         }
     }
