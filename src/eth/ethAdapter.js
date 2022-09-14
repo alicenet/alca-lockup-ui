@@ -319,38 +319,37 @@ class EthAdapter {
      * @returns {String} - Lowest staked amount
      */
     async getStakedAlca(accountIndex = 0) {
-        const ids = [];
-        let fetching = true;
-        let idx = 0;
-        const address = await this._getAddressByIndex(accountIndex);
+        return this._try(async () => {
+            const ids = [];
+            let fetching = true;
+            let idx = 0;
+            const address = await this._getAddressByIndex(accountIndex);
 
-        // Get Token Ids
-        while (fetching) {
-            try {
-                const tokenID = await this._tryCall("PublicStaking", "tokenOfOwnerByIndex", [address, idx]);
-                if (tokenID) {
-                    ids.push(tokenID);
-                    idx++;
+            // Get Token Ids
+            while (fetching) {
+                try {
+                    const tokenID = await this._tryCall("PublicStaking", "tokenOfOwnerByIndex", [address, idx]);
+                    if (tokenID) ids.push(tokenID); idx++;
+                } catch (error) {
+                    fetching = false;
                 }
-            } catch (error) {
-                fetching = false;
             }
-        }
 
-        // Get Metadata
-        let meta = {};
-        const shares = [];
-        for (let id of ids) {
-            let metadata = await this._tryCall("PublicStaking", "tokenURI", [id]);
-            meta[id] = metadata;
-            const metaEncoded = metadata.split("data:application/json;base64,")[1];
-            const metaParsed = JSON.parse(window.atob(metaEncoded));
-            // TODO: This needs refactor to get shares from a separate property
-            shares.push(metaParsed.description.split("\n")[2].replace(' Shares: ', ''));
-        }
+            // Get metadata and extract shares of each token
+            let meta = {};
+            const shares = [];
+            for (let id of ids) {
+                let metadata = await this._tryCall("PublicStaking", "tokenURI", [id]);
+                meta[id] = metadata;
+                const metaEncoded = metadata.split("data:application/json;utf8,")[1];
+                const metaParsed = JSON.parse(metaEncoded);
+                const shareAttribute = metaParsed.attributes.find(item => item.trait_type === 'Shares');
+                shares.push(shareAttribute.value);
+            }
 
-        const stakedAlca = Math.min(...shares).toString();
-        return ethers.utils.formatEther(stakedAlca);
+            const stakedAlca = Math.min(...shares).toString();
+            return shares.length > 0 ? ethers.utils.formatEther(stakedAlca) : 0 ;
+        });
     }
 
     /**
