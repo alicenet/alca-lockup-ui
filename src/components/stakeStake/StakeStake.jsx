@@ -18,49 +18,49 @@ export function StakeStake() {
     const dispatch = useDispatch();
     const [stakeAmt, setStakeAmt] = React.useState();
     const [waiting, setWaiting] = React.useState(false);
-    const [message, setMessage] = React.useState("");
+    const [status, setStatus] = React.useState({});
     const [allowanceMet, setAllowanceMet] = React.useState(false);
 
     React.useEffect(() => {
         try {
             if(!stakeAmt) return;
-            setMessage("");
+            setStatus({});
             setAllowanceMet(ethers.BigNumber.from(alcaStakeAllowance || 0).gt(ethers.utils.parseUnits(stakeAmt || "0", DECIMALS)));
             if(ethers.utils.parseUnits(stakeAmt || "0", DECIMALS).gt(ethers.utils.parseUnits(alcaBalance || "0", DECIMALS))){
-                setMessage("Stake amount higher than current balance");
+                setStatus({error: true, message: "Stake amount higher than current balance"});
             }
         } catch (exc) {
-            setMessage("There was a problem with your input, please verify");
+            setStatus({error: true, message: "There was a problem with your input, please verify"});
         }
     }, [stakeAmt]);
 
     const approveStaking = async () => {
         try {
-            setMessage("");
+            setStatus({});
             setWaiting(true)
             let tx = await ethAdapter.sendStakingAllowanceRequest();
             await tx.wait();
             setWaiting(false);
             dispatch(APPLICATION_ACTIONS.updateBalances());
-            setMessage("Stake request sent!");
+            setStatus({error: false, message: "Stake request sent!"});
         } catch (exc) {
             setWaiting(false);
-            setMessage("There was a problem with your request, please verify or try again later");
+            setStatus({error: true, message: "There was a problem with your request, please verify or try again later"});
         }
     }
 
     const stake = async () => {
         try {
-            setMessage("");
+            setStatus({});
             setWaiting(true)
             let tx = await ethAdapter.openStakingPosition(stakeAmt);
             let rec = await tx.wait();
             setWaiting(false);
             dispatch(APPLICATION_ACTIONS.updateBalances());
-            setMessage("Approve staking sent!");
+            setStatus({error: false, message: "Approve staking sent!"});
         } catch (exc) {
             setWaiting(false);
-            setMessage("There was a problem with your request, please verify or try again later");
+            setStatus({error: true, message: "There was a problem with your request, please verify or try again later"});
         }
     }
 
@@ -97,13 +97,13 @@ export function StakeStake() {
                         className="mt-4"
                         content={(!alcaStakeAllowance || !stakeAmt) ? "Enter an amount" : allowanceMet ? "Stake ALCA" : "Allow ALCA*"}
                         onClick={allowanceMet ? stake : approveStaking}
-                        disabled={!stakeAmt}
+                        disabled={!stakeAmt || status?.error}
                         loading={waiting}
                     />
                 </div>
 
                 <div className={classNames("text-xs mt-8")}>
-                    {message}
+                    {status?.message}
                 </div>
 
                 <div className={classNames("text-xs mt-8", { hidden: allowanceMet })}>
