@@ -32,6 +32,7 @@ export function StakeStake() {
         } catch (exc) {
             setStatus({error: true, message: "There was a problem with your input, please verify"});
         }
+    // eslint-disable-next-line
     }, [stakeAmt]);
 
     const approveStaking = async () => {
@@ -54,7 +55,7 @@ export function StakeStake() {
             setStatus({});
             setWaiting(true)
             let tx = await ethAdapter.openStakingPosition(stakeAmt);
-            let rec = await tx.wait();
+            await tx.wait();
             setWaiting(false);
             dispatch(APPLICATION_ACTIONS.updateBalances());
             setStatus({error: false, message: "Approve staking sent!"});
