@@ -1,5 +1,5 @@
 import { Button, Container, Header, Message } from "semantic-ui-react";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import config from "utils";
 import { useSelector } from "react-redux";
 import ethAdapter from "eth/ethAdapter";
@@ -17,12 +17,11 @@ export function Connect() {
     const [agreeCookie, _] = useCookies(['agreed']);
 
     const connect = () => {
+        setError("");
         ethAdapter.connectToWeb3Wallet((err) => {
             if (err) {
                 console.error(err?.error);
                 setError(err?.error);
-            } else {
-                setError("");
             }
         });
     };

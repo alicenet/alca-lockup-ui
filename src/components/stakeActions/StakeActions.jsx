@@ -51,7 +51,7 @@ export function StakeActions() {
                                     </> : (<Connect />)}
                                     active={activeItem === 'welcome'}
                                     onClick={e => handleItemClick(e, { name: "welcome" })}
-                                    disabled={hasReadTerms}
+                                    disabled={Boolean(hasReadTerms)}
                                 />
 
                                 <Menu.Item
@@ -61,7 +61,7 @@ export function StakeActions() {
                                             {Number(alcaBalance).toLocaleString(false, {maximumFractionDigits: 4})} ALCA Available
                                         </div>
                                     </>}
-                                    disabled={!hasReadTerms || stakedAlca}
+                                    disabled={Boolean(!hasReadTerms || stakedAlca)}
                                     active={activeItem === 'stake'}
                                     onClick={e => handleItemClick(e, { name: "stake" })}
                                 />
@@ -75,7 +75,7 @@ export function StakeActions() {
                                                 : "No ALCA staked"}
                                         </div>
                                     </>}
-                                    disabled={!hasReadTerms || !stakedAlca}
+                                    disabled={Boolean(!hasReadTerms || !stakedAlca)}
                                     active={activeItem === 'unstake'}
                                     onClick={e => handleItemClick(e, { name: "unstake" })}
                                 />
@@ -90,7 +90,7 @@ export function StakeActions() {
                                             {alcaRewards > 0 ? "" : "No ALCA to claim"}
                                         </div>
                                     </>}
-                                    disabled={!hasReadTerms || (ethRewards === 0 && alcaRewards === 0 && !stakedAlca)}
+                                    disabled={Boolean(!hasReadTerms || (ethRewards === 0 && alcaRewards === 0 && !stakedAlca))}
                                     active={activeItem === 'claim'}
                                     onClick={e => handleItemClick(e, { name: "claim" })}
                                 />

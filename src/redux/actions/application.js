@@ -137,20 +137,6 @@ export const updateBalances = tokenType => {
     }
 };
 
-export const updateExchangeRate = (madTokenAmt) => {
-    return async function (dispatch) {
-        let exchangeRate = await ethAdapter.getMadTokenToALCAExchangeRate(madTokenAmt);
-        if (exchangeRate.error) {
-            toast("Error fetching ALCA exchange rate.", { type: "error", position: "bottom-center", autoClose: 1000 })
-            return;
-        }
-        dispatch({
-            type: APPLICATION_ACTION_TYPES.UPDATE_EXCHANGE_RATE,
-            payload: exchangeRate
-        })
-    }
-}
-
 export const checkAgreeCookieState = (agreeCookie) => {
     return async function (dispatch) {
         if (agreeCookie.agreed === 'true') {
@@ -182,15 +168,6 @@ export const updateApprovalHash = (txHash) => {
     }
 }
 
-export const updateMigrationHash = (txHash) => {
-    return async function (dispatch) {
-        dispatch({
-            type: APPLICATION_ACTION_TYPES.SET_MIGRATION_HASH,
-            payload: txHash
-        })
-    }
-}
-
 export const updateStartingBalances = (sMad, sAlca) => {
     return async function (dispatch, getState) {
         let state = getState();
@@ -202,11 +179,5 @@ export const updateStartingBalances = (sMad, sAlca) => {
                 alca: sAlca || startingAlca
             }
         })
-    }
-}
-
-export const updateMigrationAmount = (migrationAmount) => {
-    return async function (dispatch) {
-        dispatch({ type: APPLICATION_ACTION_TYPES.UPDATE_MIGRATION_AMOUNT, payload: migrationAmount });
     }
 }

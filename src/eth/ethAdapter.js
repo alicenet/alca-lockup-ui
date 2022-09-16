@@ -6,6 +6,12 @@ import { APPLICATION_ACTIONS } from 'redux/actions';
 import { TOKEN_TYPES } from 'redux/constants';
 import { CONTRACT_ADDRESSES } from 'config/contracts';
 
+/** 
+ * Re exported for easy importing
+ * 
+*/
+export const CONTRACT_NAMES = config.CONTRACT_NAMES;
+
 /**
  * Callback to run after establishing web3connection state pass or fail
  * @callback web3ConnectCallback
@@ -202,7 +208,7 @@ class EthAdapter {
     }
 
     async _lookupContractName(cName) {
-        const contractAddress = await this._tryCall("Factory", "lookup", [ethers.utils.formatBytes32String(cName)]);
+        const contractAddress = await this._tryCall(CONTRACT_NAMES.Factory, "lookup", [ethers.utils.formatBytes32String(cName)]);
         return contractAddress;
     }
 
@@ -278,14 +284,14 @@ class EthAdapter {
      */
     async getAlcaBalance(accountIndex = 0) {
         return this._try(async () => {
-            let balance = await this._tryCall("AToken", "balanceOf", [await this._getAddressByIndex(accountIndex)]);
+            let balance = await this._tryCall(CONTRACT_NAMES.AToken, "balanceOf", [await this._getAddressByIndex(accountIndex)]);
             return ethers.utils.formatEther(balance);
         });
     }
 
     async getPublicStakingAllowance(accountIndex = 0) {
         return this._try(async () => {
-            let allowance = await this._tryCall("AToken", "allowance", [await this._getAddressByIndex(accountIndex), CONTRACT_ADDRESSES.PublicStaking]);
+            let allowance = await this._tryCall(CONTRACT_NAMES.AToken, "allowance", [await this._getAddressByIndex(accountIndex), CONTRACT_ADDRESSES.PublicStaking]);
             return allowance.toString();
         });
     }
@@ -305,7 +311,7 @@ class EthAdapter {
             // Get Token Ids
             while (fetching) {
                 try {
-                    const tokenID = await this._tryCall("PublicStaking", "tokenOfOwnerByIndex", [address, idx]);
+                    const tokenID = await this._tryCall(CONTRACT_NAMES.PublicStaking, "tokenOfOwnerByIndex", [address, idx]);
                     if (tokenID) ids.push(tokenID); idx++;
                 } catch (error) {
                     fetching = false;
@@ -316,7 +322,7 @@ class EthAdapter {
             let meta = {};
             const shares = [];
             for (let id of ids) {
-                let metadata = await this._tryCall("PublicStaking", "tokenURI", [id]);
+                let metadata = await this._tryCall(CONTRACT_NAMES.PublicStaking, "tokenURI", [id]);
                 meta[id] = metadata;
                 const metaEncoded = metadata.split("data:application/json;utf8,")[1];
                 const metaParsed = JSON.parse(metaEncoded);
@@ -344,28 +350,23 @@ class EthAdapter {
 
     async sendStakingAllowanceRequest() {
         return await this._try(async () => {
-            let tx = await this._trySend("AToken", "approve", [CONTRACT_ADDRESSES.PublicStaking, ethers.BigNumber.from("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")])
+            let tx = await this._trySend(CONTRACT_NAMES.AToken, "approve", [CONTRACT_ADDRESSES.PublicStaking, ethers.BigNumber.from("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")])
             return tx;
         })
     }
 
     async openStakingPosition(amount) {
         return await this._try(async () => {
-            let tx = await this._trySend("PublicStaking", "mint", [ethers.utils.parseEther(amount)])
+            let tx = await this._trySend(CONTRACT_NAMES.PublicStaking, "mint", [ethers.utils.parseEther(amount)])
             return tx;
         })
     }
 
-    /**
-     * Send a migration request transaction to the alca contract for the specified amount
-     * @param {String|Number} unformattedAmount - Non wei formatted amount of mad token to migrate
-     * @returns {ethers.Transaction} - Ethers Tx -- can call wait() for mining
-     */
-    async sendMigrateRequest(unformattedAmount) {
+    async unstakingPosition(tokenID) {
         return await this._try(async () => {
-            let tx = await this._trySend("AToken", "migrate", [ethers.utils.parseEther(unformattedAmount)])
-            return tx
-        });
+            let tx = await this._trySend(CONTRACT_NAMES.PublicStaking, "burn", [tokenID])
+            return tx;
+        })
     }
 
     /**
