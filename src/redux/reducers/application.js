@@ -12,11 +12,9 @@ const initialApplicationState = {
         stakedAlca: 0,
     },
     startingBalances: {
-        mad: 0,
         alca: 0
     },
     allowances: {
-        mad: 0,
         alcaStakeAllowance: 0,
     },
     rewards: {

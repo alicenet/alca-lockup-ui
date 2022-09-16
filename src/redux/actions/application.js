@@ -167,17 +167,3 @@ export const updateApprovalHash = (txHash) => {
         })
     }
 }
-
-export const updateStartingBalances = (sMad, sAlca) => {
-    return async function (dispatch, getState) {
-        let state = getState();
-        let startingMad = state.application.startingBalances.mad;
-        let startingAlca = state.application.startingBalances.alca;
-        dispatch({
-            type: APPLICATION_ACTION_TYPES.UPDATE_STARTING_BALANCES, payload: {
-                mad: sMad || startingMad,
-                alca: sAlca || startingAlca
-            }
-        })
-    }
-}
