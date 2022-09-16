@@ -15,7 +15,7 @@ export function StakeStake() {
     }))
 
     const dispatch = useDispatch();
-    const [stakeAmt, setStakeAmt] = React.useState();
+    const [stakeAmt, setStakeAmt] = React.useState("");
     const [waiting, setWaiting] = React.useState(false);
 
     const allowanceMet = ethers.BigNumber.from(alcaStakeAllowance || 0).gt(ethers.BigNumber.from(stakeAmt || 0));
@@ -56,6 +56,7 @@ export function StakeStake() {
                     <Input
                         placeholder="Amount to stake"
                         value={stakeAmt}
+                        type="number"
                         onChange={e => setStakeAmt(e.target.value)}
                         action={{
                             content: "Max",

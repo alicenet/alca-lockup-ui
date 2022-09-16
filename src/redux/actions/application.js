@@ -92,16 +92,14 @@ export const updateBalances = tokenType => {
         let state = getState();
         let ethBalance = state.application.balances.ethereum;
         let alcaBal = state.application.balances.alca;
-        let stakedAlca = state.application.balances.stakedAlca;
+        let stakedPosition = state.application.balances.stakedPosition;
 
         if (tokenType === TOKEN_TYPES.ETHEREUM || tokenType === TOKEN_TYPES.ALL) {
             ethBalance = await ethAdapter.getEthereumBalance(0);
         }
         if (tokenType === TOKEN_TYPES.ALCA || tokenType === TOKEN_TYPES.ALL) {
             alcaBal = await ethAdapter.getAlcaBalance(0);
-        }
-        if (tokenType === TOKEN_TYPES.ALCA || tokenType === TOKEN_TYPES.ALL) {
-            stakedAlca = await ethAdapter.getStakedAlca(0);
+            stakedPosition = await ethAdapter.getStakedAlca(0);
         }
 
         let publicStakingAllowance = await ethAdapter.getPublicStakingAllowance();
@@ -124,7 +122,13 @@ export const updateBalances = tokenType => {
             payload: {
                 ethereum: ethBalance,
                 alca: alcaBal || 0, // Fallback to 0 if token doesn't exist on network
-                stakedAlca: stakedAlca || 0 // Fallback to 0 if token doesn't exist on network
+            }
+        });
+        dispatch({
+            type: APPLICATION_ACTION_TYPES.SET_STAKED_POSITION,
+            payload: {
+                stakedAlca: stakedPosition.stakedAlca || 0, // Fallback to 0 if token doesn't exist on network
+                tokenID: stakedPosition.tokenID
             }
         });
         dispatch({

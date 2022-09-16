@@ -1,14 +1,17 @@
-import React from "react";
+import ethAdapter from "eth/ethAdapter";
 import { useSelector } from "react-redux";
 import { Grid, Header, Button } from 'semantic-ui-react'
 
 export function StakeUnstake() {
-    const { stakedAlca } = useSelector(state => ({
-        stakedAlca: state.application.balances.stakedAlca,
+    const { stakedAlca, tokenID } = useSelector(state => ({
+        stakedAlca: state.application.stakedPosition.stakedAlca,
+        tokenID: state.application.stakedPosition.tokenID,
     }))
 
-    const unstakePosition = () => {
+    const unstakePosition = async () => {
         console.log('unstaking..');
+        const tx = await ethAdapter.unstakingPosition(tokenID);
+        console.log(tx)
     }
 
     return (
@@ -25,7 +28,7 @@ export function StakeUnstake() {
                 <div>
                     <Header as="h2">{stakedAlca} ALCA</Header>
 
-                    <Header as="h3">Rewards to Claim: 0.02456789012345678 ETH</Header>
+                    <Header as="h3">Rewards to Claim: 0.02456789012345678 ETH (TBD)</Header>
 
                     <p>Rewards will be sent automatically to your wallet</p>
                 </div>

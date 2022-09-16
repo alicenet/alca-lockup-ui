@@ -320,18 +320,25 @@ class EthAdapter {
 
             // Get metadata and extract shares of each token
             let meta = {};
-            const shares = [];
             for (let id of ids) {
                 let metadata = await this._tryCall(CONTRACT_NAMES.PublicStaking, "tokenURI", [id]);
-                meta[id] = metadata;
+                // TODO move to utils
                 const metaEncoded = metadata.split("data:application/json;utf8,")[1];
                 const metaParsed = JSON.parse(metaEncoded);
-                const shareAttribute = metaParsed.attributes.find(item => item.trait_type === 'Shares');
-                shares.push(shareAttribute.value);
+                console.log(metaParsed.attributes);
+
+                const shares = metaParsed.attributes.find(item => item.trait_type === 'Shares');
+                meta[id] = shares.value;
             }
 
-            const stakedAlca = Math.min(...shares).toString();
-            return shares.length > 0 ? ethers.utils.formatEther(stakedAlca) : 0 ;
+            
+            const [ tokenID, stakedAlca ] = meta && Object.keys(meta).length 
+                ? Object.entries(meta).reduce((prev, current) => (parseInt(prev[1]) < parseInt(current[1])) ? prev : current) // TODO move to utils
+                : [null, null];
+            return {
+                tokenID: tokenID,
+                stakedAlca: stakedAlca ? ethers.utils.formatEther(stakedAlca) : 0
+            };
         });
     }
 
@@ -350,7 +357,14 @@ class EthAdapter {
 
     async sendStakingAllowanceRequest() {
         return await this._try(async () => {
-            let tx = await this._trySend(CONTRACT_NAMES.AToken, "approve", [CONTRACT_ADDRESSES.PublicStaking, ethers.BigNumber.from("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")])
+            let tx = await this._trySend(
+                CONTRACT_NAMES.AToken, 
+                "approve", 
+                [
+                    CONTRACT_ADDRESSES.PublicStaking, 
+                    ethers.BigNumber.from("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
+                ]
+            )
             return tx;
         })
     }

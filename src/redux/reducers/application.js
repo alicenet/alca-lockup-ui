@@ -9,7 +9,10 @@ const initialApplicationState = {
         alca: 0,
         alcb: 0,
         ethereum: 0,
+    },
+    stakedPosition: {
         stakedAlca: 0,
+        tokenID: ""
     },
     startingBalances: {
         alca: 0
@@ -58,7 +61,6 @@ export default function applicationReducer(state = initialApplicationState, acti
         case APPLICATION_ACTION_TYPES.SET_BALANCES:
             return Object.assign({}, state, {
                 balances: { ...state.balances, ...action.payload },
-
             });
 
         case APPLICATION_ACTION_TYPES.SET_ALLOWANCES:
@@ -92,6 +94,11 @@ export default function applicationReducer(state = initialApplicationState, acti
         case APPLICATION_ACTION_TYPES.SET_APPROVAL_HASH:
             return Object.assign({}, state, {
                 approvalHash: action.payload
+            })
+
+        case APPLICATION_ACTION_TYPES.SET_STAKED_POSITION:
+            return Object.assign({}, state, {
+                stakedPosition: action.payload
             })
 
         case APPLICATION_ACTION_TYPES.UPDATE_STARTING_BALANCES:
