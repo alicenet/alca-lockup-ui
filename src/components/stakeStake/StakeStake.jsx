@@ -5,8 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
 import { Grid, Header, Input, Button } from "semantic-ui-react";
 import { classNames } from "utils/generic";
+import { CONTRACT_ADDRESSES } from "config/contracts";
 
 const DECIMALS = 18;
+const ETHERSCAN_URL = "https://etherscan.io/address/";
 
 export function StakeStake() {
 
@@ -110,6 +112,16 @@ export function StakeStake() {
                 <div className={classNames("text-xs mt-8", { hidden: allowanceMet })}>
                     *Prior to your first staked position you will be asked to approve the Staking Contract a large amount of tokens. Wallets like metamask will allow you to change this amount, and you are more than welcome to, however additional approval transactions will cost more in gas.
                 </div>
+
+                {status?.message && !status?.error && 
+                    <div>
+                        <Button
+                            className="mt-4"
+                            content={"Open in Etherscan"}
+                            onClick={() => window.open(`${ETHERSCAN_URL}${CONTRACT_ADDRESSES.PublicStaking}`, '_blank').focus()}
+                        />
+                    </div>
+                }
 
             </Grid.Column>
 
