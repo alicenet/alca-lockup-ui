@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
 import ethAdapter from "eth/ethAdapter";
 import { Grid, Header, Button, Icon } from "semantic-ui-react";
-import { copyText } from "utils/string";
+import utils from "utils";
 
 export function StakeUnstake() {
     const dispatch = useDispatch();
@@ -85,7 +85,7 @@ export function StakeUnstake() {
                         <Icon
                             name="copy"
                             className="cursor-pointer"
-                            onClick={() => copyText(txHash)}
+                            onClick={() => utils.string.copyText(txHash)}
                         />
                     </p>
                 </div>

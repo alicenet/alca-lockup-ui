@@ -64,7 +64,7 @@ export function StakeStake() {
                         onChange={e => setStakeAmt(e.target.value)}
                         action={{
                             content: "Max",
-                            onClick: () => { setStakeAmt(parseInt(alcaBalance).toString()) } // TODO Add proper format
+                            onClick: () => { setStakeAmt(parseInt(alcaBalance).toString()) } // TODO Parse properly
                         }}
                     />
                 </div>

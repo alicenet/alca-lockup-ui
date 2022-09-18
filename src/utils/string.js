@@ -17,3 +17,12 @@ export function splitStringWithEllipsis(str, lengthOnSides = 3) {
 export const copyText = (text) => {
   copy(text, { format: 'text/plain' });
 }
+/**
+ * Parse Token Metadata 
+ * @param { String } metadata 
+ * @returns { Object }
+ */
+export const parseTokenMetadata = (metadata) => {
+    const [, encodedMetaData] = metadata.split("data:application/json;utf8,");
+    return encodedMetaData ? JSON.parse(encodedMetaData) : {} ;
+}

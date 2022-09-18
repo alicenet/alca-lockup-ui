@@ -5,6 +5,7 @@ import store from 'redux/store/store';
 import { APPLICATION_ACTIONS } from 'redux/actions';
 import { TOKEN_TYPES } from 'redux/constants';
 import { CONTRACT_ADDRESSES } from 'config/contracts';
+import utils from 'utils';
 
 /** 
  * Re exported for easy importing
@@ -84,7 +85,7 @@ class EthAdapter {
      * Returns an ethers.js contract instance that has been instanced without a signer for read-only calls
      * @param { contractName } contractName - One of the available contract name strings from config
      */
-     _getReadonlyContractInstance(contractName) {
+    _getReadonlyContractInstance(contractName) {
         this._requireContractExists(contractName);
         this._requireContractAddress(contractName);
         this._requireContractAbi(contractName);
@@ -303,31 +304,31 @@ class EthAdapter {
      */
     async getStakedAlca(accountIndex = 0) {
         return this._try(async () => {
-            const ids = [];
-            let fetching = true;
-            let idx = 0;
+            const tokenIds = [];
             const address = await this._getAddressByIndex(accountIndex);
+            let fetching = true;
+            let index = 0;
 
-            // Get Token Ids
+            // Get Token tokenIds
             while (fetching) {
                 try {
-                    const tokenId = await this._tryCall(CONTRACT_NAMES.PublicStaking, "tokenOfOwnerByIndex", [address, idx]);
-                    if (tokenId) ids.push(tokenId); idx++;
+                    const tokenId = await this._tryCall(CONTRACT_NAMES.PublicStaking, "tokenOfOwnerByIndex", [address, index]);
+                    if (tokenId) tokenIds.push(tokenId); index++;
                 } catch (error) {
                     fetching = false;
                 }
             }
 
             // Get metadata and extract shares of each token
-            let meta = [];
-            for (let id of ids) {
-                let metadata = await this._tryCall(CONTRACT_NAMES.PublicStaking, "tokenURI", [id]);
-                // TODO move to utils
-                const metaEncoded = metadata.split("data:application/json;utf8,")[1];
-                const metaParsed = JSON.parse(metaEncoded);
-                const shares = metaParsed.attributes.find(item => item.trait_type === 'Shares');
-                const accumulatedEth = metaParsed.attributes.find(item => item.trait_type === 'Accumulator Eth');
-                const accumulatedAlca = metaParsed.attributes.find(item => item.trait_type === 'Accumulator Token');
+            const { findTokenAttributeByName, getMinTokenValue } = utils.object;
+            const { parseTokenMetadata } = utils.string;
+            const meta = [];
+            for (let id of tokenIds) {
+                const metadata = await this._tryCall(CONTRACT_NAMES.PublicStaking, "tokenURI", [id]);
+                const { attributes } = parseTokenMetadata(metadata);
+                const shares = findTokenAttributeByName(attributes, 'Shares');
+                const accumulatedEth = findTokenAttributeByName(attributes, 'Accumulator Eth');
+                const accumulatedAlca = findTokenAttributeByName(attributes, 'Accumulator Token');
 
                 meta.push({ 
                     tokenId: id,
@@ -337,10 +338,7 @@ class EthAdapter {
                 });
             }
 
-            const stakedAlca = meta && meta.length 
-                ? meta.reduce((prev, current) =>  (parseInt(prev.shares) < parseInt(current.shares)) ? prev : current) // TODO move to utils
-                : {};
-
+            const stakedAlca = getMinTokenValue(meta);
             return {
                 ...stakedAlca,
                 stakedAlca: stakedAlca.shares ? ethers.utils.formatEther(stakedAlca.shares) : 0,
