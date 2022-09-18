@@ -30,10 +30,14 @@ export function StakeStake() {
 
     const stake = async () => {
         setWaiting(true);
-        let tx = await ethAdapter.openStakingPosition(stakeAmt);
-        let rec = await tx.wait();
+        try {
+            let tx = await ethAdapter.openStakingPosition(stakeAmt);
+            let rec = await tx.wait();
+            dispatch(APPLICATION_ACTIONS.updateBalances())
+        } catch (err) {
+            console.error(err);
+        }
         setWaiting(false);
-        dispatch(APPLICATION_ACTIONS.updateBalances())
     }
 
     return (
@@ -60,7 +64,7 @@ export function StakeStake() {
                         onChange={e => setStakeAmt(e.target.value)}
                         action={{
                             content: "Max",
-                            onClick: () => { setStakeAmt(alcaBalance) }
+                            onClick: () => { setStakeAmt(parseInt(alcaBalance).toString()) } // TODO Add proper format
                         }}
                     />
                 </div>
