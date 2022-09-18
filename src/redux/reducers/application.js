@@ -12,17 +12,15 @@ const initialApplicationState = {
     },
     stakedPosition: {
         stakedAlca: 0,
-        tokenID: ""
+        tokenId: "",
+        alcaRewards: 0,
+        ethRewards: 0,
     },
     startingBalances: {
         alca: 0
     },
     allowances: {
         alcaStakeAllowance: 0,
-    },
-    rewards: {
-        alca: 0,
-        eth: 0,
     },
     connectedAddress: "",
     approvalHash: "",

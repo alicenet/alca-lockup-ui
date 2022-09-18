@@ -15,8 +15,8 @@ export function StakeActions() {
         alcaBalance: state.application.balances.alca,
         web3Connected: state.application.web3Connected,
         stakedAlca: state.application.stakedPosition.stakedAlca,
-        ethRewards: state.application.rewards.eth,
-        alcaRewards: state.application.rewards.alca
+        ethRewards: state.application.stakedPosition.ethRewards,
+        alcaRewards: state.application.stakedPosition.alcaRewards
     }))
 
     const [activeItem, setActiveItem] = React.useState("welcome");
@@ -82,12 +82,12 @@ export function StakeActions() {
 
                                 <Menu.Item
                                     content={<>
-                                        <Header className={classNames({ "opacity-40": !hasReadTerms || (alcaRewards === 0 && ethRewards === 0 && !stakedAlca) })}>Claim</Header>
+                                        <Header className={classNames({ "opacity-40": !hasReadTerms || (alcaRewards === 0 && ethRewards === 0 && !stakedAlca) })}>Rewards</Header>
                                         <div className="text-xs">
-                                            {ethRewards > 0 ? "" : "No ETH to claim"}
+                                            {ethRewards > 0 ? `${ethRewards} ETH to claim` : "No ETH to claim"}
                                         </div>
                                         <div className="text-xs">
-                                            {alcaRewards > 0 ? "" : "No ALCA to claim"}
+                                            {alcaRewards > 0 ? `${alcaRewards} ALCA to claim` : "No ALCA to claim"}
                                         </div>
                                     </>}
                                     disabled={Boolean(!hasReadTerms || (ethRewards === 0 && alcaRewards === 0 && !stakedAlca))}

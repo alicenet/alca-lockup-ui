@@ -1,7 +1,7 @@
 
+import React from "react";
 import ethAdapter from "eth/ethAdapter";
 import { ethers } from "ethers";
-import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
 import { Grid, Header, Input, Button } from 'semantic-ui-react'
@@ -9,9 +9,9 @@ import { classNames } from "utils/generic";
 
 export function StakeStake() {
 
-    const { alcaBalance, alcaStakeAllowance } = useSelector(s => ({
-        alcaBalance: s.application.balances.alca,
-        alcaStakeAllowance: s.application.allowances.alcaStakeAllowance
+    const { alcaBalance, alcaStakeAllowance } = useSelector(state => ({
+        alcaBalance: state.application.balances.alca,
+        alcaStakeAllowance: state.application.allowances.alcaStakeAllowance
     }))
 
     const dispatch = useDispatch();
@@ -21,18 +21,18 @@ export function StakeStake() {
     const allowanceMet = ethers.BigNumber.from(alcaStakeAllowance || 0).gt(ethers.BigNumber.from(stakeAmt || 0));
 
     const approveStaking = async () => {
-        setWaiting(true)
+        setWaiting(true);
         let tx = await ethAdapter.sendStakingAllowanceRequest();
         let rec = await tx.wait();
-        setWaiting(false)
+        setWaiting(false);
         dispatch(APPLICATION_ACTIONS.updateBalances())
     }
 
     const stake = async () => {
-        setWaiting(true)
+        setWaiting(true);
         let tx = await ethAdapter.openStakingPosition(stakeAmt);
         let rec = await tx.wait();
-        setWaiting(false)
+        setWaiting(false);
         dispatch(APPLICATION_ACTIONS.updateBalances())
     }
 

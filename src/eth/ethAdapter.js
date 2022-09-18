@@ -311,33 +311,41 @@ class EthAdapter {
             // Get Token Ids
             while (fetching) {
                 try {
-                    const tokenID = await this._tryCall(CONTRACT_NAMES.PublicStaking, "tokenOfOwnerByIndex", [address, idx]);
-                    if (tokenID) ids.push(tokenID); idx++;
+                    const tokenId = await this._tryCall(CONTRACT_NAMES.PublicStaking, "tokenOfOwnerByIndex", [address, idx]);
+                    if (tokenId) ids.push(tokenId); idx++;
                 } catch (error) {
                     fetching = false;
                 }
             }
 
             // Get metadata and extract shares of each token
-            let meta = {};
+            let meta = [];
             for (let id of ids) {
                 let metadata = await this._tryCall(CONTRACT_NAMES.PublicStaking, "tokenURI", [id]);
                 // TODO move to utils
                 const metaEncoded = metadata.split("data:application/json;utf8,")[1];
                 const metaParsed = JSON.parse(metaEncoded);
-                console.log(metaParsed.attributes);
-
                 const shares = metaParsed.attributes.find(item => item.trait_type === 'Shares');
-                meta[id] = shares.value;
+                const accumulatedEth = metaParsed.attributes.find(item => item.trait_type === 'Accumulator Eth');
+                const accumulatedAlca = metaParsed.attributes.find(item => item.trait_type === 'Accumulator Token');
+
+                meta.push({ 
+                    tokenId: id,
+                    shares: shares.value,
+                    ethRewards: accumulatedEth.value, // TODO check if this is the correct property for rewards
+                    alcaRewards: accumulatedAlca.value // TODO check if this is the correct property for rewards
+                });
             }
 
-            
-            const [ tokenID, stakedAlca ] = meta && Object.keys(meta).length 
-                ? Object.entries(meta).reduce((prev, current) => (parseInt(prev[1]) < parseInt(current[1])) ? prev : current) // TODO move to utils
-                : [null, null];
+            const stakedAlca = meta && meta.length 
+                ? meta.reduce((prev, current) =>  (parseInt(prev.shares) < parseInt(current.shares)) ? prev : current) // TODO move to utils
+                : {};
+
             return {
-                tokenID: tokenID,
-                stakedAlca: stakedAlca ? ethers.utils.formatEther(stakedAlca) : 0
+                ...stakedAlca,
+                stakedAlca: stakedAlca.shares ? ethers.utils.formatEther(stakedAlca.shares) : 0,
+                ethRewards: stakedAlca.ethRewards || 0, 
+                alcaRewards: stakedAlca.alcaRewards || 0
             };
         });
     }
@@ -376,9 +384,9 @@ class EthAdapter {
         })
     }
 
-    async unstakingPosition(tokenID) {
+    async unstakingPosition(tokenId) {
         return await this._try(async () => {
-            let tx = await this._trySend(CONTRACT_NAMES.PublicStaking, "burn", [tokenID])
+            let tx = await this._trySend(CONTRACT_NAMES.PublicStaking, "burn", [tokenId])
             return tx;
         })
     }

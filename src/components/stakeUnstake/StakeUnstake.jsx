@@ -1,25 +1,42 @@
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { APPLICATION_ACTIONS } from "redux/actions";
 import ethAdapter from "eth/ethAdapter";
-import { useSelector } from "react-redux";
-import { Grid, Header, Button } from 'semantic-ui-react'
+import { Grid, Header, Button } from "semantic-ui-react";
 
 export function StakeUnstake() {
-    const { stakedAlca, tokenID } = useSelector(state => ({
+    const dispatch = useDispatch();
+    const [waiting, setWaiting] = React.useState(false);
+    const [success, setSuccessStatus] = React.useState(false);
+    const [txHash, setTxHash] = React.useState('');
+
+    const { stakedAlca, tokenId, ethRewards } = useSelector(state => ({
         stakedAlca: state.application.stakedPosition.stakedAlca,
-        tokenID: state.application.stakedPosition.tokenID,
+        tokenId: state.application.stakedPosition.tokenId,
+        ethRewards: state.application.stakedPosition.ethRewards,
     }))
 
     const unstakePosition = async () => {
-        console.log('unstaking..');
-        const tx = await ethAdapter.unstakingPosition(tokenID);
-        console.log(tx)
+        setWaiting(true);
+        const tx = await ethAdapter.unstakingPosition(tokenId);
+        const rec = await tx.wait();
+        console.log({ rec })
+
+        setWaiting(false);
+        if(rec.transactionHash) {
+            setSuccessStatus(true);
+            setTxHash(rec.transactionHash);
+            dispatch(APPLICATION_ACTIONS.updateBalances());
+        }
     }
 
-    return (
-        <Grid padded >
+    const requestUnstake = () => (
+        <>
             <Grid.Column width={16}>
                 <Header>Unstake ALCA Position
                     <Header.Subheader>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
+                    incididunt ut labore et dolore magna aliqua.
                     </Header.Subheader>
                 </Header>
             </Grid.Column>
@@ -27,9 +44,7 @@ export function StakeUnstake() {
             <Grid.Column width={16}>
                 <div>
                     <Header as="h2">{stakedAlca} ALCA</Header>
-
-                    <Header as="h3">Rewards to Claim: 0.02456789012345678 ETH (TBD)</Header>
-
+                    <Header as="h3">Rewards to Claim: {ethRewards} ETH</Header>
                     <p>Rewards will be sent automatically to your wallet</p>
                 </div>
 
@@ -40,14 +55,45 @@ export function StakeUnstake() {
                         content={"Unstake Position"}
                         onClick={unstakePosition}
                         disabled={false}
-                        loading={false}
+                        loading={waiting}
                     />
                 </div>
-
-                {/* <div className={classNames("text-xs mt-8", { hidden: allowanceMet })}>
-                    *Prior to your first staked position you will be asked to approve the Staking Contract a large amount of tokens. Wallets like metamask will allow you to change this amount, and you are more than welcome to, however additional approval transactions will cost more in gas.
-                </div> */}
             </Grid.Column>
+        </>
+    )
+
+    const unstakedSuccessfully = () => (
+        <>
+            <Grid.Column width={16}>
+                <Header>Unstake completed
+                    <Header.Subheader>
+                        <strong>You have successfully unstaking {stakedAlca} ALCA</strong> and claimed a 
+                        <strong>reward of {ethRewards} ETH</strong> to your wallet
+                    </Header.Subheader>
+                </Header>
+            </Grid.Column>
+
+            <Grid.Column width={16}>
+                <div>
+                    <p>You can check the transaction hash below</p>
+                    <p>{txHash}</p>
+                </div>
+
+                <div>
+                    <Button
+                        className="mt-4"
+                        color="black"
+                        content={"View on Etherscan"}
+                        onClick={() => console.log('view on etherscan')}
+                    />
+                </div>
+            </Grid.Column>
+        </>
+    )
+
+    return (
+        <Grid padded >
+            {success ? unstakedSuccessfully() : requestUnstake()}
         </Grid>
     )
 }

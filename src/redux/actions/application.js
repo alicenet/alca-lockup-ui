@@ -117,18 +117,23 @@ export const updateBalances = tokenType => {
             return; 
         }
 
+        if(stakedPosition) {
+            dispatch({
+                type: APPLICATION_ACTION_TYPES.SET_STAKED_POSITION,
+                payload: {
+                    stakedAlca: stakedPosition.stakedAlca,
+                    tokenId: stakedPosition.tokenId,
+                    ethRewards: stakedPosition.ethRewards,
+                    alcaRewards: stakedPosition.alcaRewards,
+                }
+            });
+        }
+        
         dispatch({
             type: APPLICATION_ACTION_TYPES.SET_BALANCES,
             payload: {
                 ethereum: ethBalance,
                 alca: alcaBal || 0, // Fallback to 0 if token doesn't exist on network
-            }
-        });
-        dispatch({
-            type: APPLICATION_ACTION_TYPES.SET_STAKED_POSITION,
-            payload: {
-                stakedAlca: stakedPosition.stakedAlca || 0, // Fallback to 0 if token doesn't exist on network
-                tokenID: stakedPosition.tokenID
             }
         });
         dispatch({
