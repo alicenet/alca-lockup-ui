@@ -15,10 +15,10 @@ export function StakeStake() {
     }))
 
     const dispatch = useDispatch();
-    const [stakeAmt, setStakeAmt] = React.useState("");
+    const [stakeAmt, setStakeAmt] = React.useState('');
     const [waiting, setWaiting] = React.useState(false);
 
-    const allowanceMet = ethers.BigNumber.from(alcaStakeAllowance || 0).gt(ethers.BigNumber.from(stakeAmt || 0));
+    const allowanceMet = ethers.BigNumber.from(alcaStakeAllowance || "0").gt(ethers.utils.parseEther(stakeAmt || "0"));
 
     const approveStaking = async () => {
         setWaiting(true);
@@ -60,11 +60,13 @@ export function StakeStake() {
                     <Input
                         placeholder="Amount to stake"
                         value={stakeAmt}
-                        type="number"
-                        onChange={e => setStakeAmt(e.target.value)}
+                        type="text"
+                        inputMode="decimal"
+                        pattern="^[0-9]*[.]?[0-9]*$"
+                        onChange={e => e.target.validity.valid && setStakeAmt(e.target.value)}
                         action={{
                             content: "Max",
-                            onClick: () => { setStakeAmt(parseInt(alcaBalance).toString()) } // TODO Parse properly
+                            onClick: () => { setStakeAmt(alcaBalance) }
                         }}
                     />
                 </div>

@@ -321,11 +321,11 @@ class EthAdapter {
 
             // Get metadata and extract shares of each token
             const { findTokenAttributeByName, getMinTokenValue } = utils.object;
-            const { parseTokenMetadata } = utils.string;
+            const { parseTokenMetaData } = utils.string;
             const meta = [];
             for (let id of tokenIds) {
                 const metadata = await this._tryCall(CONTRACT_NAMES.PublicStaking, "tokenURI", [id]);
-                const { attributes } = parseTokenMetadata(metadata);
+                const { attributes } = parseTokenMetaData(metadata);
                 const shares = findTokenAttributeByName(attributes, 'Shares');
                 const accumulatedEth = findTokenAttributeByName(attributes, 'Accumulator Eth');
                 const accumulatedAlca = findTokenAttributeByName(attributes, 'Accumulator Token');

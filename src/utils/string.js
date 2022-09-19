@@ -22,7 +22,7 @@ export const copyText = (text) => {
  * @param { String } metadata 
  * @returns { Object }
  */
-export const parseTokenMetadata = (metadata) => {
+export const parseTokenMetaData = (metadata) => {
     const [, encodedMetaData] = metadata.split("data:application/json;utf8,");
     return encodedMetaData ? JSON.parse(encodedMetaData) : {} ;
 }
