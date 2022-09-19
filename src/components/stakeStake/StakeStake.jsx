@@ -17,7 +17,7 @@ export function StakeStake() {
     }))
 
     const dispatch = useDispatch();
-    const [stakeAmt, setStakeAmt] = React.useState('');
+    const [stakeAmt, setStakeAmt] = React.useState("");
     const [waiting, setWaiting] = React.useState(false);
     const [status, setStatus] = React.useState({});
     const [allowanceMet, setAllowanceMet] = React.useState(false);
@@ -93,52 +93,46 @@ export function StakeStake() {
         }
     }
 
-    const StakingInput = () => {
-        if(!status?.message || status.error){
-            return (
-                <>
-                    <div>
-                        <Input
-                            placeholder="Amount to stake"
-                            value={stakeAmt}
-                            type="text"
-                            inputMode="decimal"
-                            pattern="^[0-9]*[.]?[0-9]*$"
-                            onChange={e => e.target.validity.valid && setStakeAmt(e.target.value)}
-                            action={{
-                                content: "Max",
-                                onClick: () => { setStakeAmt(alcaBalance) }
-                            }}
-                        />
-                    </div>
-
-                    <div>
-                        <Button
-                            className="mt-4"
-                            color="black"
-                            content={(!alcaStakeAllowance || !stakeAmt) ? "Enter an amount" : allowanceMet ? "Stake ALCA" : "Allow ALCA*"}
-                            onClick={allowanceMet ? stake : approveStaking}
-                            disabled={!stakeAmt || status?.error}
-                            loading={waiting}
-                        />
-                    </div>
-                </>
-            )
-        } else {
-            return <></>;
-        }
-    }
-
     return (
-        <Grid padded >
-
+        <Grid padded>
             <Grid.Column width={16}>
                 <StakingHeader/>
             </Grid.Column>
 
-
             <Grid.Column width={16}>
-                <StakingInput/>
+                {(!status?.message || status.error) && (
+                    <>
+                        <div>
+                            <Input
+                                placeholder="Amount to stake"
+                                value={stakeAmt}
+                                type="text"
+                                inputMode="decimal"
+                                pattern="^[0-9]*[.]?[0-9]*$"
+                                onChange={e => e.target.validity.valid && setStakeAmt(e.target.value)}
+                                action={{
+                                    content: "Max",
+                                    onClick: () => { setStakeAmt(alcaBalance) }
+                                }}
+                            />
+                        </div>
+
+                        <div>
+                            <Button
+                                className="mt-4"
+                                color="black"
+                                content={
+                                    (!alcaStakeAllowance || !stakeAmt) 
+                                        ? "Enter an amount" 
+                                        : allowanceMet ? "Stake ALCA" : "Allow ALCA*"
+                                }
+                                onClick={allowanceMet ? stake : approveStaking}
+                                disabled={!stakeAmt || status?.error}
+                                loading={waiting}
+                            />
+                        </div>
+                    </>
+                )}
 
                 <div className={classNames("text-xs mt-8", { hidden: allowanceMet })}>
                     *Prior to your first staked position you will be asked to approve the Staking Contract a large amount of tokens.
