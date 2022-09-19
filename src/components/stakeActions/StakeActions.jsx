@@ -56,12 +56,12 @@ export function StakeActions() {
 
                                 <Menu.Item
                                     content={<>
-                                        <Header className={classNames({ "opacity-40": !hasReadTerms || stakedAlca })}>Stake</Header>
+                                        <Header className={classNames({ "opacity-40": !hasReadTerms })}>Stake</Header>
                                         <div className="text-xs">
                                             {Number(alcaBalance).toLocaleString(false, {maximumFractionDigits: 4})} ALCA Available
                                         </div>
                                     </>}
-                                    disabled={Boolean(!hasReadTerms || stakedAlca)}
+                                    disabled={Boolean(!hasReadTerms)}
                                     active={activeItem === 'stake'}
                                     onClick={e => handleItemClick(e, { name: "stake" })}
                                 />
