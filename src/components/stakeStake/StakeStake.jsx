@@ -5,10 +5,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
 import { Grid, Header, Input, Button } from "semantic-ui-react";
 import { classNames } from "utils/generic";
-import { CONTRACT_ADDRESSES } from "config/contracts";
 
 const DECIMALS = 18;
-const ETHERSCAN_URL = "https://etherscan.io/address/";
+const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://etherscan.io/tx/";
 
 export function StakeStake() {
 
@@ -22,6 +21,7 @@ export function StakeStake() {
     const [waiting, setWaiting] = React.useState(false);
     const [status, setStatus] = React.useState({});
     const [allowanceMet, setAllowanceMet] = React.useState(false);
+    const [hash, setHash] = React.useState("");
 
     React.useEffect(() => {
         try {
@@ -39,6 +39,7 @@ export function StakeStake() {
 
     const approveStaking = async () => {
         try {
+            setHash("");
             setStatus({});
             setWaiting(true)
             let tx = await ethAdapter.sendStakingAllowanceRequest();
@@ -46,6 +47,7 @@ export function StakeStake() {
             setWaiting(false);
             dispatch(APPLICATION_ACTIONS.updateBalances());
             setStatus({error: false, message: "Stake request sent!"});
+            setHash(tx?.hash);
         } catch (exc) {
             setWaiting(false);
             setStatus({error: true, message: "There was a problem with your request, please verify or try again later"});
@@ -54,16 +56,70 @@ export function StakeStake() {
 
     const stake = async () => {
         try {
+            setHash("");
             setStatus({});
             setWaiting(true)
             let tx = await ethAdapter.openStakingPosition(stakeAmt);
             await tx.wait();
             setWaiting(false);
             dispatch(APPLICATION_ACTIONS.updateBalances());
-            setStatus({error: false, message: "Approve staking sent!"});
+            setStatus({error: false, message: "Stake completed"});
+            setHash(tx?.hash);
         } catch (exc) {
             setWaiting(false);
             setStatus({error: true, message: "There was a problem with your request, please verify or try again later"});
+        }
+    }
+
+    const StakingHeader = () => {
+        if(!status?.message || status.error){
+            return (
+                <Header>Stake your ALCA
+                    <Header.Subheader>
+                        {alcaBalance} available for staking
+                    </Header.Subheader>
+                </Header>)
+        } else {
+            return (
+                <Header>
+                    {status?.message}
+                    <div className="mt-4 mb-4 text-base">
+                        You have staked {stakeAmt} ALCA, there are {alcaBalance} available for staking
+                    </div>
+                    <Header.Subheader>
+                        You can check the transaction hash below {hash}
+                    </Header.Subheader>
+                </Header>)
+        }
+    }
+
+    const StakingInput = () => {
+        if(!status?.message || status.error){
+            return (<>
+                        <div>
+                            <Input
+                                placeholder="Amount to stake"
+                                value={stakeAmt}
+                                onChange={e => setStakeAmt(e.target.value)}
+                                action={{
+                                    content: "Max",
+                                    onClick: () => { setStakeAmt(alcaBalance) }
+                                }}
+                            />
+                        </div>
+
+                        <div>
+                            <Button
+                                className="mt-4"
+                                content={(!alcaStakeAllowance || !stakeAmt) ? "Enter an amount" : allowanceMet ? "Stake ALCA" : "Allow ALCA*"}
+                                onClick={allowanceMet ? stake : approveStaking}
+                                disabled={!stakeAmt || status?.error}
+                                loading={waiting}
+                            />
+                        </div>
+                </>)
+        } else {
+            return <></>;
         }
     }
 
@@ -72,42 +128,14 @@ export function StakeStake() {
 
             <Grid.Column width={16}>
 
-                <Header>Stake your ALCA
-                    <Header.Subheader>
-                        {alcaBalance} available for staking
-                    </Header.Subheader>
-                </Header>
+                <StakingHeader/>
 
             </Grid.Column>
 
 
             <Grid.Column width={16}>
 
-                <div>
-                    <Input
-                        placeholder="Amount to stake"
-                        value={stakeAmt}
-                        onChange={e => setStakeAmt(e.target.value)}
-                        action={{
-                            content: "Max",
-                            onClick: () => { setStakeAmt(alcaBalance) }
-                        }}
-                    />
-                </div>
-
-                <div>
-                    <Button
-                        className="mt-4"
-                        content={(!alcaStakeAllowance || !stakeAmt) ? "Enter an amount" : allowanceMet ? "Stake ALCA" : "Allow ALCA*"}
-                        onClick={allowanceMet ? stake : approveStaking}
-                        disabled={!stakeAmt || status?.error}
-                        loading={waiting}
-                    />
-                </div>
-
-                <div className={classNames("text-xs mt-8")}>
-                    {status?.message}
-                </div>
+                <StakingInput/>
 
                 <div className={classNames("text-xs mt-8", { hidden: allowanceMet })}>
                     *Prior to your first staked position you will be asked to approve the Staking Contract a large amount of tokens. Wallets like metamask will allow you to change this amount, and you are more than welcome to, however additional approval transactions will cost more in gas.
@@ -117,9 +145,10 @@ export function StakeStake() {
                     <div>
                         <Button
                             className="mt-4"
-                            content={"Open in Etherscan"}
-                            onClick={() => window.open(`${ETHERSCAN_URL}${CONTRACT_ADDRESSES.PublicStaking}`, '_blank').focus()}
+                            content={"View on Etherscan"}
+                            onClick={() => window.open(`${ETHERSCAN_URL}${hash}`, '_blank').focus()}
                         />
+                        <div className="cursor-pointer text-xs mt-4" onClick={() => setStatus({})}>Stake more</div>
                     </div>
                 }
 
