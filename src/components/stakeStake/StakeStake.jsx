@@ -46,7 +46,7 @@ export function StakeStake() {
             await tx.wait();
             setWaiting(false);
             dispatch(APPLICATION_ACTIONS.updateBalances());
-            setStatus({error: false, message: "Stake request sent!"});
+            setStatus({error: false, message: "Allowance granted to the Staking Contract, you can now stake ALCA"});
             setHash(tx?.hash);
         } catch (exc) {
             setWaiting(false);
