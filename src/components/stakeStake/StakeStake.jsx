@@ -28,11 +28,17 @@ export function StakeStake() {
             if(!stakeAmt) return;
             setStatus({});
             setAllowanceMet(ethers.BigNumber.from(alcaStakeAllowance || 0).gt(ethers.utils.parseUnits(stakeAmt || "0", DECIMALS)));
-            if(ethers.utils.parseUnits(stakeAmt || "0", DECIMALS).gt(ethers.utils.parseUnits(alcaBalance || "0", DECIMALS))){
-                setStatus({error: true, message: "Stake amount higher than current balance"});
+            if(ethers.utils.parseUnits(stakeAmt || "0", DECIMALS).gt(ethers.utils.parseUnits(alcaBalance || "0", DECIMALS))) {
+                setStatus({ 
+                    error: true, 
+                    message: "Stake amount higher than current balance"
+                });
             }
         } catch (exc) {
-            setStatus({error: true, message: "There was a problem with your input, please verify"});
+            setStatus({ 
+                error: true, 
+                message: "There was a problem with your input, please verify" 
+            });
         }
     // eslint-disable-next-line
     }, [stakeAmt]);
@@ -46,11 +52,17 @@ export function StakeStake() {
             await tx.wait();
             setWaiting(false);
             dispatch(APPLICATION_ACTIONS.updateBalances());
-            setStatus({error: false, message: "Stake request sent!"});
+            setStatus({ 
+                error: false, 
+                message: "Allowance granted to the Staking Contract, you can now stake ALCA" 
+            });
             setHash(tx?.hash);
         } catch (exc) {
             setWaiting(false);
-            setStatus({error: true, message: "There was a problem with your request, please verify or try again later"});
+            setStatus({ 
+                error: true, 
+                message: "There was a problem with your request, please verify or try again later" 
+            });
         }
     }
 
@@ -63,22 +75,26 @@ export function StakeStake() {
             await tx.wait();
             setWaiting(false);
             dispatch(APPLICATION_ACTIONS.updateBalances());
-            setStatus({error: false, message: "Stake completed"});
+            setStatus({ error: false, message: "Stake completed" });
             setHash(tx?.hash);
         } catch (exc) {
             setWaiting(false);
-            setStatus({error: true, message: "There was a problem with your request, please verify or try again later"});
+            setStatus({ 
+                error: true, 
+                message: "There was a problem with your request, please verify or try again later" 
+            });
         }
     }
 
     const StakingHeader = () => {
-        if(!status?.message || status.error){
+        if(!status?.message || status.error) {
             return (
                 <Header>Stake your ALCA
                     <Header.Subheader>
                         {alcaBalance} available for staking
                     </Header.Subheader>
-                </Header>)
+                </Header>
+            )
         } else {
             return (
                 <Header>
@@ -89,7 +105,8 @@ export function StakeStake() {
                     <Header.Subheader>
                         You can check the transaction hash below {hash}
                     </Header.Subheader>
-                </Header>)
+                </Header>
+            )
         }
     }
 
