@@ -9,26 +9,21 @@ const initialApplicationState = {
         alca: 0,
         alcb: 0,
         ethereum: 0,
-        mad: 0,
+    },
+    stakedPosition: {
         stakedAlca: 0,
+        tokenId: "",
+        alcaRewards: 0,
+        ethRewards: 0,
     },
     startingBalances: {
-        mad: 0,
         alca: 0
     },
     allowances: {
-        mad: 0,
         alcaStakeAllowance: 0,
     },
-    rewards: {
-        alca: 0,
-        eth: 0,
-    },
-    alcaExchangeRate: 0, // MadTokens => Alca :: Example... If this == 3... 1 MadToken == 3 ALCA || madTokens * alcaExchangeRate = estimateReturnedAlcaTokens
     connectedAddress: "",
     approvalHash: "",
-    migrationHash: "",
-    migrationAmount: 0,
     networkId: "",
     networkName: "",
     txStatuses: Object.keys(ACTION_TYPES).map(action => {
@@ -64,7 +59,6 @@ export default function applicationReducer(state = initialApplicationState, acti
         case APPLICATION_ACTION_TYPES.SET_BALANCES:
             return Object.assign({}, state, {
                 balances: { ...state.balances, ...action.payload },
-
             });
 
         case APPLICATION_ACTION_TYPES.SET_ALLOWANCES:
@@ -90,11 +84,6 @@ export default function applicationReducer(state = initialApplicationState, acti
                 networkName: action.payload.name
             })
 
-        case APPLICATION_ACTION_TYPES.UPDATE_EXCHANGE_RATE:
-            return Object.assign({}, state, {
-                alcaExchangeRate: action.payload
-            })
-
         case APPLICATION_ACTION_TYPES.UPDATE_HAS_READ_TERMS:
             return Object.assign({}, state, {
                 hasReadTerms: action.payload
@@ -105,20 +94,14 @@ export default function applicationReducer(state = initialApplicationState, acti
                 approvalHash: action.payload
             })
 
-        case APPLICATION_ACTION_TYPES.SET_MIGRATION_HASH:
+        case APPLICATION_ACTION_TYPES.SET_STAKED_POSITION:
             return Object.assign({}, state, {
-                migrationHash: action.payload
+                stakedPosition: action.payload
             })
 
         case APPLICATION_ACTION_TYPES.UPDATE_STARTING_BALANCES:
             return Object.assign({}, state, {
                 startingBalances: action.payload
-            })
-
-
-        case APPLICATION_ACTION_TYPES.UPDATE_MIGRATION_AMOUNT:
-            return Object.assign({}, state, {
-                migrationAmount: action.payload
             })
 
         default:
