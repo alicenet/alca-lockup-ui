@@ -18,10 +18,6 @@ export function Header() {
 
             <Menu.Item position="right" className="items-center" >
 
-                {/* <Menu.Item as={Link} to="/swap" active={location.pathname == "/" || location.pathname == "/swap"}>
-                    MAD => ALCA Token Migration
-                </Menu.Item> */}
-
                 <Menu.Item as={Link} to="/stake" active={location.pathname == "/"}>
                     ALCA Staking
                 </Menu.Item>

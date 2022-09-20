@@ -5,6 +5,13 @@ import store from 'redux/store/store';
 import { APPLICATION_ACTIONS } from 'redux/actions';
 import { TOKEN_TYPES } from 'redux/constants';
 import { CONTRACT_ADDRESSES } from 'config/contracts';
+import utils from 'utils';
+
+/** 
+ * Re exported for easy importing
+ * 
+*/
+export const CONTRACT_NAMES = config.CONTRACT_NAMES;
 
 /**
  * Callback to run after establishing web3connection state pass or fail
@@ -22,6 +29,7 @@ class EthAdapter {
         this.signer = null; // Web3 Signer -- Populated on successful _connectToWeb3Wallet()
         this.contracts = config.CONTRACTS; // Contracts from config
         this._setupWeb3Listeners();
+        this.addressesFromFactory = {};
         this.timeBetweenBalancePolls = 7500;
         
         // Setup RPC provider
@@ -34,12 +42,13 @@ class EthAdapter {
      * Listen for balance updates
      */
     async _balanceLoop() {
-        let accts = await this.provider.send("eth_requestAccounts", []); // Request accounts
+        // Request accounts
+        const accts = await this.provider.send("eth_requestAccounts", []); 
         if (accts.length === 0) {
             console.log("balfail")
             return;
         }
-        console.log("BALANCE")
+
         this.updateBalances();
         setTimeout(this._balanceLoop.bind(this), this.timeBetweenBalancePolls);
     }
@@ -80,7 +89,7 @@ class EthAdapter {
         this._requireContractExists(contractName);
         this._requireContractAddress(contractName);
         this._requireContractAbi(contractName);
-        return new ethers.Contract(this.contracts[contractName].address, this.contracts[contractName].abi, this.provider);
+        return new ethers.Contract(this.addressesFromFactory[contractName] || this.contracts[contractName].address, this.contracts[contractName].abi, this.provider);
     }
 
     /**
@@ -92,7 +101,7 @@ class EthAdapter {
         this._requireContractAddress(contractName);
         this._requireContractAbi(contractName);
         this._requireSigner(contractName);
-        return new ethers.Contract(this.contracts[contractName].address, this.contracts[contractName].abi, this.signer);
+        return new ethers.Contract(this.addressesFromFactory[contractName] || this.contracts[contractName].address, this.contracts[contractName].abi, this.signer);
     }
 
     // TODO: FINISH DETERMINISTIC CONFIG SETUP
@@ -143,6 +152,7 @@ class EthAdapter {
      * @param { String } contractName
      */
     _requireContractAddress(contractName) {
+        if (this.addressesFromFactory[contractName]) { return }
         if (!this.contracts[contractName].address) {
             this._throw("Requesting contract instance for contract '" + contractName + "' with nonexistant address. Verify address has been set.");
         }
@@ -199,7 +209,7 @@ class EthAdapter {
     }
 
     async _lookupContractName(cName) {
-        let contractAddress = await this._tryCall("Factory", "lookup", [ethers.utils.formatBytes32String(cName)]);
+        const contractAddress = await this._tryCall(CONTRACT_NAMES.Factory, "lookup", [ethers.utils.formatBytes32String(cName)]);
         return contractAddress;
     }
 
@@ -224,9 +234,15 @@ class EthAdapter {
             store.dispatch(APPLICATION_ACTIONS.setWeb3Connected(true));
             store.dispatch(APPLICATION_ACTIONS.setConnectedAddress(connectedAddress));
             cb(null, connectedAddress);
+
+            // Lookup Contract Addresses
+            for (let contract in this.contracts) {
+                let address = await this._lookupContractName(contract);
+                this.addressesFromFactory[contract] = address;
+            }
+
             // Setup balance listener
             this._balanceLoop();
-            // this._lookupContractName();
         } catch (ex) {
             console.error(ex);
             store.dispatch(APPLICATION_ACTIONS.setWeb3Connected(false));
@@ -269,46 +285,66 @@ class EthAdapter {
      */
     async getAlcaBalance(accountIndex = 0) {
         return this._try(async () => {
-            let balance = await this._tryCall("AToken", "balanceOf", [await this._getAddressByIndex(accountIndex)]);
+            let balance = await this._tryCall(CONTRACT_NAMES.AToken, "balanceOf", [await this._getAddressByIndex(accountIndex)]);
             return ethers.utils.formatEther(balance);
-        });
-    }
-
-    /**
-     * Get mad token balance for an address
-     * @param {String} address - Ethereum address to which the balance should be fetched for
-     * @returns {String} - Balance of mad tokens held by the address
-     */
-    async getMadTokenBalance(accountIndex = 0) {
-        return this._try(async () => {
-            let balance = await this._tryCall("MadToken", "balanceOf", [await this._getAddressByIndex(accountIndex)])
-            return ethers.utils.formatEther(balance); // MadToken is an 18 Decimal balance like ETH, format it
-        });
-    }
-
-    /**
-     * Get mad token allowance for an address
-     * @param {String} address - Ethereum address to which the balance should be fetched for
-     * @returns {String} - Allowance of mad tokens in non-decimal (wei) value held by the address
-     */
-    async getMadTokenAllowance(accountIndex = 0) {
-        return this._try(async () => {
-            let allowance = await this._tryCall("MadToken", "allowance", [await this._getAddressByIndex(accountIndex), CONTRACT_ADDRESSES.AToken]);
-            return allowance;
         });
     }
 
     async getPublicStakingAllowance(accountIndex = 0) {
         return this._try(async () => {
-            let allowance = await this._tryCall("AToken", "allowance", [await this._getAddressByIndex(accountIndex), CONTRACT_ADDRESSES.PublicStaking]);
+            let allowance = await this._tryCall(CONTRACT_NAMES.AToken, "allowance", [await this._getAddressByIndex(accountIndex), CONTRACT_ADDRESSES.PublicStaking]);
             return allowance.toString();
         });
     }
 
-    async getMadTokenToALCAExchangeRate(madAmt) {
+    /**
+     * Get staked ALCA
+     * @param {Number} accountIndex - Account index to 
+     * @returns {String} - Lowest staked amount
+     */
+    async getStakedAlca(accountIndex = 0) {
         return this._try(async () => {
-            let exchangeRate = await this._tryCall("AToken", "convert", [madAmt]);
-            return ethers.utils.formatEther(exchangeRate).toString();
+            const tokenIds = [];
+            const address = await this._getAddressByIndex(accountIndex);
+            let fetching = true;
+            let index = 0;
+
+            // Get Token tokenIds
+            while (fetching) {
+                try {
+                    const tokenId = await this._tryCall(CONTRACT_NAMES.PublicStaking, "tokenOfOwnerByIndex", [address, index]);
+                    if (tokenId) tokenIds.push(tokenId); index++;
+                } catch (error) {
+                    fetching = false;
+                }
+            }
+
+            // Get metadata and extract shares of each token
+            const { findTokenAttributeByName, getMinTokenValue } = utils.object;
+            const { parseTokenMetadata } = utils.string;
+            const meta = [];
+            for (let id of tokenIds) {
+                const metadata = await this._tryCall(CONTRACT_NAMES.PublicStaking, "tokenURI", [id]);
+                const { attributes } = parseTokenMetadata(metadata);
+                const shares = findTokenAttributeByName(attributes, 'Shares');
+                const accumulatedEth = findTokenAttributeByName(attributes, 'Accumulator Eth');
+                const accumulatedAlca = findTokenAttributeByName(attributes, 'Accumulator Token');
+
+                meta.push({ 
+                    tokenId: id,
+                    shares: shares.value,
+                    ethRewards: accumulatedEth.value, // TODO check if this is the correct property for rewards
+                    alcaRewards: accumulatedAlca.value // TODO check if this is the correct property for rewards
+                });
+            }
+
+            const stakedAlca = getMinTokenValue(meta);
+            return {
+                ...stakedAlca,
+                stakedAlca: stakedAlca.shares ? ethers.utils.formatEther(stakedAlca.shares) : 0,
+                ethRewards: stakedAlca.ethRewards || 0, 
+                alcaRewards: stakedAlca.alcaRewards || 0
+            };
         });
     }
 
@@ -325,42 +361,32 @@ class EthAdapter {
         this.updateBalances();
     }
 
-    /**
-     * Send an allowance request for a specified index and amount
-     * @param {String|Number} unformattedAmount - Non wei formatted amount
-     * @returns {ethers.Transaction} - Ethers Tx -- can call wait() for mining
-     */
-    async sendAllowanceRequest(unformattedAmount) {
-        return await this._try(async () => {
-            let tx = await this._trySend("MadToken", "approve", [CONTRACT_ADDRESSES.AToken, ethers.utils.parseEther(unformattedAmount)]);
-            return tx;
-        })
-    }
-
     async sendStakingAllowanceRequest() {
         return await this._try(async () => {
-            let tx = await this._trySend("AToken", "approve", [CONTRACT_ADDRESSES.PublicStaking, ethers.BigNumber.from("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")])
+            let tx = await this._trySend(
+                CONTRACT_NAMES.AToken, 
+                "approve", 
+                [
+                    CONTRACT_ADDRESSES.PublicStaking, 
+                    ethers.BigNumber.from("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
+                ]
+            )
             return tx;
         })
     }
 
     async openStakingPosition(amount) {
         return await this._try(async () => {
-            let tx = await this._trySend("PublicStaking", "mint", [ethers.utils.parseEther(amount)])
+            let tx = await this._trySend(CONTRACT_NAMES.PublicStaking, "mint", [ethers.utils.parseEther(amount)])
             return tx;
         })
     }
 
-    /**
-     * Send a migration request transaction to the alca contract for the specified amount
-     * @param {String|Number} unformattedAmount - Non wei formatted amount of mad token to migrate
-     * @returns {ethers.Transaction} - Ethers Tx -- can call wait() for mining
-     */
-    async sendMigrateRequest(unformattedAmount) {
+    async unstakingPosition(tokenId) {
         return await this._try(async () => {
-            let tx = await this._trySend("AToken", "migrate", [ethers.utils.parseEther(unformattedAmount)])
-            return tx
-        });
+            let tx = await this._trySend(CONTRACT_NAMES.PublicStaking, "burn", [tokenId])
+            return tx;
+        })
     }
 
     /**

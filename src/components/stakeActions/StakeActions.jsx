@@ -14,10 +14,9 @@ export function StakeActions() {
         hasReadTerms: state.application.hasReadTerms,
         alcaBalance: state.application.balances.alca,
         web3Connected: state.application.web3Connected,
-        hasReadTerms: state.application.hasReadTerms,
-        stakedAlca: state.application.balances.stakedAlca,
-        ethRewards: state.application.rewards.eth,
-        alcaRewards: state.application.rewards.alca
+        stakedAlca: state.application.stakedPosition.stakedAlca,
+        ethRewards: state.application.stakedPosition.ethRewards,
+        alcaRewards: state.application.stakedPosition.alcaRewards
     }))
 
     const [activeItem, setActiveItem] = React.useState("welcome");
@@ -52,41 +51,46 @@ export function StakeActions() {
                                     </> : (<Connect />)}
                                     active={activeItem === 'welcome'}
                                     onClick={e => handleItemClick(e, { name: "welcome" })}
-                                    disabled={hasReadTerms}
+                                    disabled={Boolean(hasReadTerms)}
                                 />
+
                                 <Menu.Item
                                     content={<>
-                                        <Header className={classNames({ "opacity-40": !hasReadTerms })}>Stake</Header>
+                                        <Header className={classNames({ "opacity-40": !hasReadTerms || stakedAlca })}>Stake</Header>
                                         <div className="text-xs">
                                             {Number(alcaBalance).toLocaleString(false, {maximumFractionDigits: 4})} ALCA Available
                                         </div>
                                     </>}
-                                    disabled={!hasReadTerms}
+                                    disabled={Boolean(!hasReadTerms || stakedAlca)}
                                     active={activeItem === 'stake'}
                                     onClick={e => handleItemClick(e, { name: "stake" })}
                                 />
+
                                 <Menu.Item
                                     content={<>
                                         <Header className={classNames({ "opacity-40": !hasReadTerms || !stakedAlca > 0 })}>Unstake</Header>
                                         <div className="text-xs">
-                                            {stakedAlca > 0 ? "" : "No ALCA staked"}
+                                            {stakedAlca > 0 
+                                                ? `${stakedAlca} ALCA` 
+                                                : "No ALCA staked"}
                                         </div>
                                     </>}
-                                    disabled={!hasReadTerms || !stakedAlca}
+                                    disabled={Boolean(!hasReadTerms || !stakedAlca)}
                                     active={activeItem === 'unstake'}
                                     onClick={e => handleItemClick(e, { name: "unstake" })}
                                 />
+
                                 <Menu.Item
                                     content={<>
-                                        <Header className={classNames({ "opacity-40": !hasReadTerms || (alcaRewards == 0 || ethRewards == 0) })}>Claim</Header>
+                                        <Header className={classNames({ "opacity-40": !hasReadTerms || (alcaRewards === 0 && ethRewards === 0 && !stakedAlca) })}>Rewards</Header>
                                         <div className="text-xs">
-                                            {ethRewards > 0 ? "" : "No ETH to claim"}
+                                            {ethRewards > 0 ? `${ethRewards} ETH to claim` : "No ETH to claim"}
                                         </div>
                                         <div className="text-xs">
-                                            {alcaRewards > 0 ? "" : "No ALCA to claim"}
+                                            {alcaRewards > 0 ? `${alcaRewards} ALCA to claim` : "No ALCA to claim"}
                                         </div>
                                     </>}
-                                    disabled={!hasReadTerms || (ethRewards == 0 && alcaRewards == 0)}
+                                    disabled={Boolean(!hasReadTerms || (ethRewards === 0 && alcaRewards === 0 && !stakedAlca))}
                                     active={activeItem === 'claim'}
                                     onClick={e => handleItemClick(e, { name: "claim" })}
                                 />

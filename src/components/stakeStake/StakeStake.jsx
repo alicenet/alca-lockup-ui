@@ -11,13 +11,13 @@ const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://ethers
 
 export function StakeStake() {
 
-    const { alcaBalance, alcaStakeAllowance } = useSelector(s => ({
-        alcaBalance: s.application.balances.alca,
-        alcaStakeAllowance: s.application.allowances.alcaStakeAllowance
+    const { alcaBalance, alcaStakeAllowance } = useSelector(state => ({
+        alcaBalance: state.application.balances.alca,
+        alcaStakeAllowance: state.application.allowances.alcaStakeAllowance
     }))
 
     const dispatch = useDispatch();
-    const [stakeAmt, setStakeAmt] = React.useState();
+    const [stakeAmt, setStakeAmt] = React.useState("");
     const [waiting, setWaiting] = React.useState(false);
     const [status, setStatus] = React.useState({});
     const [allowanceMet, setAllowanceMet] = React.useState(false);
