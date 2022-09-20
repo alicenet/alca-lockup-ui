@@ -34,12 +34,13 @@ class EthAdapter {
      * Listen for balance updates
      */
     async _balanceLoop() {
-        let accts = await this.provider.send("eth_requestAccounts", []); // Request accounts
+        // Request accounts
+        const accts = await this.provider.send("eth_requestAccounts", []); 
         if (accts.length === 0) {
             console.log("balfail")
             return;
         }
-        console.log("BALANCE")
+
         this.updateBalances();
         setTimeout(this._balanceLoop.bind(this), this.timeBetweenBalancePolls);
     }
@@ -309,6 +310,45 @@ class EthAdapter {
         return this._try(async () => {
             let exchangeRate = await this._tryCall("AToken", "convert", [madAmt]);
             return ethers.utils.formatEther(exchangeRate).toString();
+        });
+    }
+
+    /**
+     * Get staked ALCA
+     * @param {Number} accountIndex - Account index to 
+     * @returns {String} - Lowest staked amount
+     */
+    async getStakedAlca(accountIndex = 0) {
+        return this._try(async () => {
+            const ids = [];
+            let fetching = true;
+            let idx = 0;
+            const address = await this._getAddressByIndex(accountIndex);
+
+            // Get Token Ids
+            while (fetching) {
+                try {
+                    const tokenID = await this._tryCall("PublicStaking", "tokenOfOwnerByIndex", [address, idx]);
+                    if (tokenID) ids.push(tokenID); idx++;
+                } catch (error) {
+                    fetching = false;
+                }
+            }
+
+            // Get metadata and extract shares of each token
+            let meta = {};
+            const shares = [];
+            for (let id of ids) {
+                let metadata = await this._tryCall("PublicStaking", "tokenURI", [id]);
+                meta[id] = metadata;
+                const metaEncoded = metadata.split("data:application/json;utf8,")[1];
+                const metaParsed = JSON.parse(metaEncoded);
+                const shareAttribute = metaParsed.attributes.find(item => item.trait_type === 'Shares');
+                shares.push(shareAttribute.value);
+            }
+
+            const stakedAlca = Math.min(...shares).toString();
+            return shares.length > 0 ? ethers.utils.formatEther(stakedAlca) : 0 ;
         });
     }
 

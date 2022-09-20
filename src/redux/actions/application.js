@@ -91,19 +91,17 @@ export const updateBalances = tokenType => {
     return async function (dispatch, getState) {
         let state = getState();
         let ethBalance = state.application.balances.ethereum;
-        let madBal = state.application.balances.mad;
-        let madAllowance = state.application.allowances.mad;
         let alcaBal = state.application.balances.alca;
+        let stakedAlca = state.application.balances.stakedAlca;
 
         if (tokenType === TOKEN_TYPES.ETHEREUM || tokenType === TOKEN_TYPES.ALL) {
             ethBalance = await ethAdapter.getEthereumBalance(0);
         }
-        if (tokenType === TOKEN_TYPES.MADTOKEN || tokenType === TOKEN_TYPES.ALL) {
-            madBal = await ethAdapter.getMadTokenBalance(0);
-            madAllowance = await ethAdapter.getMadTokenAllowance(0);
-        }
         if (tokenType === TOKEN_TYPES.ALCA || tokenType === TOKEN_TYPES.ALL) {
             alcaBal = await ethAdapter.getAlcaBalance(0);
+        }
+        if (tokenType === TOKEN_TYPES.ALCA || tokenType === TOKEN_TYPES.ALL) {
+            stakedAlca = await ethAdapter.getStakedAlca(0);
         }
 
         let publicStakingAllowance = await ethAdapter.getPublicStakingAllowance();
@@ -112,31 +110,26 @@ export const updateBalances = tokenType => {
             toast("Error fetching ETH balance.", { type: "error", position: "bottom-center", autoClose: 1000 })
         }
 
-        if (madBal.error || madAllowance.error) {
-            toast("Error fetching MAD balance.", { type: "error", position: "bottom-center", autoClose: 1000 })
-        }
-
         if (alcaBal.error || publicStakingAllowance.error) {
             toast("Error fetching ALCA balance.", { type: "error", position: "bottom-center", autoClose: 1000 })
         }
 
-        if (ethBalance.error || madBal.error || madAllowance.error || alcaBal.error || publicStakingAllowance.error) {
+        if (ethBalance.error || alcaBal.error || publicStakingAllowance.error) {
             console.error("Contract error, are you on the correct network?");
-            return;
+            return; 
         }
 
         dispatch({
             type: APPLICATION_ACTION_TYPES.SET_BALANCES,
             payload: {
                 ethereum: ethBalance,
-                mad: madBal || 0, // Fallback to 0 if token doesn't exist on network
-                alca: alcaBal || 0 // Fallback to 0 if token doesn't exist on network
+                alca: alcaBal || 0, // Fallback to 0 if token doesn't exist on network
+                stakedAlca: stakedAlca || 0 // Fallback to 0 if token doesn't exist on network
             }
         });
         dispatch({
             type: APPLICATION_ACTION_TYPES.SET_ALLOWANCES,
             payload: {
-                mad: madAllowance ? madAllowance : "0", // Fallback to 0 if token doesn't exist on network
                 alcaStakeAllowance: publicStakingAllowance || "0"
             }
         });

@@ -2,8 +2,7 @@
 import ethAdapter from "eth/ethAdapter";
 import { ethers } from "ethers";
 import React from "react";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
 import { Grid, Header, Input, Button } from 'semantic-ui-react'
 import { classNames } from "utils/generic";
