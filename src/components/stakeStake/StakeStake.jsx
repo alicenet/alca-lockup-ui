@@ -48,8 +48,10 @@ export function StakeStake() {
             setHash("");
             setStatus({});
             setWaiting(true)
-            let tx = await ethAdapter.sendStakingAllowanceRequest();
+
+            const tx = await ethAdapter.sendStakingAllowanceRequest();
             await tx.wait();
+
             setWaiting(false);
             dispatch(APPLICATION_ACTIONS.updateBalances());
             setStatus({ 
@@ -71,8 +73,15 @@ export function StakeStake() {
             setHash("");
             setStatus({});
             setWaiting(true)
-            let tx = await ethAdapter.openStakingPosition(stakeAmt);
+
+            const tx = await ethAdapter.openStakingPosition(stakeAmt);
             await tx.wait();
+            // TODO test only
+            const { tokenTx, ethTx } =  await ethAdapter.distributeRewards();
+            const recToken = await tokenTx.wait();
+            const recEth = await ethTx.wait();
+            console.log({ recToken, recEth });
+
             setWaiting(false);
             dispatch(APPLICATION_ACTIONS.updateBalances());
             setStatus({ error: false, message: "Stake completed" });
