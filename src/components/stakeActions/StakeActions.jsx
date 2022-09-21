@@ -1,11 +1,7 @@
-import { Connect } from "components/connect/Connect";
-import { StakeClaim } from "components/stakeClaim/StakeClaim";
-import { StakeStake } from "components/stakeStake/StakeStake";
-import { StakeUnstake } from "components/stakeUnstake/StakeUnstake";
-import { StakeWelcome } from "components/stakeWelcome/StakeWelcome";
 import React from "react";
 import { useSelector } from "react-redux";
-import { Grid, Menu, Segment, Header } from 'semantic-ui-react'
+import { Grid, Menu, Segment, Header } from "semantic-ui-react";
+import { Connect, StakeClaim, StakeStake, StakeUnstake, StakeWelcome } from "components";
 import { classNames } from "utils/generic";
 
 export function StakeActions() {
@@ -58,7 +54,7 @@ export function StakeActions() {
                                     content={<>
                                         <Header className={classNames({ "opacity-40": !hasReadTerms || stakedAlca })}>Stake</Header>
                                         <div className="text-xs">
-                                            {Number(alcaBalance).toLocaleString(false, {maximumFractionDigits: 4})} ALCA Available
+                                            {Number(alcaBalance).toLocaleString(false, { maximumFractionDigits: 4 })} ALCA Available
                                         </div>
                                     </>}
                                     disabled={Boolean(!hasReadTerms || stakedAlca)}
@@ -70,8 +66,8 @@ export function StakeActions() {
                                     content={<>
                                         <Header className={classNames({ "opacity-40": !hasReadTerms || !stakedAlca > 0 })}>Unstake</Header>
                                         <div className="text-xs">
-                                            {stakedAlca > 0 
-                                                ? `${stakedAlca} ALCA` 
+                                            {stakedAlca > 0
+                                                ? `${stakedAlca} ALCA`
                                                 : "No ALCA staked"}
                                         </div>
                                     </>}

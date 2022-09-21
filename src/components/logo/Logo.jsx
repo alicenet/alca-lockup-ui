@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import AliceNetIcon from "assets/AliceNetSvg";
 
 export function Logo({ className = "" }) {

@@ -1,8 +1,7 @@
 import React from "react";
-import {Grid} from 'semantic-ui-react'
+import { Grid } from "semantic-ui-react";
 
 export function StakeClaim() {
-
 
     return (
         <Grid>
