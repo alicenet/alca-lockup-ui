@@ -1,6 +1,8 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Grid, Header, Button, Icon } from "semantic-ui-react";
+import { APPLICATION_ACTIONS } from "redux/actions";
+import ethAdapter from "eth/ethAdapter";
 import utils from "utils";
 
 const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://etherscan.io/tx/";
@@ -8,12 +10,29 @@ const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://ethers
 export function StakeClaim() {
     const dispatch = useDispatch();
 
-    const { ethRewards } = useSelector(state => ({
+    const { tokenId, ethRewards } = useSelector(state => ({
+        tokenId: state.application.stakedPosition.tokenId,
         ethRewards: state.application.stakedPosition.ethRewards,
     }))
 
+    const [waiting, setWaiting] = React.useState(false);
+    const [claimedAmount, setClaimedAmount] = React.useState(false);
     const [success, setSuccessStatus] = React.useState(false);
-    const [txHash, setTxHash] = React.useState('22630ed1-95827720he230e00f5950¢45954-72');
+    const [txHash, setTxHash] = React.useState('');
+
+    const collectRewards = async () => {
+        setWaiting(true);
+        const tx = await ethAdapter.collectEthProfits(tokenId);
+        const rec = tx.hash && await tx.wait();
+
+        if(rec.transactionHash) {
+            setWaiting(false);
+            setSuccessStatus(true);
+            setClaimedAmount(ethRewards);
+            setTxHash(rec.transactionHash);
+            dispatch(APPLICATION_ACTIONS.updateBalances());
+        }
+    }
 
     const claimRewards = () => (
         <>
@@ -37,9 +56,9 @@ export function StakeClaim() {
                         className="mt-4"
                         color="black"
                         content={"Claim Rewards"}
-                        onClick={() => setSuccessStatus(!success)}
+                        onClick={collectRewards}
                         disabled={false}
-                        loading={false}
+                        loading={waiting}
                     />
                 </div>
             </Grid.Column>
@@ -51,7 +70,7 @@ export function StakeClaim() {
             <Grid.Column width={16}>
                 <Header>Reward Claimed Completed
                     <Header.Subheader>
-                        <strong>You have successfully claiming a reward of {ethRewards} ETH</strong> 
+                        <strong>You have successfully claiming a reward of {claimedAmount} ETH</strong> 
                         Rewards will be sent automatically to your wallet
                     </Header.Subheader>
                 </Header>

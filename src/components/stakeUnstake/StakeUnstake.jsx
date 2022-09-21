@@ -26,8 +26,8 @@ export function StakeUnstake() {
         const tx = await ethAdapter.unstakingPosition(tokenId);
         const rec = tx.hash && await tx.wait();
 
-        setWaiting(false);
         if(rec.transactionHash) {
+            setWaiting(false);
             setSuccessStatus(true);
             setUnstakedAmount(stakedAlca);
             setClaimedRewards(ethRewards);

@@ -86,9 +86,9 @@ export function StakeActions() {
                                         <div className="text-xs">
                                             {ethRewards > 0 ? `${ethRewards} ETH to claim` : "No ETH to claim"}
                                         </div>
-                                        <div className="text-xs">
+                                        {/* <div className="text-xs">
                                             {alcaRewards > 0 ? `${alcaRewards} ALCA to claim` : "No ALCA to claim"}
-                                        </div>
+                                        </div> */}
                                     </>}
                                     disabled={Boolean(!hasReadTerms || (ethRewards === 0 && alcaRewards === 0 && !stakedAlca))}
                                     active={activeItem === 'claim'}

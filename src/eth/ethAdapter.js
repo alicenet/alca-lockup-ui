@@ -436,10 +436,10 @@ class EthAdapter {
      * @param {*} tokenId 
      * @returns 
      */
-    async collectAllProfits(tokenId) {
+    async collectEthProfits(tokenId) {
         return await this._try(async () => {
-            const payout = await this._trySend(CONTRACT_NAMES.PublicStaking, "collectAllProfits", [tokenId]);
-            return payout;
+            const payoutTx = await this._trySend(CONTRACT_NAMES.PublicStaking, "collectEth", [tokenId]);
+            return payoutTx;
         })
     }
 
@@ -449,9 +449,8 @@ class EthAdapter {
     async distributeRewards() {
         return await this._try(async () => {
             const options = { value: ethers.utils.parseEther("3").toString() };
-            const tokenTx = await this._trySend(CONTRACT_NAMES.PublicStaking, "depositToken", [42, options.value]);
             const ethTx = await this._trySend(CONTRACT_NAMES.PublicStaking, "depositEth", [42, options]);
-            return { tokenTx, ethTx };
+            return { ethTx };
         })
     }
 
