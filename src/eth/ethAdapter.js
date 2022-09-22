@@ -299,48 +299,15 @@ class EthAdapter {
 
     /**
      * Get staked ALCA
-     * @param {Number} accountIndex - Account index to 
-     * @returns {String} - Lowest staked amount
+     * @param { Number } accountIndex - Account index to 
+     * @returns { Object } - Lowest staked amount
      */
     async getStakedAlca(accountIndex = 0) {
         return this._try(async () => {
-            // TODO Abstract to internal method
-            const tokenIds = [];
             const address = await this._getAddressByIndex(accountIndex);
-            let fetching = true;
-            let index = 0;
-
-            // Get Token tokenIds
-            while (fetching) {
-                try {
-                    const tokenId = await this._tryCall(CONTRACT_NAMES.PublicStaking, "tokenOfOwnerByIndex", [address, index]);
-                    if (tokenId) tokenIds.push(tokenId); index++;
-                } catch (error) {
-                    fetching = false;
-                }
-            }
-
-            // TODO Abstract to internal method - Get metadata and extract shares of each token
-            const { findTokenAttributeByName, getMinTokenValue } = utils.object;
-            const { parseTokenMetaData } = utils.string;
-            const meta = [];
-            for (let id of tokenIds) {
-                const metadata = await this._tryCall(CONTRACT_NAMES.PublicStaking, "tokenURI", [id]);
-                const { attributes } = parseTokenMetaData(metadata);
-                const shares = findTokenAttributeByName(attributes, 'Shares');
-
-                const ethRewards = await this.estimateEthCollection(id);
-                const alcaRewards = await this.estimateTokenCollection(id);
-
-                meta.push({ 
-                    tokenId: id,
-                    shares: shares.value,
-                    ethRewards,
-                    alcaRewards
-                });
-            }
-            // TODO remove
-            console.log({ meta })
+            const tokenIds = await this._getTokenByIndex(address);
+            const { getMinTokenValue } = utils.object;
+            const meta = await this._getTokenMetaData(tokenIds);
 
             const stakedAlca = getMinTokenValue(meta);
             return {
@@ -350,6 +317,50 @@ class EthAdapter {
                 alcaRewards: stakedAlca.alcaRewards || 0
             };
         });
+    }
+    
+    /**
+     * Get all token id for a given address 
+     * @param { String } address - Owner address
+     * @returns { Array<Number> }
+     */
+    async _getTokenByIndex(address) {
+        const tokenIds = [];
+        let fetching = true;
+        let index = 0;
+
+        while (fetching) {
+            try {
+                const tokenId = await this._tryCall(
+                    CONTRACT_NAMES.PublicStaking, 
+                    "tokenOfOwnerByIndex", 
+                    [address, index]
+                );
+                if (tokenId) tokenIds.push(tokenId); index++;
+            } catch (error) { fetching = false; }
+        }
+        return tokenIds;
+    }
+    
+    /**
+     * Get metadata for each token
+     * @param { Array<Number> } tokenIds - array of token ids
+     * @returns { Object }
+     */
+    async _getTokenMetaData(tokenIds) {
+        const meta = [];
+        const { findTokenAttributeByName } = utils.object;
+        const { parseTokenMetaData } = utils.string;
+
+        for (let id of tokenIds) {
+            const metadata = await this._tryCall(CONTRACT_NAMES.PublicStaking, "tokenURI", [id]);
+            const { attributes } = parseTokenMetaData(metadata);
+            const shares = findTokenAttributeByName(attributes, 'Shares');
+            const ethRewards = await this.estimateEthCollection(id);
+            const alcaRewards = await this.estimateTokenCollection(id);
+            meta.push({ tokenId: id, shares: shares.value, ethRewards, alcaRewards });
+        }
+        return meta;
     }
 
     /**
@@ -366,8 +377,8 @@ class EthAdapter {
     }
 
     /**
-     * TODO add docs here
-     * @returns 
+     * Send a approve request for AToken allowance
+     * @returns { Object }
      */
     async sendStakingAllowanceRequest() {
         return await this._try(async () => {
@@ -384,9 +395,9 @@ class EthAdapter {
     }
 
     /**
-     * TODO add docs here
-     * @param {*} amount 
-     * @returns 
+     * Request a stake position to be opened
+     * @param { Number } amount - Amount to be staked for a position
+     * @returns { Object }
      */
     async openStakingPosition(amount) {
         return await this._try(async () => {
@@ -396,9 +407,9 @@ class EthAdapter {
     }
 
     /**
-     * TODO add docs here
-     * @param {*} tokenId 
-     * @returns 
+     * Request to exit a staked position
+     * @param { Number } tokenId
+     * @returns { Object }
      */
     async unstakingPosition(tokenId) {
         return await this._try(async () => {
@@ -408,9 +419,9 @@ class EthAdapter {
     }
 
     /**
-     * TODO add docs here
-     * @param {*} tokenId 
-     * @returns 
+     * Get ETH rewards for a given token
+     * @param { Number } tokenId
+     * @returns { String }
      */
     async estimateEthCollection(tokenId) {
         return await this._try(async () => {
@@ -420,9 +431,9 @@ class EthAdapter {
     }
     
     /**
-     * TODO add docs here
-     * @param {*} tokenId 
-     * @returns 
+     * Get ALCA rewards for a given token
+     * @param { Number } tokenId 
+     * @returns { String }
      */
     async estimateTokenCollection(tokenId) {
         return await this._try(async () => {
@@ -432,9 +443,9 @@ class EthAdapter {
     }
 
     /**
-     * TODO add docs here
-     * @param {*} tokenId 
-     * @returns 
+     * Claim all rewards for ETH
+     * @param { Number } tokenId 
+     * @returns { Object }
      */
     async collectEthProfits(tokenId) {
         return await this._try(async () => {
@@ -444,7 +455,19 @@ class EthAdapter {
     }
 
     /**
-     * TODO tests only - remove after dev
+     * Claim all rewards for both ETH and ALCA
+     * @param { Number } tokenId 
+     * @returns { Object }
+     */
+    async collectAllProfits(tokenId) {
+        return await this._try(async () => {
+            const payoutTx = await this._trySend(CONTRACT_NAMES.PublicStaking, "collectAllProfits", [tokenId]);
+            return payoutTx;
+        })
+    }
+
+    /**
+     * TODO test only - remove before merging
      */
     async distributeRewards() {
         return await this._try(async () => {

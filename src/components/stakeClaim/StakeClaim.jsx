@@ -68,9 +68,9 @@ export function StakeClaim() {
     const claimedRewardsSuccessfully = () => (
         <>
             <Grid.Column width={16}>
-                <Header>Reward Claimed Completed
+                <Header>Reward Claim Completed
                     <Header.Subheader>
-                        <strong>You have successfully claiming a reward of {claimedAmount} ETH</strong> 
+                        <strong>You have successfully claimed a reward of {claimedAmount} ETH</strong>{' '} 
                         Rewards will be sent automatically to your wallet
                     </Header.Subheader>
                 </Header>
