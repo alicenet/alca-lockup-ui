@@ -36,7 +36,7 @@ export function StakeUnstake() {
         }
     }
 
-    const requestUnstake = () => (
+    const renderRequestUnstake = () => (
         <>
             <Grid.Column width={16}>
                 <Header>Unstake ALCA Position
@@ -68,7 +68,7 @@ export function StakeUnstake() {
         </>
     )
 
-    const unstakedSuccessfully = () => (
+    const renderUnstakedSuccessfully = () => (
         <>
             <Grid.Column width={16}>
                 <Header>Unstake completed
@@ -106,7 +106,7 @@ export function StakeUnstake() {
 
     return (
         <Grid padded >
-            {success ? unstakedSuccessfully() : requestUnstake()}
+            {success ? renderUnstakedSuccessfully() : renderRequestUnstake()}
         </Grid>
     )
 }

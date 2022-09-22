@@ -34,7 +34,7 @@ export function StakeClaim() {
         }
     }
 
-    const claimRewards = () => (
+    const renderClaimReward = () => (
         <>
             <Grid.Column width={16}>
                 <Header>Claim Rewards
@@ -65,7 +65,7 @@ export function StakeClaim() {
         </>
     )
 
-    const claimedRewardsSuccessfully = () => (
+    const renderClaimedRewardSuccessfully = () => (
         <>
             <Grid.Column width={16}>
                 <Header>Reward Claim Completed
@@ -103,7 +103,7 @@ export function StakeClaim() {
 
     return (
         <Grid>
-            {success ? claimedRewardsSuccessfully() : claimRewards()}
+            {success ? renderClaimedRewardSuccessfully() : renderClaimReward()}
         </Grid>
     )
 }
