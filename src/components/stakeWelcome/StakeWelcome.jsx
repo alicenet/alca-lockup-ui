@@ -1,10 +1,8 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import { Header, Grid, Checkbox, Segment, Button } from 'semantic-ui-react'
-import { useCookies } from 'react-cookie';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { Header, Grid, Checkbox, Segment, Button } from "semantic-ui-react";
+import { useCookies } from "react-cookie";
 import { APPLICATION_ACTIONS } from "redux/actions";
-import { setAgreeCookieTrue } from "redux/actions/application";
 
 export function StakeWelcome({ stepForward }) {
 
@@ -31,11 +29,14 @@ export function StakeWelcome({ stepForward }) {
         if (hasReadTerms && web3Connected) {
             stepForward();
         }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [hasReadTerms, web3Connected])
 
     // Check for cookie if exists, dispatch update, 
     React.useEffect(() => {
-        dispatch(APPLICATION_ACTIONS.checkAgreeCookieState(agreeCookie))
+        dispatch(APPLICATION_ACTIONS.checkAgreeCookieState(agreeCookie));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const agreeAndContinue = () => {
@@ -47,7 +48,7 @@ export function StakeWelcome({ stepForward }) {
         setCheckState(s => ({ ...s, [checkType]: bool }))
     }
 
-    const stakeAll = agreeCookie?.agreed || checkState.stake1 && checkState.stake2 && checkState.stake3;
+    const stakeAll = agreeCookie?.agreed || (checkState.stake1 && checkState.stake2 && checkState.stake3);
     const unstakeAll = checkState.unstake1 && checkState.unstake2 && checkState.unstake3;
     const allCheck = stakeAll && unstakeAll;
 

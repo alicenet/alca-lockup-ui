@@ -12,13 +12,13 @@ export const invertObjectKeyValues = (obj) => {
 }
 
 /**
- * Gets the minimum share value of a given Token Metadata array of object
+ * Gets the lowest index share value of a given Token Metadata array of object
  * @param { Array<Object> } metadataArray - Token metadata array of objects
  * @returns { Object }  
  */
 export const getMinTokenValue = (metadataArray) => {
-    return metadataArray && metadataArray.length 
-        ? metadataArray.reduce((prev, current) => (parseInt(prev.shares) < parseInt(current.shares)) ? prev : current)
+    return metadataArray && metadataArray.length > 0
+        ? metadataArray[0]
         : {};
 }
 

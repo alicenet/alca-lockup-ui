@@ -14,7 +14,7 @@ export function Connect() {
         web3Connected: state.application.web3Connected,
     }));
 
-    const [agreeCookie, _] = useCookies(['agreed']);
+    const [agreeCookie] = useCookies(['agreed']);
 
     const connect = () => {
         setError("");

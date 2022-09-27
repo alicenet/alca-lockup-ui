@@ -1,4 +1,5 @@
 export * from './about/About';
+export * from './connect/Connect';
 export * from './footer/Footer';
 export * from './header/Header';
 export * from './logo/Logo';

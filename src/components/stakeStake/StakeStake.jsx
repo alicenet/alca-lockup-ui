@@ -154,6 +154,7 @@ export function StakeStake() {
                                 disabled={!stakeAmt || status?.error}
                                 loading={waiting}
                             />
+                            <div className="cursor-pointer text-xs mt-4 underline" onClick={() => window.open(`${process.env.REACT_APP__ABOUT_STAKE_URL}`, '_blank').focus()}>About ALCA Staked rewards</div>
                         </div>
                     </>
                 )}
@@ -172,7 +173,6 @@ export function StakeStake() {
                             color="black"
                             onClick={() => window.open(`${ETHERSCAN_URL}${hash}`, '_blank').focus()}
                         />
-                        <div className="cursor-pointer text-xs mt-4" onClick={() => setStatus({})}>Stake more</div>
                     </div>
                 }
             </Grid.Column>
