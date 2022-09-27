@@ -299,44 +299,15 @@ class EthAdapter {
 
     /**
      * Get staked ALCA
-     * @param {Number} accountIndex - Account index to 
-     * @returns {String} - Lowest staked amount
+     * @param { Number } accountIndex - Account index to 
+     * @returns { Object } - Lowest staked amount
      */
     async getStakedAlca(accountIndex = 0) {
         return this._try(async () => {
-            const tokenIds = [];
             const address = await this._getAddressByIndex(accountIndex);
-            let fetching = true;
-            let index = 0;
-
-            // Get Token tokenIds
-            while (fetching) {
-                try {
-                    const tokenId = await this._tryCall(CONTRACT_NAMES.PublicStaking, "tokenOfOwnerByIndex", [address, index]);
-                    if (tokenId) tokenIds.push(tokenId); index++;
-                } catch (error) {
-                    fetching = false;
-                }
-            }
-
-            // Get metadata and extract shares of each token
-            const { findTokenAttributeByName, getMinTokenValue } = utils.object;
-            const { parseTokenMetaData } = utils.string;
-            const meta = [];
-            for (let id of tokenIds) {
-                const metadata = await this._tryCall(CONTRACT_NAMES.PublicStaking, "tokenURI", [id]);
-                const { attributes } = parseTokenMetaData(metadata);
-                const shares = findTokenAttributeByName(attributes, 'Shares');
-                const accumulatedEth = findTokenAttributeByName(attributes, 'Accumulator Eth');
-                const accumulatedAlca = findTokenAttributeByName(attributes, 'Accumulator Token');
-
-                meta.push({ 
-                    tokenId: id,
-                    shares: shares.value,
-                    ethRewards: accumulatedEth.value, // TODO check if this is the correct property for rewards
-                    alcaRewards: accumulatedAlca.value // TODO check if this is the correct property for rewards
-                });
-            }
+            const tokenIds = await this._getTokenByIndex(address);
+            const { getMinTokenValue } = utils.object;
+            const meta = await this._getTokenMetaData(tokenIds);
 
             const stakedAlca = getMinTokenValue(meta);
             return {
@@ -347,13 +318,57 @@ class EthAdapter {
             };
         });
     }
+    
+    /**
+     * Get all token id for a given address 
+     * @param { String } address - Owner address
+     * @returns { Array<Number> }
+     */
+    async _getTokenByIndex(address) {
+        const tokenIds = [];
+        let fetching = true;
+        let index = 0;
+
+        while (fetching) {
+            try {
+                const tokenId = await this._tryCall(
+                    CONTRACT_NAMES.PublicStaking, 
+                    "tokenOfOwnerByIndex", 
+                    [address, index]
+                );
+                if (tokenId) tokenIds.push(tokenId); index++;
+            } catch (error) { fetching = false; }
+        }
+        return tokenIds;
+    }
+    
+    /**
+     * Get metadata for each token
+     * @param { Array<Number> } tokenIds - array of token ids
+     * @returns { Object }
+     */
+    async _getTokenMetaData(tokenIds) {
+        const meta = [];
+        const { findTokenAttributeByName } = utils.object;
+        const { parseTokenMetaData } = utils.string;
+
+        for (let id of tokenIds) {
+            const metadata = await this._tryCall(CONTRACT_NAMES.PublicStaking, "tokenURI", [id]);
+            const { attributes } = parseTokenMetaData(metadata);
+            const shares = findTokenAttributeByName(attributes, 'Shares');
+            const ethRewards = await this.estimateEthCollection(id);
+            const alcaRewards = await this.estimateTokenCollection(id);
+            meta.push({ tokenId: id, shares: shares.value, ethRewards, alcaRewards });
+        }
+        return meta;
+    }
 
     /**
      * Request a network change to the active web wallet in window.ethereum
      * @param { String } networkId - Network ID as a string -- Not Hexadecimal
      */
     async requestNetworkChange(networkId) {
-        let hexChainId = "0x" + parseInt(networkId).toString(16);
+        const hexChainId = "0x" + parseInt(networkId).toString(16);
         await window.ethereum.request({
             method: 'wallet_switchEthereumChain',
             params: [{ chainId: hexChainId }],
@@ -361,9 +376,13 @@ class EthAdapter {
         this.updateBalances();
     }
 
+    /**
+     * Send a approve request for AToken allowance
+     * @returns { Object }
+     */
     async sendStakingAllowanceRequest() {
         return await this._try(async () => {
-            let tx = await this._trySend(
+            const tx = await this._trySend(
                 CONTRACT_NAMES.AToken, 
                 "approve", 
                 [
@@ -375,17 +394,75 @@ class EthAdapter {
         })
     }
 
+    /**
+     * Request a stake position to be opened
+     * @param { Number } amount - Amount to be staked for a position
+     * @returns { Object }
+     */
     async openStakingPosition(amount) {
         return await this._try(async () => {
-            let tx = await this._trySend(CONTRACT_NAMES.PublicStaking, "mint", [ethers.utils.parseEther(amount)])
+            const tx = await this._trySend(CONTRACT_NAMES.PublicStaking, "mint", [ethers.utils.parseEther(amount)]);
             return tx;
         })
     }
 
+    /**
+     * Request to exit a staked position
+     * @param { Number } tokenId
+     * @returns { Object }
+     */
     async unstakingPosition(tokenId) {
         return await this._try(async () => {
-            let tx = await this._trySend(CONTRACT_NAMES.PublicStaking, "burn", [tokenId])
+            const tx = await this._trySend(CONTRACT_NAMES.PublicStaking, "burn", [tokenId]);
             return tx;
+        })
+    }
+
+    /**
+     * Get ETH rewards for a given token
+     * @param { Number } tokenId
+     * @returns { String }
+     */
+    async estimateEthCollection(tokenId) {
+        return await this._try(async () => {
+            const payout = await this._trySend(CONTRACT_NAMES.PublicStaking, "estimateEthCollection", [tokenId]);
+            return ethers.utils.formatEther(payout);
+        })
+    }
+    
+    /**
+     * Get ALCA rewards for a given token
+     * @param { Number } tokenId 
+     * @returns { String }
+     */
+    async estimateTokenCollection(tokenId) {
+        return await this._try(async () => {
+            const payout = await this._trySend(CONTRACT_NAMES.PublicStaking, "estimateTokenCollection", [tokenId]);
+            return ethers.utils.formatEther(payout);
+        })
+    }
+
+    /**
+     * Claim all rewards for ETH
+     * @param { Number } tokenId 
+     * @returns { Object }
+     */
+    async collectEthProfits(tokenId) {
+        return await this._try(async () => {
+            const payoutTx = await this._trySend(CONTRACT_NAMES.PublicStaking, "collectEth", [tokenId]);
+            return payoutTx;
+        })
+    }
+
+    /**
+     * Claim all rewards for both ETH and ALCA
+     * @param { Number } tokenId 
+     * @returns { Object }
+     */
+    async collectAllProfits(tokenId) {
+        return await this._try(async () => {
+            const payoutTx = await this._trySend(CONTRACT_NAMES.PublicStaking, "collectAllProfits", [tokenId]);
+            return payoutTx;
         })
     }
 
