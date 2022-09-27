@@ -148,7 +148,6 @@ export function StakeStake() {
                             content={"View on Etherscan"}
                             onClick={() => window.open(`${ETHERSCAN_URL}${hash}`, '_blank').focus()}
                         />
-                        <div className="cursor-pointer text-xs mt-4" onClick={() => setStatus({})}>Stake more</div>
                     </div>
                 }
 
