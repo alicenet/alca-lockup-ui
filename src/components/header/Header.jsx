@@ -1,5 +1,5 @@
 import React from "react";
-import { Menu, Header as SHeader } from "semantic-ui-react";
+import { Menu } from "semantic-ui-react";
 import { Link, useLocation } from "react-router-dom";
 import { Logo } from "components";
 import { LINKS } from "utils/constants";
@@ -18,7 +18,7 @@ export function Header() {
 
             <Menu.Item position="right" className="items-center" >
 
-                <Menu.Item as={Link} to="/stake" active={location.pathname == "/"}>
+                <Menu.Item as={Link} to="/stake" active={location.pathname === "/"}>
                     ALCA Staking
                 </Menu.Item>
 
