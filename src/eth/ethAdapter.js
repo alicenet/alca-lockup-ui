@@ -467,17 +467,6 @@ class EthAdapter {
     }
 
     /**
-     * TODO test only - remove before merging
-     */
-    async distributeRewards() {
-        return await this._try(async () => {
-            const options = { value: ethers.utils.parseEther("3").toString() };
-            const ethTx = await this._trySend(CONTRACT_NAMES.PublicStaking, "depositEth", [42, options]);
-            return { ethTx };
-        })
-    }
-
-    /**
      * Sign a simple string with this.signer
      * @param { String } message - The string to sign
      * @returns { String } -- Signed message

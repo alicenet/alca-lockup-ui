@@ -76,9 +76,6 @@ export function StakeStake() {
 
             const tx = await ethAdapter.openStakingPosition(stakeAmt);
             const rec = await tx.wait();
-            // TODO test only - remove before merge
-            const { ethTx } =  await ethAdapter.distributeRewards();
-            await ethTx.wait();
 
             if (rec.transactionHash) {
                 setWaiting(false);
