@@ -5,6 +5,8 @@ import ethAdapter from "eth/ethAdapter";
 import { Grid, Header, Button, Icon } from "semantic-ui-react";
 import utils from "utils";
 
+const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://etherscan.io/tx/";
+
 export function StakeUnstake() {
     const dispatch = useDispatch();
     const [waiting, setWaiting] = React.useState(false);
@@ -94,8 +96,8 @@ export function StakeUnstake() {
                     <Button
                         className="mt-4"
                         color="black"
-                        content={"View on Etherscan (TBD)"}
-                        onClick={() => console.log('view on etherscan')}
+                        content={"View on Etherscan"}
+                        onClick={() => window.open(`${ETHERSCAN_URL}${txHash}`, '_blank').focus()}
                     />
                 </div>
             </Grid.Column>
