@@ -18,7 +18,12 @@ export function Header() {
 
             <Menu.Item position="right" className="items-center" >
 
-                <Menu.Item as={Link} to="/stake" active={location.pathname === "/"}>
+                <Menu.Item
+                    className="cursor-pointer ml-4"
+                    onClick={() => window.location.href = LINKS.MIGRATION}
+                    content="ALCA Migration"
+                />
+                <Menu.Item as={Link} to="/" active>
                     ALCA Staking
                 </Menu.Item>
 

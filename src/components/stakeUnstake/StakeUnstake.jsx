@@ -4,6 +4,7 @@ import { APPLICATION_ACTIONS } from "redux/actions";
 import ethAdapter from "eth/ethAdapter";
 import { Grid, Header, Button, Icon } from "semantic-ui-react";
 import utils from "utils";
+import { TOKEN_TYPES } from "redux/constants";
 
 const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://etherscan.io/tx/";
 
@@ -23,16 +24,22 @@ export function StakeUnstake() {
 
     const unstakePosition = async () => {
         setWaiting(true);
-        const tx = await ethAdapter.unstakingPosition(tokenId);
-        const rec = tx.hash && await tx.wait();
 
-        if(rec.transactionHash) {
+        try {
+
+            const tx = await ethAdapter.unstakingPosition(tokenId);
+            const rec = tx.hash && await tx.wait();
+            
+            if(rec.transactionHash) {
+                await dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
+                setWaiting(false);
+                setSuccessStatus(true);
+                setUnstakedAmount(stakedAlca);
+                setClaimedRewards(ethRewards);
+                setTxHash(rec.transactionHash);
+            }
+        } catch (ex) {
             setWaiting(false);
-            setSuccessStatus(true);
-            setUnstakedAmount(stakedAlca);
-            setClaimedRewards(ethRewards);
-            setTxHash(rec.transactionHash);
-            dispatch(APPLICATION_ACTIONS.updateBalances());
         }
     }
 

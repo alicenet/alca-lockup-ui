@@ -14,16 +14,22 @@ export function Connect() {
         web3Connected: state.application.web3Connected,
     }));
 
+    const [loading, setLoading] = React.useState(false);
+
     const [agreeCookie] = useCookies(['agreed']);
 
-    const connect = () => {
+    const connect = async () => {
         setError("");
-        ethAdapter.connectToWeb3Wallet((err) => {
+        setLoading(true)
+        await ethAdapter.connectToWeb3Wallet((err) => {
             if (err) {
                 console.error(err?.error);
                 setError(err?.error);
             }
         });
+
+        setLoading(false)
+
     };
 
     return (
@@ -44,15 +50,13 @@ export function Connect() {
                     ) : <div>
                         <>{(agreeCookie?.agreed) ? 
                             <>
-                                <div>
-                                    Press the button below to connect your web3 wallet arg
-                                </div>
                                 <Button
                                     className="m-0 mt-8"
                                     secondary
                                     color="black"
                                     onClick={connect}
                                     content="Connect Wallet"
+                                    loading={loading}
                                 />
                             </> : "Please read and agree to Staking T&C first"}
                         </>

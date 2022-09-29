@@ -23,7 +23,7 @@ export function StakeActions() {
 
     const getActiveTab = () => {
         switch (activeItem) {
-            case "welcome": return <StakeWelcome stepForward={() => setActiveItem("stake")} />
+            case "welcome": return <StakeWelcome stepForward={() => stakedAlca > 0 ? setActiveItem("unstake") : setActiveItem("stake")} />
             case "stake": return <StakeStake />
             case "unstake": return <StakeUnstake />
             case "claim": return <StakeClaim />
@@ -52,12 +52,12 @@ export function StakeActions() {
 
                                 <Menu.Item
                                     content={<>
-                                        <Header className={classNames({ "opacity-40": !hasReadTerms || stakedAlca })}>Stake</Header>
+                                        <Header className={classNames({ "opacity-40": !hasReadTerms || stakedAlca || !web3Connected })}>Stake</Header>
                                         <div className="text-xs">
                                             {Number(alcaBalance).toLocaleString(false, { maximumFractionDigits: 4 })} ALCA Available
                                         </div>
                                     </>}
-                                    disabled={Boolean(!hasReadTerms || stakedAlca)}
+                                    disabled={Boolean(!hasReadTerms || stakedAlca || !web3Connected)}
                                     active={activeItem === 'stake'}
                                     onClick={e => handleItemClick(e, { name: "stake" })}
                                 />
