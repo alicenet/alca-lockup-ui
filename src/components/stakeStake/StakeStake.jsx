@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
 import { Grid, Header, Input, Button } from "semantic-ui-react";
 import { classNames } from "utils/generic";
+import { TOKEN_TYPES } from "redux/constants";
 
 const DECIMALS = 18;
 const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://etherscan.io/tx/";
@@ -22,6 +23,10 @@ export function StakeStake() {
     const [status, setStatus] = React.useState({});
     const [allowanceMet, setAllowanceMet] = React.useState(false);
     const [hash, setHash] = React.useState("");
+
+    React.useEffect( () => {
+        setStakeAmt("")
+    }, [])
 
     React.useEffect(() => {
         try {
@@ -78,13 +83,16 @@ export function StakeStake() {
             const rec = await tx.wait();
 
             if (rec.transactionHash) {
-                setWaiting(false);
+                console.log("hit 1");
+                await dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
+                console.log("hit 2");
                 setStatus({ error: false, message: "Stake completed" });
                 setHash(rec.transactionHash);
-                setStakeAmt("");
-                dispatch(APPLICATION_ACTIONS.updateBalances());
+                // setStakeAmt(""); // Was resetting a UI element to the user
+                setWaiting(false);
             }
         } catch (exc) {
+            console.log('uhoh')
             setWaiting(false);
             setStatus({ 
                 error: true, 
@@ -107,7 +115,7 @@ export function StakeStake() {
                 <Header>
                     {status?.message}
                     <div className="mt-4 mb-4 text-base">
-                        You have staked {stakeAmt} ALCA, there are {alcaBalance} available for staking
+                        You have successfully staked {stakeAmt} ALCA
                     </div>
                     <Header.Subheader>
                         You can check the transaction hash below {hash}

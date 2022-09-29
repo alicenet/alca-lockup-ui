@@ -48,8 +48,7 @@ class EthAdapter {
             console.log("balfail")
             return;
         }
-
-        this.updateBalances();
+        await this.updateBalances();
         setTimeout(this._balanceLoop.bind(this), this.timeBetweenBalancePolls);
     }
 
@@ -231,18 +230,21 @@ class EthAdapter {
             this.signer = this.provider.getSigner(); // Get the signer
             let connectedAddress = await this._getAddressByIndex(0);
             store.dispatch(APPLICATION_ACTIONS.updateNetwork(String(parseInt(window.ethereum.chainId, 16))));
-            store.dispatch(APPLICATION_ACTIONS.setWeb3Connected(true));
             store.dispatch(APPLICATION_ACTIONS.setConnectedAddress(connectedAddress));
-            cb(null, connectedAddress);
-
+            
             // Lookup Contract Addresses
             for (let contract in this.contracts) {
                 let address = await this._lookupContractName(contract);
                 this.addressesFromFactory[contract] = address;
             }
-
+            
             // Setup balance listener
-            this._balanceLoop();
+            await this._balanceLoop();
+            
+            cb(null, connectedAddress);
+            store.dispatch(APPLICATION_ACTIONS.setWeb3Connected(true));
+            
+            return
         } catch (ex) {
             console.error(ex);
             store.dispatch(APPLICATION_ACTIONS.setWeb3Connected(false));
@@ -491,7 +493,7 @@ class EthAdapter {
      * Sends dispatch to update the connected addresses ethereum balance
      */
     async updateBalances() {
-        store.dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
+        await store.dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
     }
 
 }

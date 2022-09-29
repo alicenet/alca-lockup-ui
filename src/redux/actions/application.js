@@ -85,7 +85,7 @@ export const toggleTxPendingStatus = (action) => {
 /**
  * Request and update balance state for requested token type
  * @param {TokenType} tokenType
- * @returns
+ * @returns {Promise}
  */
 export const updateBalances = tokenType => {
     return async function (dispatch, getState) {
