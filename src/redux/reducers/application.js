@@ -22,6 +22,13 @@ const initialApplicationState = {
     allowances: {
         alcaStakeAllowance: 0,
     },
+    lockedPosition: {
+        lockedAlca: 0,
+        tokenId: "",
+        alcaReward: 0,
+        ethReward: 0,
+        unlockDate: 0,
+    },
     connectedAddress: "",
     approvalHash: "",
     networkId: "",
@@ -35,6 +42,7 @@ const initialApplicationState = {
             errorMessage: "",
         }
     }),
+    
     hasReadTerms: false
 };
 

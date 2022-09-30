@@ -23,8 +23,11 @@ export function Header() {
                     onClick={() => window.location.href = LINKS.MIGRATION}
                     content="ALCA Migration"
                 />
-                <Menu.Item as={Link} to="/" active>
+                <Menu.Item as={Link} to="/">
                     ALCA Staking
+                </Menu.Item>
+                <Menu.Item as={Link} to="/lockup">
+                    ALCA Lockup
                 </Menu.Item>
 
             </Menu.Item>
