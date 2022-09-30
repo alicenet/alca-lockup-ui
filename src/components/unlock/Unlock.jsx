@@ -7,15 +7,13 @@ import { Grid, Header, Input, Button } from "semantic-ui-react";
 import { classNames } from "utils/generic";
 import { TOKEN_TYPES } from "redux/constants";
 
-const DECIMALS = 18;
+
 const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://etherscan.io/tx/";
 
 export function Unlock() {
 
-    const { stakedAlca, alcaBalance, alcaStakeAllowance, lockedAlca, unlockDate } = useSelector(state => ({
+    const { stakedAlca, lockedAlca, unlockDate } = useSelector(state => ({
         stakedAlca: state.application.stakedPosition.stakedAlca,
-        alcaBalance: state.application.balances.alca,
-        alcaStakeAllowance: state.application.allowances.alcaStakeAllowance,
         lockedAlca: state.application.lockedPosition.lockedAlca,
         unlockDate: state.application.lockedPosition.unlockDate,
     }))
