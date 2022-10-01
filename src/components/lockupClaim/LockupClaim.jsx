@@ -55,10 +55,6 @@ export function LockupClaim() {
     // eslint-disable-next-line
     }, [stakeAmt]);
 
-   
-
-  
-
     const ClaimHeader = () => {
         if(!status?.message || status.error) {
             return (

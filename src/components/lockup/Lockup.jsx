@@ -12,7 +12,8 @@ const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://ethers
 
 export function Lockup() {
 
-    const { stakedAlca, alcaBalance, alcaStakeAllowance } = useSelector(state => ({
+    const { stakedAlca, alcaBalance, alcaStakeAllowance, tokenID } = useSelector(state => ({
+        tokenID: state.application.stakedPosition.tokenId,
         stakedAlca: state.application.stakedPosition.stakedAlca,
         alcaBalance: state.application.balances.alca,
         alcaStakeAllowance: state.application.allowances.alcaStakeAllowance
@@ -20,13 +21,64 @@ export function Lockup() {
 
     const dispatch = useDispatch();
 
-    //figure out how to update this
-    //user's staked amount
-    const [stakeAmt, setStakeAmt] = React.useState("");
     const [waiting, setWaiting] = React.useState(false);
     const [status, setStatus] = React.useState({});
-    const [allowanceMet, setAllowanceMet] = React.useState(false);
+    const [approvedLockup, setApprovedLockup] = React.useState(false);
     const [hash, setHash] = React.useState("");
+    
+    const approveLockup = async () => {
+        try {
+            setHash("");
+            setStatus({});
+            setWaiting(true)
+            const tx = await ethAdapter.sendLockupApproval(tokenID);
+            await tx.wait();
+
+            setWaiting(false);
+            dispatch(APPLICATION_ACTIONS.updateBalances());
+            setStatus({ 
+                error: false, 
+                message: "Approval granted to the lockup contract, you can now lockup your Staked ALCA" 
+            });
+            setHash(tx?.hash);
+            setApprovedLockup(true);
+        } catch (exc) {
+            setWaiting(false);
+            setStatus({ 
+                error: true, 
+                message: "There was a problem with your request, please verify or try again later" 
+            });
+            setApprovedLockup(false);
+        }
+    }
+
+    const lockupPosition = async () => {
+        try {
+            setHash("");
+            setStatus({});
+            setWaiting(true)
+
+            const tx = await ethAdapter.lockupStakedPosition(tokenID);
+            const rec = await tx.wait();
+
+            if (rec.transactionHash) {
+                console.log("hit 1");
+                await dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
+                console.log("hit 2");
+                setStatus({ error: false, message: "lockup completed" });
+                setHash(rec.transactionHash);
+                // setStakeAmt(""); // Was resetting a UI element to the user
+                setWaiting(false);
+            }
+        } catch (exc) {
+            console.log('uhoh')
+            setWaiting(false);
+            setStatus({ 
+                error: true, 
+                message: "There was a problem with your request, please verify or try again later" 
+            });
+        }
+    }
 
     React.useEffect( () => {
         setStakeAmt("")
@@ -103,6 +155,8 @@ export function Lockup() {
                                 content={
                                     "Lockup Positions"
                                 }
+                                onClick={approvedLockup ? lockupPosition : approveLockup}
+                                disabled={stakedAlca || status?.error}
                                 loading={waiting}
                             />      
                         </div>

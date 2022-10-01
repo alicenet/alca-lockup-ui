@@ -1,5 +1,5 @@
 import 'ethers';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import config from 'config/_config';
 import store from 'redux/store/store';
 import { APPLICATION_ACTIONS } from 'redux/actions';
@@ -396,6 +396,36 @@ class EthAdapter {
         })
     }
 
+    /**
+     * approve lockup contract to transfer public staking nft token
+     * @param tokenID nft id to approve transfer of
+     * @returns { Object }
+     */
+    async sendLockupApproval(tokenID) {
+        return await this._try(async () => {
+            const tx = await this._trySend(
+                CONTRACT_NAMES.AToken, 
+                "approve", 
+                [
+                    CONTRACT_ADDRESSES.Lockup, 
+                    ethers.BigNumber.from(tokenID)
+                ]
+            )
+            return tx;
+        })
+    }
+
+    /**
+     * calls the lockup contract to initiate token transfer
+     * @param { Number } tokenID - Amount to be staked for a position
+     * @returns { Object }
+     */
+     async lockupStakedPosition(tokenID) {
+        return await this._try(async () => {
+            const tx = await this._trySend(CONTRACT_NAMES.Lockup, "lockTokens", [BigNumber.from(tokenID)]);
+            return tx;
+        })
+    }
     /**
      * Request a stake position to be opened
      * @param { Number } amount - Amount to be staked for a position
