@@ -489,6 +489,18 @@ class EthAdapter {
     }
 
     /**
+     * calls the lockup contract to initiate token transfer
+     * @param { Number } tokenID - Amount to be staked for a position
+     * @returns { Object }
+     */
+     async lockupStakedPosition(tokenID) {
+        return await this._try(async () => {
+            const tx = await this._trySend(CONTRACT_NAMES.Lockup, "lockTokens", [BigNumber.from(tokenID)]);
+            return tx;
+        })
+    }
+
+    /**
      * unlock and claim ownership of locked position and rewards
      * @param tokenID nft id held by lockup
      * @returns { Object }
@@ -564,7 +576,7 @@ class EthAdapter {
      * @param { Number } tokenId 
      * @returns { Object }
      */
-     async collectEthProfitsLockup(tokenId) {
+     async collectALCARewardsLockup(tokenId) {
         return await this._try(async () => {
             const payoutTx = await this._trySend(CONTRACT_NAMES.Lockup, "collectALCA", [tokenId]);
             return payoutTx;
@@ -578,20 +590,8 @@ class EthAdapter {
      */
      async collectAllProfitsLockup(tokenId) {
         return await this._try(async () => {
-            const payoutTx = await this._trySend(CONTRACT_NAMES.PublicStaking, "collectAllProfits", [tokenId]);
+            const payoutTx = await this._trySend(CONTRACT_NAMES.Lockup, "collectAllProfits", [tokenId]);
             return payoutTx;
-        })
-    }
-
-    /**
-     * calls the lockup contract to initiate token transfer
-     * @param { Number } tokenID - Amount to be staked for a position
-     * @returns { Object }
-     */
-     async lockupStakedPosition(tokenID) {
-        return await this._try(async () => {
-            const tx = await this._trySend(CONTRACT_NAMES.Lockup, "lockTokens", [BigNumber.from(tokenID)]);
-            return tx;
         })
     }
 
