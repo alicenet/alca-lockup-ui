@@ -1,22 +1,17 @@
 import React from "react";
 import ethAdapter from "eth/ethAdapter";
-import { ethers } from "ethers";
 import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
-import { Grid, Header, Input, Button } from "semantic-ui-react";
-import { classNames } from "utils/generic";
+import { Grid, Header, Button } from "semantic-ui-react";
 import { TOKEN_TYPES } from "redux/constants";
 
-const DECIMALS = 18;
 const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://etherscan.io/tx/";
 
 export function Lockup() {
 
-    const { stakedAlca, alcaBalance, alcaStakeAllowance, tokenID } = useSelector(state => ({
+    const { stakedAlca, tokenID } = useSelector(state => ({
         tokenID: state.application.stakedPosition.tokenId,
         stakedAlca: state.application.stakedPosition.stakedAlca,
-        alcaBalance: state.application.balances.alca,
-        alcaStakeAllowance: state.application.allowances.alcaStakeAllowance
     }))
 
     const dispatch = useDispatch();
@@ -79,30 +74,6 @@ export function Lockup() {
             });
         }
     }
-
-    React.useEffect( () => {
-        setStakeAmt("")
-    }, [])
-
-    React.useEffect(() => {
-        try {
-            if(!stakeAmt) return;
-            setStatus({});
-            setAllowanceMet(ethers.BigNumber.from(alcaStakeAllowance || 0).gt(ethers.utils.parseUnits(stakeAmt || "0", DECIMALS)));
-            if(ethers.utils.parseUnits(stakeAmt || "0", DECIMALS).gt(ethers.utils.parseUnits(alcaBalance || "0", DECIMALS))) {
-                setStatus({ 
-                    error: true, 
-                    message: "Stake amount higher than current balance"
-                });
-            }
-        } catch (exc) {
-            setStatus({ 
-                error: true, 
-                message: "There was a problem with your input, please verify" 
-            });
-        }
-    // eslint-disable-next-line
-    }, [stakeAmt]);
 
     const LockupHeader = () => {
         if(!status?.message || status.error) {
