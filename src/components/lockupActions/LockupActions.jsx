@@ -54,7 +54,7 @@ export function LockupActions() {
                                 <Menu.Item
                                     content={<>
                                         <Header className={classNames({ "opacity-40": !hasReadTerms || stakedAlca || !web3Connected })}>Lockup</Header>
-                                        <Header as="h2" className="text-sm">Staked Positions</Header>
+                                        <Header as="h2" className="text-sm">ALCA Staked Position</Header>
                                         <div className="text-xs">
                                         {`${stakedAlca}
                                                 ALCA`}
@@ -68,7 +68,7 @@ export function LockupActions() {
                                 <Menu.Item
                                     content={<>
                                         <Header className={classNames({ "opacity-40": !hasReadTerms /*|| !lockedAlca > 0*/ })}>Unlock</Header>
-                                        <Header as="h2" className="text-sm">Locked Positions</Header>
+                                        <Header as="h2" className="text-sm">Locked Position</Header>
                                         <div className="text-xs">
                                         {`${lockedAlca}
                                                 ALCA`}
@@ -82,7 +82,7 @@ export function LockupActions() {
                                 <Menu.Item
                                     content={<>
                                         <Header className={classNames({ "opacity-40": !hasReadTerms /*|| !lockedAlca > 0*/ })}>Lockup Rewards</Header>
-                                        <Header as="h2" className="text-sm">Locked Positions</Header>
+                                        <Header as="h2" className="text-sm">Locked Position</Header>
                                         <div className="text-xs">
                                             {`${lockedAlca}
                                                 ALCA`}
