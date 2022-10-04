@@ -111,6 +111,11 @@ export default function applicationReducer(state = initialApplicationState, acti
             return Object.assign({}, state, {
                 startingBalances: action.payload
             })
+            
+        case APPLICATION_ACTION_TYPES.SET_LOCKED_POSITION:
+            return Object.assign({}, state, {
+                  lockedPosition: action.payload
+            })
 
         default:
             return state;

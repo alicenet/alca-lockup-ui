@@ -52,21 +52,16 @@ export function Lockup() {
             setHash("");
             setStatus({});
             setWaiting(true)
-
             const tx = await ethAdapter.lockupStakedPosition(tokenID);
             const rec = await tx.wait();
-
             if (rec.transactionHash) {
-                console.log("hit 1");
                 await dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
-                console.log("hit 2");
                 setStatus({ error: false, message: "lockup completed" });
                 setHash(rec.transactionHash);
                 // setStakeAmt(""); // Was resetting a UI element to the user
                 setWaiting(false);
             }
         } catch (exc) {
-            console.log('uhoh')
             setWaiting(false);
             setStatus({ 
                 error: true, 
