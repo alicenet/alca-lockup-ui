@@ -29,8 +29,7 @@ function App() {
     const DefaultRoutes = () => {
         return (
             <>
-                <Route exact path="/" element={<StakeActions />} />
-                <Route exact path="/lockup" element={<LockupActions />} />
+                <Route exact path="/" element={<LockupActions />} />
             </>
         )
     };

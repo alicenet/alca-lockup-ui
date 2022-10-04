@@ -29,9 +29,7 @@ export function LockupActions() {
             default: return;
         }
     };
-    if(!hasReadTerms){
-        this.context.router.history.push("/");
-    }
+    
     return (
         <div className="flex justify-center w-full">
 
