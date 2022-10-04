@@ -5,15 +5,13 @@ import { Connect, Lockup, Unlock, LockupWelcome, LockupClaim } from "components"
 import { classNames } from "utils/generic";
 
 export function LockupActions() {
-    const { hasReadTerms, alcaBalance, web3Connected, stakedAlca, ethRewards, alcaRewards, lockedAlca } = useSelector(state => ({
+    const { hasReadTerms, web3Connected, lockedPosition, stakedPosition } = useSelector(state => ({
         hasReadTerms: state.application.hasReadTerms,
-        alcaBalance: state.application.balances.alca,
         web3Connected: state.application.web3Connected,
-        stakedAlca: state.application.stakedPosition.stakedAlca,
-        lockedAlca: state.application.lockedPosition.lockedAlca,
-        ethRewards: state.application.stakedPosition.ethRewards,
-        alcaRewards: state.application.stakedPosition.alcaRewards
+        stakedPosition: state.application.stakedPosition,
+        lockedPosition: state.application.lockedPosition,
     }))
+    
     const [activeItem, setActiveItem] = React.useState("welcome");
 
     const handleItemClick = (e, { name }) => {
@@ -22,7 +20,7 @@ export function LockupActions() {
 
     const getActiveTab = () => {
         switch (activeItem) {
-            case "welcome": return <LockupWelcome stepForward={() =>  setActiveItem("lockup") } />
+            case "welcome": return <LockupWelcome stepForward={() => lockedPosition.lockedAlca > 0 ? setActiveItem("unlock") : setActiveItem("lockup") } />
             case "lockup": return <Lockup />
             case "unlock": return <Unlock />
             case "claim": return <LockupClaim />
@@ -51,14 +49,14 @@ export function LockupActions() {
 
                                 <Menu.Item
                                     content={<>
-                                        <Header className={classNames({ "opacity-40": !hasReadTerms || stakedAlca || !web3Connected })}>Lockup</Header>
+                                        <Header className={classNames({ "opacity-40": !hasReadTerms || stakedPosition.stakedAlca || !web3Connected })}>Lockup</Header>
                                         <Header as="h2" className="text-sm">ALCA Staked Position</Header>
                                         <div className="text-xs">
-                                        {`${stakedAlca}
+                                        {`${stakedPosition.stakedAlca}
                                                 ALCA`}
                                         </div>
                                     </>}
-                                    disabled={Boolean(!hasReadTerms || stakedAlca || !web3Connected)}
+                                    disabled={Boolean(!hasReadTerms || !stakedPosition.stakedAlca || !web3Connected)}
                                     active={activeItem === 'lockup'}
                                     onClick={e => handleItemClick(e, { name: "lockup" })}
                                 />
@@ -68,11 +66,11 @@ export function LockupActions() {
                                         <Header className={classNames({ "opacity-40": !hasReadTerms /*|| !lockedAlca > 0*/ })}>Unlock</Header>
                                         <Header as="h2" className="text-sm">Locked Position</Header>
                                         <div className="text-xs">
-                                        {`${lockedAlca}
+                                        {`${lockedPosition.lockedAlca}
                                                 ALCA`}
                                         </div>
                                     </>}
-                                    disabled={Boolean(!hasReadTerms)}
+                                    disabled={Boolean(!hasReadTerms || !lockedPosition.lockedAlca || !web3Connected)}
                                     active={activeItem === 'unlock'}
                                     onClick={e => handleItemClick(e, { name: "unlock" })}
                                 />
@@ -82,11 +80,11 @@ export function LockupActions() {
                                         <Header className={classNames({ "opacity-40": !hasReadTerms /*|| !lockedAlca > 0*/ })}>Lockup Rewards</Header>
                                         <Header as="h2" className="text-sm">Locked Position</Header>
                                         <div className="text-xs">
-                                            {`${lockedAlca}
+                                            {`${lockedPosition.lockedAlca}
                                                 ALCA`}
                                         </div>
                                     </>}
-                                    disabled={Boolean(!hasReadTerms)}
+                                    disabled={Boolean(!hasReadTerms || !lockedPosition.lockedAlca || !web3Connected)}
                                     active={activeItem === 'claim'}
                                     onClick={e => handleItemClick(e, { name: "claim" })}
                                 />

@@ -48,8 +48,10 @@ class EthAdapter {
             console.log("balfail")
             return;
         }
-        await this.updateBalances();
-        setTimeout(this._balanceLoop.bind(this), this.timeBetweenBalancePolls);
+        if(process.env.REACT_APP__MODE !== "TESTING"){
+            await this.updateBalances();
+            setTimeout(this._balanceLoop.bind(this), this.timeBetweenBalancePolls);
+        }
     }
 
     /**
@@ -475,17 +477,26 @@ class EthAdapter {
      * @returns { Object }
      */
      async sendLockupApproval(tokenID) {
-        return await this._try(async () => {
-            const tx = await this._trySend(
-                CONTRACT_NAMES.PublicStaking, 
-                "approve", 
-                [
-                    CONTRACT_ADDRESSES.Lockup, 
-                    ethers.BigNumber.from(tokenID)
-                ]
-            )
-            return tx;
-        })
+        if(process.env.REACT_APP__MODE === "TESTING"){
+            return {
+                wait: async () => { return {
+                    transactionHash: "0x60e95740d7453a76b0bf6cb60d0a6524330e628e0c7098a8e08eece5df93c93c"
+                }}
+            }
+        } else {
+            return await this._try(async () => {
+                const tx = await this._trySend(
+                    CONTRACT_NAMES.PublicStaking, 
+                    "approve", 
+                    [
+                        CONTRACT_ADDRESSES.Lockup, 
+                        ethers.BigNumber.from(tokenID)
+                    ]
+                )
+                return tx;
+            })
+        }
+        
     }
 
     /**
@@ -494,10 +505,18 @@ class EthAdapter {
      * @returns { Object }
      */
      async lockupStakedPosition(tokenID) {
-        return await this._try(async () => {
-            const tx = await this._trySend(CONTRACT_NAMES.Lockup, "lockTokens", [BigNumber.from(tokenID)]);
-            return tx;
-        })
+        if(process.env.REACT_APP__MODE === "TESTING"){
+            return {
+                wait: async () => { return {
+                    transactionHash: "0x60e95740d7453a76b0bf6cb60d0a6524330e628e0c7098a8e08eece5df93c93c"
+                }}
+            }
+        } else {
+            return await this._try(async () => {
+                const tx = await this._trySend(CONTRACT_NAMES.Lockup, "lockTokens", [BigNumber.from(tokenID)]);
+                return tx;
+            })
+        }
     }
 
     /**

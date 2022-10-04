@@ -23,7 +23,13 @@ export function LockupWelcome({stepForward}) {
         unstake3: false,
         finalCheck: false,
     })
-
+    React.useEffect(() => {
+        if(process.env.REACT_APP__MODE === "TESTING"){
+            dispatch(APPLICATION_ACTIONS.setStakedPosition(500,1,0,0));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+    
     // Push forward if user cookie has been set or is set
     React.useEffect(() => {
         if (hasReadTerms && web3Connected) {

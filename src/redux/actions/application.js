@@ -78,6 +78,25 @@ export const setLockedPosition = (
     }
 }
 
+export const setStakedPosition = (
+    stakedAlca,
+    tokenId,
+    alcaReward,
+    ethReward,
+    unlockDate) => {
+    return dispatch => { 
+        dispatch({type: APPLICATION_ACTION_TYPES.SET_STAKED_POSITION, 
+            payload: {
+                stakedAlca: stakedAlca,
+                tokenId: tokenId,
+                alcaReward: alcaReward,
+                ethReward: ethReward,
+                unlockDate: unlockDate,
+            }
+        })
+    }
+}
+
 /**
  * Set balance by accepted tokenType
  * @param {String} balance - String of current balance for tokenType

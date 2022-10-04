@@ -1,5 +1,6 @@
 ## One of: LOCAL, STAGING, PRODUCTION
-REACT_APP__ENV="STAGING";
+REACT_APP__ENV="STAGING"
+REACT_APP__MODE="TESTING"
 
 ## Ethereum Endpoints for JSON RPC requests if desired ( Allows Pre Wallet Connect Reads )
 REACT_APP__ETHEREUM_ENDPOINT_LOCAL="http://localhost:8545"
