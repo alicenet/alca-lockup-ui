@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Container } from "semantic-ui-react";
 import { useSelector } from "react-redux";
-import { StakeActions, Footer, Header } from "components";
+import { StakeActions, Footer, Header, LockupActions } from "components";
 import { ToastContainer } from 'react-toastify';
 
 function App() {
@@ -29,7 +29,7 @@ function App() {
     const DefaultRoutes = () => {
         return (
             <>
-                <Route exact path="/" element={<StakeActions />} />
+                <Route exact path="/" element={<LockupActions />} />
             </>
         )
     };

@@ -1,5 +1,5 @@
 import 'ethers';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import config from 'config/_config';
 import store from 'redux/store/store';
 import { APPLICATION_ACTIONS } from 'redux/actions';
@@ -48,8 +48,10 @@ class EthAdapter {
             console.log("balfail")
             return;
         }
-        await this.updateBalances();
-        setTimeout(this._balanceLoop.bind(this), this.timeBetweenBalancePolls);
+        if(process.env.REACT_APP__MODE !== "TESTING"){
+            await this.updateBalances();
+            setTimeout(this._balanceLoop.bind(this), this.timeBetweenBalancePolls);
+        }
     }
 
     /**
@@ -464,6 +466,150 @@ class EthAdapter {
     async collectAllProfits(tokenId) {
         return await this._try(async () => {
             const payoutTx = await this._trySend(CONTRACT_NAMES.PublicStaking, "collectAllProfits", [tokenId]);
+            return payoutTx;
+        })
+    }
+    //Lockup
+
+    /**
+     * approve lockup contract to transfer public staking nft token
+     * @param tokenID nft id held by lockup
+     * @returns { Object }
+     */
+     async sendLockupApproval(tokenID) {
+        if(process.env.REACT_APP__MODE === "TESTING"){
+            return {
+                wait: async () => { return {
+                    transactionHash: "0x60e95740d7453a76b0bf6cb60d0a6524330e628e0c7098a8e08eece5df93c93c"
+                }}
+            }
+        } else {
+            return await this._try(async () => {
+                const tx = await this._trySend(
+                    CONTRACT_NAMES.PublicStaking, 
+                    "approve", 
+                    [
+                        CONTRACT_ADDRESSES.Lockup, 
+                        ethers.BigNumber.from(tokenID)
+                    ]
+                )
+                return tx;
+            })
+        }
+        
+    }
+
+    /**
+     * calls the lockup contract to initiate token transfer
+     * @param { Number } tokenID - Amount to be staked for a position
+     * @returns { Object }
+     */
+     async lockupStakedPosition(tokenID) {
+        if(process.env.REACT_APP__MODE === "TESTING"){
+            return {
+                wait: async () => { return {
+                    transactionHash: "0x60e95740d7453a76b0bf6cb60d0a6524330e628e0c7098a8e08eece5df93c93c"
+                }}
+            }
+        } else {
+            return await this._try(async () => {
+                const tx = await this._trySend(CONTRACT_NAMES.Lockup, "lockTokens", [BigNumber.from(tokenID)]);
+                return tx;
+            })
+        }
+    }
+
+    /**
+     * unlock and claim ownership of locked position and rewards
+     * @param tokenID nft id held by lockup
+     * @returns { Object }
+     */
+    async sendExitLock(tokenID) {
+        return await this._try(async () => {
+            const tx = await this._trySend(
+                CONTRACT_NAMES.Lockup, 
+                "exitLock", 
+                [ 
+                    ethers.BigNumber.from(tokenID)
+                ]
+            )
+            return tx;
+        })
+    }
+    /**
+     * early exit on your locked position, loses 20% of rewards and bonus ALCA
+     * @param tokenID nft id held by lockup
+     * @returns { Object }
+     */
+    async sendEarlyExit(tokenID) {
+        return await this._try(async () => {
+            const tx = await this._trySend(
+                CONTRACT_NAMES.Lockup, 
+                "earlyExit", 
+                [ 
+                    ethers.BigNumber.from(tokenID)
+                ]
+            )
+            return tx;
+        })
+    }
+
+    /**
+     * Get ETH rewards for a given token in lockup
+     * @param { Number } tokenId
+     * @returns { String }
+     */
+     async estimateEthCollectionLockup(tokenId) {
+        return await this._try(async () => {
+            const payout = await this._trySend(CONTRACT_NAMES.Lockup, "estimateEthCollection", [tokenId]);
+            return ethers.utils.formatEther(payout);
+        })
+    }
+    
+    /**
+     * Get ALCA rewards for a given token in lockup
+     * @param { Number } tokenId 
+     * @returns { String }
+     */
+    async estimateTokenCollectioninLockup(tokenId) {
+        return await this._try(async () => {
+            const payout = await this._trySend(CONTRACT_NAMES.Lockup, "estimateTokenCollection", [tokenId]);
+            return ethers.utils.formatEther(payout);
+        })
+    }
+
+    /**
+     * Claim all rewards for ETH from lockup
+     * @param { Number } tokenId 
+     * @returns { Object }
+     */
+     async collectEthProfitsLockup(tokenId) {
+        return await this._try(async () => {
+            const payoutTx = await this._trySend(CONTRACT_NAMES.Lockup, "collectEth", [tokenId]);
+            return payoutTx;
+        })
+    }
+
+    /**
+     * Claim rewards for ALCA from lockup
+     * @param { Number } tokenId 
+     * @returns { Object }
+     */
+     async collectALCARewardsLockup(tokenId) {
+        return await this._try(async () => {
+            const payoutTx = await this._trySend(CONTRACT_NAMES.Lockup, "collectALCA", [tokenId]);
+            return payoutTx;
+        })
+    }
+
+    /**
+     * Claim all rewards for both ETH and ALCA from lockup
+     * @param { Number } tokenId 
+     * @returns { Object }
+     */
+     async collectAllProfitsLockup(tokenId) {
+        return await this._try(async () => {
+            const payoutTx = await this._trySend(CONTRACT_NAMES.Lockup, "collectAllProfits", [tokenId]);
             return payoutTx;
         })
     }

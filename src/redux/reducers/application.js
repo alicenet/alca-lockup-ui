@@ -22,6 +22,13 @@ const initialApplicationState = {
     allowances: {
         alcaStakeAllowance: 0,
     },
+    lockedPosition: {
+        lockedAlca: 0,
+        tokenId: "",
+        alcaReward: 0,
+        ethReward: 0,
+        unlockDate: 0,
+    },
     connectedAddress: "",
     approvalHash: "",
     networkId: "",
@@ -35,6 +42,7 @@ const initialApplicationState = {
             errorMessage: "",
         }
     }),
+    
     hasReadTerms: false
 };
 
@@ -102,6 +110,11 @@ export default function applicationReducer(state = initialApplicationState, acti
         case APPLICATION_ACTION_TYPES.UPDATE_STARTING_BALANCES:
             return Object.assign({}, state, {
                 startingBalances: action.payload
+            })
+            
+        case APPLICATION_ACTION_TYPES.SET_LOCKED_POSITION:
+            return Object.assign({}, state, {
+                  lockedPosition: action.payload
             })
 
         default:
