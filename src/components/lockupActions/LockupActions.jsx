@@ -30,13 +30,10 @@ export function LockupActions() {
     
     return (
         <div className="flex justify-center w-full">
-
             <div className="max-w-[1200px] w-full mt-12">
-
                 <Grid padded className="flex h-full">
-
                     <Grid.Row>
-                        <Grid.Column width={3}>
+                        <Grid.Column width={3} stretched className="pr-0">
                             <Menu fluid vertical tabular>
                                 <Menu.Item
                                     content={web3Connected ? <>
@@ -70,7 +67,8 @@ export function LockupActions() {
                                                 ALCA`}
                                         </div>
                                     </>}
-                                    disabled={Boolean(!hasReadTerms || !lockedPosition.lockedAlca || !web3Connected)}
+                                    // TODO Uncomment later
+                                    // disabled={Boolean(!hasReadTerms || !lockedPosition.lockedAlca || !web3Connected)}
                                     active={activeItem === 'unlock'}
                                     onClick={e => handleItemClick(e, { name: "unlock" })}
                                 />
@@ -84,26 +82,22 @@ export function LockupActions() {
                                                 ALCA`}
                                         </div>
                                     </>}
-                                    disabled={Boolean(!hasReadTerms || !lockedPosition.lockedAlca || !web3Connected)}
+                                    // TODO Uncomment later
+                                    // disabled={Boolean(!hasReadTerms || !lockedPosition.lockedAlca || !web3Connected)}
                                     active={activeItem === 'claim'}
                                     onClick={e => handleItemClick(e, { name: "claim" })}
                                 />
                             </Menu>
                         </Grid.Column>
 
-                        <Grid.Column stretched width={13}>
-                            <Segment>
+                        <Grid.Column stretched width={13} className="pl-0">
+                            <Segment className="border-l-0 shadow-none rounded-none">
                                 {getActiveTab()}
                             </Segment>
                         </Grid.Column>
-
                     </Grid.Row>
-
                 </Grid>
-
             </div>
-
         </div>
     );
-
 }

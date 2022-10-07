@@ -3,8 +3,7 @@ import ethAdapter from "eth/ethAdapter";
 import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
 import { Grid, Header, Button } from "semantic-ui-react";
-import { APPLICATION_ACTION_TYPES, TOKEN_TYPES } from "redux/constants";
-import { setLockedPosition } from "redux/actions/application";
+import { TOKEN_TYPES } from "redux/constants";
 
 const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://etherscan.io/tx/";
 
@@ -22,8 +21,6 @@ export function Lockup() {
     const [status, setStatus] = React.useState({});
     const [approvedLockup, setApprovedLockup] = React.useState(0);
     const [hash, setHash] = React.useState("");
-    
-    
 
     const approveLockup = async () => {
         try {
@@ -93,10 +90,21 @@ export function Lockup() {
                     </Header.Subheader>
                         <Grid> 
                             <Grid.Column width={5}>
-                                <div className="cursor-pointer text-xs mt-4 underline" onClick={() => window.open(`${process.env.REACT_APP__ABOUT_EXTRA_ALCA_LOCKUP_URL}`, '_blank').focus()}>About extra ALCA lockup rewards</div>
+                                <div 
+                                    className="cursor-pointer text-xs mt-4 underline" 
+                                    onClick={() => window.open(`${process.env.REACT_APP__ABOUT_EXTRA_ALCA_LOCKUP_URL}`, '_blank').focus()}
+                                >
+                                    About extra ALCA lockup rewards
+                                </div>
                             </Grid.Column>
+
                             <Grid.Column width={5}>
-                            <div className="cursor-pointer text-xs mt-4 underline" onClick={() => window.open(`${process.env.REACT_APP__ABOUT_ETH_LOCKUP_URL}`, '_blank').focus()}>About ETH % lockup rewards</div>
+                                <div 
+                                    className="cursor-pointer text-xs mt-4 underline" 
+                                    onClick={() => window.open(`${process.env.REACT_APP__ABOUT_ETH_LOCKUP_URL}`, '_blank').focus()}
+                                >
+                                    About ETH % lockup rewards
+                                </div>
                             </Grid.Column>
                         </Grid>
                 </Header>
@@ -111,10 +119,21 @@ export function Lockup() {
                     </Header.Subheader>
                         <Grid> 
                             <Grid.Column width={5}>
-                                <div className="cursor-pointer text-xs mt-4 underline" onClick={() => window.open(`${process.env.REACT_APP__ABOUT_EXTRA_ALCA_LOCKUP_URL}`, '_blank').focus()}>About extra ALCA lockup rewards</div>
+                                <div 
+                                    className="cursor-pointer text-xs mt-4 underline" 
+                                    onClick={() => window.open(`${process.env.REACT_APP__ABOUT_EXTRA_ALCA_LOCKUP_URL}`, '_blank').focus()}
+                                >
+                                    About extra ALCA lockup rewards
+                                </div>
                             </Grid.Column>
+
                             <Grid.Column width={5}>
-                            <div className="cursor-pointer text-xs mt-4 underline" onClick={() => window.open(`${process.env.REACT_APP__ABOUT_ETH_LOCKUP_URL}`, '_blank').focus()}>About ETH % lockup rewards</div>
+                                <div 
+                                    className="cursor-pointer text-xs mt-4 underline" 
+                                    onClick={() => window.open(`${process.env.REACT_APP__ABOUT_ETH_LOCKUP_URL}`, '_blank').focus()}
+                                >
+                                    About ETH % lockup rewards
+                                </div>
                             </Grid.Column>
                         </Grid>
                 </Header>

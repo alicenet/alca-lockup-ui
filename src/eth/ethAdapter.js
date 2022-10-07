@@ -477,7 +477,7 @@ class EthAdapter {
      * @returns { Object }
      */
      async sendLockupApproval(tokenID) {
-        if(process.env.REACT_APP__MODE === "TESTING"){
+        if(process.env.REACT_APP__MODE === "TESTING") {
             return {
                 wait: async () => { return {
                     transactionHash: "0x60e95740d7453a76b0bf6cb60d0a6524330e628e0c7098a8e08eece5df93c93c"
@@ -500,7 +500,7 @@ class EthAdapter {
     }
 
     /**
-     * calls the lockup contract to initiate token transfer
+     * Calls the lockup contract to initiate token transfer
      * @param { Number } tokenID - Amount to be staked for a position
      * @returns { Object }
      */
@@ -641,7 +641,6 @@ class EthAdapter {
     async updateBalances() {
         await store.dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
     }
-
 }
 
 let ethAdapter = new EthAdapter();
