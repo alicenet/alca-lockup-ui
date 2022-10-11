@@ -33,12 +33,9 @@ export function Connect() {
     };
 
     return (
-
         <>
-
-            <Container className="flex flex-col justify-around items-center p-4 min-h-[240px]">
-
-                <div className="text-sm text-center">
+            <Container fluid>
+                <div className="text-sm text-right">
                     {web3Connected ? (<div>
                         <Header as='h5' content={`${address} connected`} />
 
@@ -64,7 +61,6 @@ export function Connect() {
 
                     }
                 </div>
-
             </Container>
 
             <div className="absolute left-0 top-[100%]">
@@ -85,8 +81,6 @@ export function Connect() {
                     onClick={() => {}}
                 />
             </div>
-
         </>
-
     );
 }

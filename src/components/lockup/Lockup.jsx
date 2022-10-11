@@ -2,7 +2,7 @@ import React from "react";
 import ethAdapter from "eth/ethAdapter";
 import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
-import { Grid, Header, Button } from "semantic-ui-react";
+import { Grid, Header, Button, Modal } from "semantic-ui-react";
 import { TOKEN_TYPES } from "redux/constants";
 
 const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://etherscan.io/tx/";
@@ -88,25 +88,26 @@ export function Lockup() {
                     <Header.Subheader>
                         You currently have {Number(stakedPosition.stakedAlca).toLocaleString(false, { maximumFractionDigits: 4 })}  ALCA staked, the lockup period is 6 months
                     </Header.Subheader>
-                        <Grid> 
-                            <Grid.Column width={5}>
-                                <div 
-                                    className="cursor-pointer text-xs mt-4 underline" 
-                                    onClick={() => window.open(`${process.env.REACT_APP__ABOUT_EXTRA_ALCA_LOCKUP_URL}`, '_blank').focus()}
-                                >
-                                    About extra ALCA lockup rewards
-                                </div>
-                            </Grid.Column>
 
-                            <Grid.Column width={5}>
-                                <div 
-                                    className="cursor-pointer text-xs mt-4 underline" 
-                                    onClick={() => window.open(`${process.env.REACT_APP__ABOUT_ETH_LOCKUP_URL}`, '_blank').focus()}
-                                >
-                                    About ETH % lockup rewards
-                                </div>
-                            </Grid.Column>
-                        </Grid>
+                    <Grid> 
+                        <Grid.Column width={5}>
+                            <div 
+                                className="cursor-pointer text-xs mt-4 underline" 
+                                onClick={() => window.open(`${process.env.REACT_APP__ABOUT_EXTRA_ALCA_LOCKUP_URL}`, '_blank').focus()}
+                            >
+                                About extra ALCA lockup rewards
+                            </div>
+                        </Grid.Column>
+
+                        <Grid.Column width={5}>
+                            <div 
+                                className="cursor-pointer text-xs mt-4 underline" 
+                                onClick={() => window.open(`${process.env.REACT_APP__ABOUT_ETH_LOCKUP_URL}`, '_blank').focus()}
+                            >
+                                About ETH % lockup rewards
+                            </div>
+                        </Grid.Column>
+                    </Grid>
                 </Header>
             )
         } 
@@ -115,27 +116,28 @@ export function Lockup() {
             return (
                 <Header>Lockup Staked Positions
                     <Header.Subheader>
-                    {status?.message}, the lockup period is 6 months
+                        {status?.message}, the lockup period is 6 months
                     </Header.Subheader>
-                        <Grid> 
-                            <Grid.Column width={5}>
-                                <div 
-                                    className="cursor-pointer text-xs mt-4 underline" 
-                                    onClick={() => window.open(`${process.env.REACT_APP__ABOUT_EXTRA_ALCA_LOCKUP_URL}`, '_blank').focus()}
-                                >
-                                    About extra ALCA lockup rewards
-                                </div>
-                            </Grid.Column>
 
-                            <Grid.Column width={5}>
-                                <div 
-                                    className="cursor-pointer text-xs mt-4 underline" 
-                                    onClick={() => window.open(`${process.env.REACT_APP__ABOUT_ETH_LOCKUP_URL}`, '_blank').focus()}
-                                >
-                                    About ETH % lockup rewards
-                                </div>
-                            </Grid.Column>
-                        </Grid>
+                    <Grid> 
+                        <Grid.Column width={5}>
+                            <div 
+                                className="cursor-pointer text-xs mt-4 underline" 
+                                onClick={() => window.open(`${process.env.REACT_APP__ABOUT_EXTRA_ALCA_LOCKUP_URL}`, '_blank').focus()}
+                            >
+                                About extra ALCA lockup rewards
+                            </div>
+                        </Grid.Column>
+
+                        <Grid.Column width={5}>
+                            <div 
+                                className="cursor-pointer text-xs mt-4 underline" 
+                                onClick={() => window.open(`${process.env.REACT_APP__ABOUT_ETH_LOCKUP_URL}`, '_blank').focus()}
+                            >
+                                About ETH % lockup rewards
+                            </div>
+                        </Grid.Column>
+                    </Grid>
                 </Header>
             ) 
         } 
@@ -155,42 +157,74 @@ export function Lockup() {
     }
 
     return (
-        <Grid padded>
-            <Grid.Column width={16}>
-                <LockupHeader/>
-            </Grid.Column>
+        <>
+            <Modal
+                onClose={() => {}}
+                onOpen={() => {}}
+                open={false}
+            >
+                <Modal.Header>
+                    Lockup this staked position
+                </Modal.Header>
 
-            <Grid.Column width={16}>
-                {((!lockedPosition.lockedAlca) || status.error) && (
-                    <>
-                        <div>
-                            <Header as="h2">{stakedPosition.stakedAlca} ALCA Staked</Header>
-                        </div>
+                <Modal.Content image>
+                    <Modal.Description>
+                        <p>You are about to Lock-up <strong>{stakedPosition.stakedAlca}</strong> ALCA for 6 months with a XX multiplayer</p>
+                    </Modal.Description>
+                </Modal.Content>
+
+                <Modal.Actions>
+                    <Button
+                        onClick={() => {}}
+                    >
+                        Cancel
+                    </Button>
+                    
+                    <Button
+                        content="Lockup Position"
+                        color='black'
+                        onClick={() => {}}
+                    />
+                </Modal.Actions>
+            </Modal>
+
+            <Grid padded>
+                <Grid.Column width={16}>
+                    <LockupHeader/>
+                </Grid.Column>
+
+                <Grid.Column width={16}>
+                    {((!lockedPosition.lockedAlca) || status.error) && (
+                        <>
+                            <div>
+                                <Header as="h2">{stakedPosition.stakedAlca} ALCA Staked</Header>
+                            </div>
+
+                            <div>
+                                <Button
+                                    className="mt-4"
+                                    color="black"
+                                    content={approvedLockup ? "Lockup Positions" : "Approve Lockup"}
+                                    onClick={approvedLockup ? lockupPosition : approveLockup}
+                                    disabled={stakedPosition.stakedAlca === 0 || status?.error }
+                                    loading={waiting}
+                                />      
+                            </div>
+                        </>
+                    )}
+
+                    {status?.message && (!status?.error && lockedPosition.lockedAlca > 0)  && (
                         <div>
                             <Button
                                 className="mt-4"
+                                content={"View on Etherscan"}
                                 color="black"
-                                content={ approvedLockup ? 
-                                    "Lockup Positions" : "Approve Lockup"
-                                }
-                                onClick={approvedLockup ? lockupPosition : approveLockup}
-                                disabled={stakedPosition.stakedAlca === 0 || status?.error }
-                                loading={waiting}
-                            />      
+                                onClick={() => window.open(`${ETHERSCAN_URL}${hash}`, '_blank').focus()}
+                            />
                         </div>
-                    </>
-                )}
-                {status?.message && (!status?.error && lockedPosition.lockedAlca > 0)  && 
-                    <div>
-                        <Button
-                            className="mt-4"
-                            content={"View on Etherscan"}
-                            color="black"
-                            onClick={() => window.open(`${ETHERSCAN_URL}${hash}`, '_blank').focus()}
-                        />
-                    </div>
-                }
-            </Grid.Column>
-        </Grid>
+                    )}
+                </Grid.Column>
+            </Grid>
+        </>
     )
 }

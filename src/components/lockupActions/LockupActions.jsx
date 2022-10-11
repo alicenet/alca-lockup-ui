@@ -31,14 +31,15 @@ export function LockupActions() {
     return (
         <div className="flex justify-center w-full">
             <div className="max-w-[1200px] w-full mt-12">
+
                 <Grid padded className="flex h-full">
+                    <Connect />
+                    
                     <Grid.Row>
-                        <Grid.Column width={3} stretched className="pr-0">
+                        <Grid.Column width={4} stretched className="pr-0">
                             <Menu fluid vertical tabular>
                                 <Menu.Item
-                                    content={web3Connected ? <>
-                                        <div className="text-sm">{hasReadTerms ? "Wallet Connected" : "Welcome"}</div>
-                                    </> : (<Connect />)}
+                                    content={<Header className="text-base">Lockup</Header>}
                                     active={activeItem === 'welcome'}
                                     onClick={e => handleItemClick(e, { name: "welcome" })}
                                     disabled={Boolean(hasReadTerms)}
@@ -46,8 +47,12 @@ export function LockupActions() {
 
                                 <Menu.Item
                                     content={<>
-                                        <Header className={classNames({ "opacity-40": !hasReadTerms || stakedPosition.stakedAlca || !web3Connected })}>Lockup</Header>
-                                        <Header as="h2" className="text-sm">ALCA Staked Position</Header>
+                                        <Header 
+                                            className={classNames({ "opacity-40": !hasReadTerms || lockedPosition.lockedAlca || !web3Connected, "text-base": true })} 
+                                            as="h2"
+                                        >
+                                            Position Available to Lockup
+                                        </Header>
                                         <div className="text-xs">
                                         {`${stakedPosition.stakedAlca}
                                                 ALCA`}
@@ -60,37 +65,45 @@ export function LockupActions() {
 
                                 <Menu.Item
                                     content={<>
-                                        <Header className={classNames({ "opacity-40": !hasReadTerms /*|| !lockedAlca > 0*/ })}>Unlock</Header>
-                                        <Header as="h2" className="text-sm">Locked Position</Header>
+                                        <Header
+                                            className={classNames({ "opacity-40": !hasReadTerms || !lockedPosition.lockedAlca || !web3Connected, "text-base": true })} 
+                                            as="h2"
+                                        >
+                                            Current Lockup Position
+                                        </Header>
+                                        
                                         <div className="text-xs">
                                         {`${lockedPosition.lockedAlca}
                                                 ALCA`}
                                         </div>
                                     </>}
-                                    // TODO Uncomment later
-                                    // disabled={Boolean(!hasReadTerms || !lockedPosition.lockedAlca || !web3Connected)}
+                                    disabled={Boolean(!hasReadTerms || !lockedPosition.lockedAlca || !web3Connected)}
                                     active={activeItem === 'unlock'}
                                     onClick={e => handleItemClick(e, { name: "unlock" })}
                                 />
 
                                 <Menu.Item
                                     content={<>
-                                        <Header className={classNames({ "opacity-40": !hasReadTerms /*|| !lockedAlca > 0*/ })}>Lockup Rewards</Header>
-                                        <Header as="h2" className="text-sm">Locked Position</Header>
+                                        <Header
+                                            className={classNames({ "opacity-40": !hasReadTerms || !lockedPosition.lockedAlca || !web3Connected, "text-base": true })} 
+                                            as="h2"
+                                        >
+                                            Claim Lockup Rewards
+                                        </Header>
+
                                         <div className="text-xs">
                                             {`${lockedPosition.lockedAlca}
                                                 ALCA`}
                                         </div>
                                     </>}
-                                    // TODO Uncomment later
-                                    // disabled={Boolean(!hasReadTerms || !lockedPosition.lockedAlca || !web3Connected)}
+                                    disabled={Boolean(!hasReadTerms || !lockedPosition.lockedAlca || !web3Connected)}
                                     active={activeItem === 'claim'}
                                     onClick={e => handleItemClick(e, { name: "claim" })}
                                 />
                             </Menu>
                         </Grid.Column>
 
-                        <Grid.Column stretched width={13} className="pl-0">
+                        <Grid.Column stretched width={12} className="pl-0">
                             <Segment className="border-l-0 shadow-none rounded-none">
                                 {getActiveTab()}
                             </Segment>
