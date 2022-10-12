@@ -1,12 +1,9 @@
 import React from "react";
 import ethAdapter from "eth/ethAdapter";
-import { ethers } from "ethers";
 import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
-import { Grid, Header, Input, Button } from "semantic-ui-react";
-import { classNames } from "utils/generic";
-import { TOKEN_TYPES } from "redux/constants";
-
+import { Grid, Header,  Button, Icon, Message } from "semantic-ui-react";
+import { ConfirmationModal } from "components";
 
 const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://etherscan.io/tx/";
 
@@ -19,18 +16,37 @@ export function Unlock() {
     }))
 
     const dispatch = useDispatch();
-
-    //figure out how to update this
-    //user's staked amount
     
-   
     const [status, setStatus] = React.useState({});
-   
+    const [openConfirmation, toggleConfirmModal] = React.useState(false);
+    const [waiting, setWaiting] = React.useState(false);
     const [hash, setHash] = React.useState("");
 
+    const unlockPosition = async () => {
+        try {
+            setHash("");
+            setStatus({});
+            setWaiting(true)
+            toggleConfirmModal(false);
 
+            const tx = await ethAdapter.lockupStakedPosition(3);
+            const rec = await tx.wait();
+            if (rec.transactionHash) {
+                setStatus({ error: false, message: "Lockup Successful!" });
+                setHash(rec.transactionHash);
+                dispatch(APPLICATION_ACTIONS.updateBalances());
+                setWaiting(false);
+            }
+        } catch (exc) {
+            setWaiting(false);
+            setStatus({ 
+                error: true, 
+                message: "There was a problem with your request, please verify or try again later" 
+            });
+        }
+    }
 
-    const UnlockHeader = () => {
+    const unlockHeader = () => {
         if(!status?.message || status.error) {
             return (
                 <Header>Locked Positions
@@ -54,43 +70,73 @@ export function Unlock() {
         }
     }
 
-    return (
-        <Grid padded>
-            <Grid.Column width={16}>
-                <UnlockHeader/>
-            </Grid.Column>
+    const confirmation = () => (
+        <ConfirmationModal 
+            title="Unlock this position"
+            open={openConfirmation}
+            onClose={() => toggleConfirmModal(false)}
+            onOpen={() => console.log('openned')}
+            onAccept={() => unlockPosition()}
+        >
+            <Message warning>
+                <Message.Header>You are about unlock this 500 ALCA position and lose potential rewards</Message.Header>
+                <p>The early exit will have a 20% penalty for earned rewards, users will get the 80%<br />
+                    of their rewards and their original stake position.</p>
+            </Message>
 
-            <Grid.Column width={16}>
-                {(!status?.message || status.error) && (
-                    <>
-                        <div>
-                            <Header as="h1">{stakedAlca} ALCA Staked and Locked</Header>
-                            <div className="mt4">
-                                {`You can unlock your position at anytime, however to receive the lock-up bonus rewards it must not be unlocked until ${unlockDate}`}
+            <p>You are about to unlock this 500 ALCA before the lock-up period this means....</p>
+
+            <Header as="h3">Locked rewards as today</Header>
+            
+            <div className="font-bold space-x-2">
+                <Icon name="ethereum"/>0.012344 ETH 
+
+                <Icon name="ethereum"/>344 ALCA
+            </div>
+        </ConfirmationModal>
+    )
+
+    return (
+        <>
+            {confirmation()}
+
+            <Grid padded>
+                <Grid.Column width={16}>{unlockHeader()}</Grid.Column>
+
+                <Grid.Column width={16}>
+                    {(!status?.message || status.error) && (
+                        <>
+                            <div>
+                                <Header as="h1">{stakedAlca} ALCA Staked and Locked</Header>
+                                <div className="mt4">
+                                    {`You can unlock your position at anytime, however to receive the lock-up bonus rewards it must not be unlocked until ${unlockDate}`}
+                                </div>
                             </div>
-                        </div>
+
+                            <div>
+                                <Button
+                                    className="mt-4"
+                                    color="pink"
+                                    loading={waiting}
+                                    onClick={() => toggleConfirmModal(true)}
+                                    content={"Unlock Positions"}
+                                />      
+                            </div>
+                        </>
+                    )}
+
+                    {status?.message && !status?.error && (
                         <div>
                             <Button
                                 className="mt-4"
-                                color="pink"
-                                content={
-                                    "Unlock Positions"
-                                }
-                            />      
+                                content={"View on Etherscan"}
+                                color="black"
+                                onClick={() => window.open(`${ETHERSCAN_URL}${hash}`, '_blank').focus()}
+                            />
                         </div>
-                    </>
-                )}
-                {status?.message && !status?.error && 
-                    <div>
-                        <Button
-                            className="mt-4"
-                            content={"View on Etherscan"}
-                            color="black"
-                            onClick={() => window.open(`${ETHERSCAN_URL}${hash}`, '_blank').focus()}
-                        />
-                    </div>
-                }
-            </Grid.Column>
-        </Grid>
+                    )}
+                </Grid.Column>
+            </Grid>
+        </>
     )
 }

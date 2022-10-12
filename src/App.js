@@ -39,14 +39,13 @@ function App() {
         <Container fluid className="">
             <BrowserRouter>
                 <Header />
-                <div className="overflow-auto pb-[112px] ">
+                    <div className="overflow-auto pb-[112px] ">
                         <Routes>
-
                             {DefaultRoutes()}
-
                         </Routes>
-                    <ToastContainer />
-                </div>
+                        
+                        <ToastContainer />
+                    </div>
                 <Footer />
             </BrowserRouter>
         </Container>

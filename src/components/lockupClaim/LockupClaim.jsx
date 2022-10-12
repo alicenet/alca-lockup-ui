@@ -1,14 +1,13 @@
 import React from "react";
-
-
+import ethAdapter from "eth/ethAdapter";
 import { useDispatch, useSelector } from "react-redux";
-import { Grid, Header, Button} from "semantic-ui-react";
-
+import { APPLICATION_ACTIONS } from "redux/actions";
+import { Grid, Header, Button, Icon, Message } from "semantic-ui-react";
+import { ConfirmationModal } from "components";
 
 const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://etherscan.io/tx/";
 
 export function LockupClaim() {
-
     const { stakedAlca, lockedAlca, ethReward, alcaReward } = useSelector(state => ({
         stakedAlca: state.application.stakedPosition.stakedAlca,
         lockedAlca: state.application.lockedPosition.lockedAlca,
@@ -18,13 +17,36 @@ export function LockupClaim() {
 
     const dispatch = useDispatch();
 
-    //figure out how to update this
-    //user's staked amount
     const [waiting, setWaiting] = React.useState(false);
+    const [openConfirmation, toggleConfirmModal] = React.useState(false);
     const [status, setStatus] = React.useState({});
     const [hash, setHash] = React.useState("");
 
-    const ClaimHeader = () => {
+    const claimRewards = async () => {
+        try {
+            setHash("");
+            setStatus({});
+            setWaiting(true)
+            toggleConfirmModal(false);
+
+            const tx = await ethAdapter.lockupStakedPosition(3);
+            const rec = await tx.wait();
+            if (rec.transactionHash) {
+                setStatus({ error: false, message: "Lockup Successful!" });
+                setHash(rec.transactionHash);
+                dispatch(APPLICATION_ACTIONS.updateBalances());
+                setWaiting(false);
+            }
+        } catch (exc) {
+            setWaiting(false);
+            setStatus({ 
+                error: true, 
+                message: "There was a problem with your request, please verify or try again later" 
+            });
+        }
+    }
+
+    const claimHeader = () => {
         if(!status?.message || status.error) {
             return (
                 <Header>Locked Positions
@@ -48,54 +70,80 @@ export function LockupClaim() {
         }
     }
 
+    const confirmation = () => (
+        <ConfirmationModal 
+                title="Claim Reward"
+                open={openConfirmation}
+                onClose={() => toggleConfirmModal(false)}
+                onOpen={() => console.log('openned')}
+                onAccept={() => claimRewards()}
+            >
+                <Message warning>
+                    <Message.Header>You are about unlock this 500 ALCA position and lose potential rewards</Message.Header>
+                    <p>The early exit will have a 20% penalty for earned rewards, users will get the 80%<br />
+                        of their rewards and their original stake position.</p>
+                </Message>
+
+                <p>You are about to unlock this 500 ALCA before the lock-up period this means....</p>
+
+                <div className="font-bold space-x-2">
+                    <Icon name="ethereum"/>0.012344 ETH 
+
+                    <Icon name="ethereum"/>344 ALCA
+                </div>
+            </ConfirmationModal>
+    )
+
     return (
-        <Grid padded>
-            <Grid.Column width={16}>
-                <ClaimHeader/>
-            </Grid.Column>
+        <>
+            {confirmation()}
 
-            <Grid.Column width={16}>
-                {(!status?.message || status.error) && (
-                    <>
-                        <div>
-                            <Header as="h1">{stakedAlca} ALCA Staked and Locked</Header>
-                            <Header as="h3">
-                                Available accumulated rewards: 
-                            </Header>
-                            <Header as="h3">
-                                {`${ethReward} ETH / ${alcaReward} ALCA`}
-                            </Header>
-                            <Header as="h3">
-                                {``}
-                            </Header>
-                            <Header as="h3">
-                                
-                            </Header>
+            <Grid padded>
+                <Grid.Column width={16}>
+                    {claimHeader()}
+                </Grid.Column>
 
-                        </div>
-                        <div>
-                            <Button
-                                className="mt-4"
-                                color="black"
-                                content={
-                                    "Claim rewards"
-                                }
-                                loading={waiting}
-                            />      
-                        </div>
-                    </>
-                )}
-                {status?.message && !status?.error && 
-                    <div>
+                <Grid.Column width={16}>
+                    {(!status?.message || status.error) && (
+                        <>
+                            <div>
+                                <Header as="h1">{stakedAlca} ALCA Staked and Locked</Header>
+                                <Header as="h3">
+                                    Available accumulated rewards: 
+                                </Header>
+                                <Header as="h3">
+                                    {`${ethReward} ETH / ${alcaReward} ALCA`}
+                                </Header>
+                                <Header as="h3">
+                                    {``}
+                                </Header>
+                                <Header as="h3">
+                                    
+                                </Header>
+
+                            </div>
+                            <div>
+                                <Button
+                                    className="mt-4"
+                                    color="blue"
+                                    content={"Claim rewards"}
+                                    onClick={() => toggleConfirmModal(true)}
+                                    loading={waiting}
+                                />      
+                            </div>
+                        </>
+                    )}
+
+                    {status?.message && !status?.error && (
                         <Button
                             className="mt-4"
                             content={"View on Etherscan"}
                             color="black"
                             onClick={() => window.open(`${ETHERSCAN_URL}${hash}`, '_blank').focus()}
                         />
-                    </div>
-                }
-            </Grid.Column>
-        </Grid>
+                    )}
+                </Grid.Column>
+            </Grid>
+        </>
     )
 }

@@ -2,8 +2,9 @@ import React from "react";
 import ethAdapter from "eth/ethAdapter";
 import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
-import { Grid, Header, Button, Modal } from "semantic-ui-react";
+import { Grid, Header, Button } from "semantic-ui-react";
 import { TOKEN_TYPES } from "redux/constants";
+import { ConfirmationModal } from "components";
 
 const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://etherscan.io/tx/";
 
@@ -19,6 +20,7 @@ export function Lockup() {
 
     const [waiting, setWaiting] = React.useState(false);
     const [status, setStatus] = React.useState({});
+    const [openConfirmation, toggleConfirmModal] = React.useState(false);
     const [approvedLockup, setApprovedLockup] = React.useState(0);
     const [hash, setHash] = React.useState("");
 
@@ -26,7 +28,9 @@ export function Lockup() {
         try {
             setHash("");
             setStatus({});
-            setWaiting(true)
+            setWaiting(true);
+            toggleConfirmModal(true);
+
             const tx = await ethAdapter.sendLockupApproval(tokenID);
             await tx.wait();
 
@@ -58,6 +62,8 @@ export function Lockup() {
             setHash("");
             setStatus({});
             setWaiting(true)
+            toggleConfirmModal(false);
+
             const tx = await ethAdapter.lockupStakedPosition(tokenID);
             const rec = await tx.wait();
             if (rec.transactionHash) {
@@ -156,37 +162,21 @@ export function Lockup() {
         }
     }
 
+    const confirmation = () => (
+        <ConfirmationModal 
+            title="Lockup this staked position"
+            open={openConfirmation}
+            onClose={() => toggleConfirmModal(false)}
+            onOpen={() => console.log('openned')}
+            onAccept={() => lockupPosition()}
+        >
+            <p>You are about to Lock-up <strong>{stakedPosition.stakedAlca}</strong> ALCA for 6 months with a XX multiplayer</p>
+        </ConfirmationModal>
+    )
+
     return (
         <>
-            <Modal
-                onClose={() => {}}
-                onOpen={() => {}}
-                open={false}
-            >
-                <Modal.Header>
-                    Lockup this staked position
-                </Modal.Header>
-
-                <Modal.Content image>
-                    <Modal.Description>
-                        <p>You are about to Lock-up <strong>{stakedPosition.stakedAlca}</strong> ALCA for 6 months with a XX multiplayer</p>
-                    </Modal.Description>
-                </Modal.Content>
-
-                <Modal.Actions>
-                    <Button
-                        onClick={() => {}}
-                    >
-                        Cancel
-                    </Button>
-                    
-                    <Button
-                        content="Lockup Position"
-                        color='black'
-                        onClick={() => {}}
-                    />
-                </Modal.Actions>
-            </Modal>
+            {confirmation()}
 
             <Grid padded>
                 <Grid.Column width={16}>
