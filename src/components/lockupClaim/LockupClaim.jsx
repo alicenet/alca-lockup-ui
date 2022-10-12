@@ -2,7 +2,7 @@ import React from "react";
 import ethAdapter from "eth/ethAdapter";
 import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
-import { Grid, Header, Button, Icon, Message } from "semantic-ui-react";
+import { Grid, Header, Button, Icon, Message, Segment } from "semantic-ui-react";
 import { ConfirmationModal } from "components";
 
 const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://etherscan.io/tx/";
@@ -49,9 +49,10 @@ export function LockupClaim() {
     const claimHeader = () => {
         if(!status?.message || status.error) {
             return (
-                <Header>Locked Positions
+                <Header>
+                    Claim Lockup Rewards
                     <Header.Subheader>
-                        You currently have {`${lockedAlca}`}  ALCA on Lockup
+                        Lockup rewards can be claim without unlocking your position.
                     </Header.Subheader>
                 </Header>
             )
@@ -72,26 +73,26 @@ export function LockupClaim() {
 
     const confirmation = () => (
         <ConfirmationModal 
-                title="Claim Reward"
-                open={openConfirmation}
-                onClose={() => toggleConfirmModal(false)}
-                onOpen={() => console.log('openned')}
-                onAccept={() => claimRewards()}
-            >
-                <Message warning>
-                    <Message.Header>You are about unlock this 500 ALCA position and lose potential rewards</Message.Header>
-                    <p>The early exit will have a 20% penalty for earned rewards, users will get the 80%<br />
-                        of their rewards and their original stake position.</p>
-                </Message>
+            title="Claim Reward"
+            open={openConfirmation}
+            onClose={() => toggleConfirmModal(false)}
+            onOpen={() => console.log('openned')}
+            onAccept={() => claimRewards()}
+        >
+            <Message warning>
+                <Message.Header>You are about unlock this 500 ALCA position and lose potential rewards</Message.Header>
+                <p>The early exit will have a 20% penalty for earned rewards, users will get the 80%<br />
+                    of their rewards and their original stake position.</p>
+            </Message>
 
-                <p>You are about to unlock this 500 ALCA before the lock-up period this means....</p>
+            <p>You are about to unlock this 500 ALCA before the lock-up period this means....</p>
 
-                <div className="font-bold space-x-2">
-                    <Icon name="ethereum"/>0.012344 ETH 
+            <div className="font-bold space-x-2">
+                <Icon name="ethereum"/>0.012344 ETH 
 
-                    <Icon name="ethereum"/>344 ALCA
-                </div>
-            </ConfirmationModal>
+                <Icon name="ethereum"/>344 ALCA
+            </div>
+        </ConfirmationModal>
     )
 
     return (
@@ -106,31 +107,38 @@ export function LockupClaim() {
                 <Grid.Column width={16}>
                     {(!status?.message || status.error) && (
                         <>
-                            <div>
-                                <Header as="h1">{stakedAlca} ALCA Staked and Locked</Header>
-                                <Header as="h3">
-                                    Available accumulated rewards: 
-                                </Header>
-                                <Header as="h3">
-                                    {`${ethReward} ETH / ${alcaReward} ALCA`}
-                                </Header>
-                                <Header as="h3">
-                                    {``}
-                                </Header>
-                                <Header as="h3">
-                                    
-                                </Header>
+                            <div className="flex items-center">
+                                <div className="mr-3">
+                                    <Icon bordered size="huge" color="grey" name="lock" />
+                                </div>
+                            
+                                <div>
+                                    <Header as="h1">{stakedAlca} ALCA Staked Locked</Header>
+                                    <p>
+                                        You can claim your rewards at anytime, however early claiming will have a 20% penalty of earned rewards, 
+                                        users will get the 80% of their rewards and their original stake position.
+                                    </p>
+                                </div>
+                            </div>
 
-                            </div>
-                            <div>
+                            <Segment className="flex justify-between items-center">
+                                <div>
+                                    <Header as="h3">Locked rewards as today</Header>
+                                    
+                                    <div className="font-bold space-x-2">
+                                        <Icon name="ethereum"/>0.012344 ETH 
+
+                                        <Icon name="ethereum"/>344 ALCA
+                                    </div>
+                                </div>
+
                                 <Button
-                                    className="mt-4"
                                     color="blue"
-                                    content={"Claim rewards"}
-                                    onClick={() => toggleConfirmModal(true)}
                                     loading={waiting}
+                                    onClick={() => toggleConfirmModal(true)}
+                                    content={"Claim rewards"}
                                 />      
-                            </div>
+                            </Segment>
                         </>
                     )}
 
