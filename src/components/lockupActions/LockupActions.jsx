@@ -27,6 +27,10 @@ export function LockupActions() {
             default: return;
         }
     };
+
+    const activeMenuClass = (checkAgainst) => {
+        return checkAgainst === activeItem ? "border-l-aliceblue border-l-[3px]" : ""
+    }
     
     return (
         <div className="flex justify-center w-full">
@@ -43,6 +47,7 @@ export function LockupActions() {
                                     active={activeItem === 'welcome'}
                                     onClick={e => handleItemClick(e, { name: "welcome" })}
                                     disabled={Boolean(hasReadTerms)}
+                                    className={activeMenuClass("welcome")}
                                 />
 
                                 <Menu.Item
@@ -61,6 +66,7 @@ export function LockupActions() {
                                     disabled={Boolean(!hasReadTerms || !stakedPosition.stakedAlca || !web3Connected)}
                                     active={activeItem === 'lockup'}
                                     onClick={e => handleItemClick(e, { name: "lockup" })}
+                                    className={activeMenuClass("lockup")}
                                 />
 
                                 <Menu.Item
@@ -80,6 +86,7 @@ export function LockupActions() {
                                     disabled={Boolean(!hasReadTerms || !lockedPosition.lockedAlca || !web3Connected)}
                                     active={activeItem === 'unlock'}
                                     onClick={e => handleItemClick(e, { name: "unlock" })}
+                                    className={activeMenuClass("unlock")}
                                 />
 
                                 <Menu.Item
@@ -99,6 +106,7 @@ export function LockupActions() {
                                     disabled={Boolean(!hasReadTerms || !lockedPosition.lockedAlca || !web3Connected)}
                                     active={activeItem === 'claim'}
                                     onClick={e => handleItemClick(e, { name: "claim" })}
+                                    className={activeMenuClass("claim")}
                                 />
                             </Menu>
                         </Grid.Column>

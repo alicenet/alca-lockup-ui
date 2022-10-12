@@ -92,7 +92,7 @@ export function Lockup() {
             return (
                 <Header>Lockup Staked Positions
                     <Header.Subheader>
-                        You currently have {Number(stakedPosition.stakedAlca).toLocaleString(false, { maximumFractionDigits: 4 })}  ALCA staked, the lockup period is 6 months
+                        You currently have a staked position of {Number(stakedPosition.stakedAlca).toLocaleString(false, { maximumFractionDigits: 4 })} of ALCA, a lockup will be a period of 6 months with 5X multiplayer
                     </Header.Subheader>
 
                     <Grid> 

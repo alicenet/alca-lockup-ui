@@ -2,7 +2,7 @@ import React from "react";
 import ethAdapter from "eth/ethAdapter";
 import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
-import { Grid, Header,  Button, Icon, Message } from "semantic-ui-react";
+import { Grid, Header,  Button, Icon, Message, Segment } from "semantic-ui-react";
 import { ConfirmationModal } from "components";
 
 const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://etherscan.io/tx/";
@@ -49,10 +49,31 @@ export function Unlock() {
     const unlockHeader = () => {
         if(!status?.message || status.error) {
             return (
-                <Header>Locked Positions
+                <Header>
+                    Current lockup position
                     <Header.Subheader>
-                        You currently have {`${lockedAlca}`}  ALCA on Lockup
+                    The early exit will have a 20% penalty of earned rewards, users will get the 80% of their rewards and their original stake position.
                     </Header.Subheader>
+
+                    <Grid> 
+                        <Grid.Column width={5}>
+                            <div 
+                                className="cursor-pointer text-xs mt-4 underline" 
+                                onClick={() => window.open(`${process.env.REACT_APP__ABOUT_EXTRA_ALCA_LOCKUP_URL}`, '_blank').focus()}
+                            >
+                                About extra ALCA lockup rewards
+                            </div>
+                        </Grid.Column>
+
+                        <Grid.Column width={5}>
+                            <div 
+                                className="cursor-pointer text-xs mt-4 underline" 
+                                onClick={() => window.open(`${process.env.REACT_APP__ABOUT_ETH_LOCKUP_URL}`, '_blank').focus()}
+                            >
+                                About ETH % lockup rewards
+                            </div>
+                        </Grid.Column>
+                    </Grid>
                 </Header>
             )
         } else {
@@ -106,22 +127,38 @@ export function Unlock() {
                 <Grid.Column width={16}>
                     {(!status?.message || status.error) && (
                         <>
-                            <div>
-                                <Header as="h1">{stakedAlca} ALCA Staked and Locked</Header>
-                                <div className="mt4">
-                                    {`You can unlock your position at anytime, however to receive the lock-up bonus rewards it must not be unlocked until ${unlockDate}`}
+                            <div className="flex items-center">
+                                <div className="mr-3">
+                                    <Icon bordered size="huge" color="grey" name="lock" />
+                                </div>
+                            
+                                <div>
+                                    <Header as="h1">{stakedAlca} ALCA Staked Locked</Header>
+                                    <p>
+                                        You can unlock your position at anytime, however to receive the complete lockup bonus rewards 
+                                        it must not be unlocked until {unlockDate}
+                                    </p>
                                 </div>
                             </div>
 
-                            <div>
+                            <Segment className="flex justify-between items-center">
+                                <div>
+                                    <Header as="h3">Locked rewards as today</Header>
+                                    
+                                    <div className="font-bold space-x-2">
+                                        <Icon name="ethereum"/>0.012344 ETH 
+
+                                        <Icon name="ethereum"/>344 ALCA
+                                    </div>
+                                </div>
+
                                 <Button
-                                    className="mt-4"
                                     color="pink"
                                     loading={waiting}
                                     onClick={() => toggleConfirmModal(true)}
                                     content={"Unlock Positions"}
                                 />      
-                            </div>
+                            </Segment>
                         </>
                     )}
 
