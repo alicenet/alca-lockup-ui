@@ -9,4 +9,5 @@ export * from './lockupActions/LockupActions';
 export * from './lockupClaim/LockupClaim';
 export * from './lockupWelcome/LockupWelcome';
 export * from './tos/TOS';
+export * from "./unlockedClaim/UnlockedClaim";
 export * from "./unlock/Unlock";

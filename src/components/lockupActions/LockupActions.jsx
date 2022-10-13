@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Grid, Menu, Segment, Header } from "semantic-ui-react";
-import { Connect, Lockup, Unlock, LockupWelcome, LockupClaim } from "components";
+import { Connect, Lockup, Unlock, LockupWelcome, LockupClaim, UnlockedClaim } from "components";
 import { classNames } from "utils/generic";
 
 export function LockupActions() {
@@ -22,7 +22,7 @@ export function LockupActions() {
         switch (activeItem) {
             case "welcome": return <LockupWelcome stepForward={() => lockedPosition.lockedAlca > 0 ? setActiveItem("unlock") : setActiveItem("lockup") } />
             case "lockup": return <Lockup />
-            case "unlock": return <Unlock />
+            case "unlock": return lockedPosition.lockedAlca < 0 ? <Unlock /> : <UnlockedClaim />
             case "claim": return <LockupClaim />
             default: return;
         }
