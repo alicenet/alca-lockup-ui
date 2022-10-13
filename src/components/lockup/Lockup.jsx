@@ -95,24 +95,20 @@ export function Lockup() {
                         You currently have a staked position of {Number(stakedPosition.stakedAlca).toLocaleString(false, { maximumFractionDigits: 4 })} of ALCA, a lockup will be a period of 6 months with 5X multiplayer
                     </Header.Subheader>
 
-                    <Grid> 
-                        <Grid.Column width={5}>
-                            <div 
-                                className="cursor-pointer text-xs mt-4 underline" 
-                                onClick={() => window.open(`${process.env.REACT_APP__ABOUT_EXTRA_ALCA_LOCKUP_URL}`, '_blank').focus()}
-                            >
-                                About extra ALCA lockup rewards
-                            </div>
-                        </Grid.Column>
+                    <Grid className="mt-3"> 
+                        <div 
+                            className="cursor-pointer text-sm mt-4 underline" 
+                            onClick={() => window.open(`${process.env.REACT_APP__ABOUT_EXTRA_ALCA_LOCKUP_URL}`, '_blank').focus()}
+                        >
+                            About extra ALCA lockup rewards
+                        </div>
 
-                        <Grid.Column width={5}>
-                            <div 
-                                className="cursor-pointer text-xs mt-4 underline" 
-                                onClick={() => window.open(`${process.env.REACT_APP__ABOUT_ETH_LOCKUP_URL}`, '_blank').focus()}
-                            >
-                                About ETH % lockup rewards
-                            </div>
-                        </Grid.Column>
+                        <div 
+                            className="cursor-pointer text-sm mt-4 underline" 
+                            onClick={() => window.open(`${process.env.REACT_APP__ABOUT_ETH_LOCKUP_URL}`, '_blank').focus()}
+                        >
+                            About ETH % lockup rewards
+                        </div>
                     </Grid>
                 </Header>
             )
@@ -125,24 +121,19 @@ export function Lockup() {
                         {status?.message}, the lockup period is 6 months
                     </Header.Subheader>
 
-                    <Grid> 
-                        <Grid.Column width={5}>
-                            <div 
-                                className="cursor-pointer text-xs mt-4 underline" 
-                                onClick={() => window.open(`${process.env.REACT_APP__ABOUT_EXTRA_ALCA_LOCKUP_URL}`, '_blank').focus()}
-                            >
-                                About extra ALCA lockup rewards
-                            </div>
-                        </Grid.Column>
-
-                        <Grid.Column width={5}>
-                            <div 
-                                className="cursor-pointer text-xs mt-4 underline" 
-                                onClick={() => window.open(`${process.env.REACT_APP__ABOUT_ETH_LOCKUP_URL}`, '_blank').focus()}
-                            >
-                                About ETH % lockup rewards
-                            </div>
-                        </Grid.Column>
+                    <Grid className="mt-3"> 
+                        <div 
+                            className="cursor-pointer text-sm mt-4 underline" 
+                            onClick={() => window.open(`${process.env.REACT_APP__ABOUT_EXTRA_ALCA_LOCKUP_URL}`, '_blank').focus()}
+                        >
+                            About extra ALCA lockup rewards
+                        </div>
+                        <div 
+                            className="cursor-pointer text-sm mt-4 underline" 
+                            onClick={() => window.open(`${process.env.REACT_APP__ABOUT_ETH_LOCKUP_URL}`, '_blank').focus()}
+                        >
+                            About ETH % lockup rewards
+                        </div>
                     </Grid>
                 </Header>
             ) 
@@ -180,7 +171,7 @@ export function Lockup() {
             {confirmation()}
 
             <Grid padded>
-                <Grid.Column width={16}>
+                <Grid.Column width={16} className="flex mb-16">
                     <LockupHeader/>
                 </Grid.Column>
 
