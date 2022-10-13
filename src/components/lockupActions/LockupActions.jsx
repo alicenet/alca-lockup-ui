@@ -43,7 +43,7 @@ export function LockupActions() {
                         <Grid.Column width={4} stretched className="pr-0">
                             <Menu fluid vertical tabular>
                                 <Menu.Item
-                                    content={<Header className="text-base">Lockup</Header>}
+                                    content={<Header className="text-base mb-0">Lockup</Header>}
                                     active={activeItem === 'welcome'}
                                     onClick={e => handleItemClick(e, { name: "welcome" })}
                                     disabled={Boolean(hasReadTerms)}
@@ -53,8 +53,12 @@ export function LockupActions() {
                                 <Menu.Item
                                     content={<>
                                         <Header 
-                                            className={classNames({ "opacity-40": !hasReadTerms || lockedPosition.lockedAlca || !web3Connected, "text-base": true })} 
-                                            as="h2"
+                                            className={classNames({ 
+                                                "opacity-40": !hasReadTerms || lockedPosition.lockedAlca || !web3Connected, 
+                                                "text-base": true,
+                                                "mb-0": true 
+                                            })} 
+                                            as="h3"
                                         >
                                             Position Available to Lockup
                                         </Header>
@@ -72,8 +76,12 @@ export function LockupActions() {
                                 <Menu.Item
                                     content={<>
                                         <Header
-                                            className={classNames({ "opacity-40": !hasReadTerms || !lockedPosition.lockedAlca || !web3Connected, "text-base": true })} 
-                                            as="h2"
+                                            className={classNames({ 
+                                                "opacity-40": !hasReadTerms || !lockedPosition.lockedAlca || !web3Connected, 
+                                                "text-base": true,
+                                                "mb-0": true
+                                            })} 
+                                            as="h3"
                                         >
                                             Current Lockup Position
                                         </Header>
@@ -92,8 +100,12 @@ export function LockupActions() {
                                 <Menu.Item
                                     content={<>
                                         <Header
-                                            className={classNames({ "opacity-40": !hasReadTerms || !lockedPosition.lockedAlca || !web3Connected, "text-base": true })} 
-                                            as="h2"
+                                            className={classNames({ 
+                                                "opacity-40": !hasReadTerms || !lockedPosition.lockedAlca || !web3Connected, 
+                                                "text-base": true,
+                                                "mb-0": true
+                                            })} 
+                                            as="h3"
                                         >
                                             Claim Lockup Rewards
                                         </Header>

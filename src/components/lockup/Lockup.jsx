@@ -128,6 +128,7 @@ export function Lockup() {
                         >
                             About extra ALCA lockup rewards
                         </div>
+                        
                         <div 
                             className="cursor-pointer text-sm mt-4 underline" 
                             onClick={() => window.open(`${process.env.REACT_APP__ABOUT_ETH_LOCKUP_URL}`, '_blank').focus()}
