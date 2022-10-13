@@ -22,7 +22,7 @@ export function LockupActions() {
         switch (activeItem) {
             case "welcome": return <LockupWelcome stepForward={() => lockedPosition.lockedAlca > 0 ? setActiveItem("unlock") : setActiveItem("lockup") } />
             case "lockup": return <Lockup />
-            case "unlock": return lockedPosition.lockedAlca < 0 ? <Unlock /> : <UnlockedClaim />
+            case "unlock": return lockedPosition.lockedAlca > 0 ? <Unlock /> : <UnlockedClaim />
             case "claim": return <LockupClaim />
             default: return;
         }

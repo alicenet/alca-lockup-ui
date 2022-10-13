@@ -120,7 +120,7 @@ export function LockupClaim() {
                                 </div>
                             </div>
 
-                            <Segment className="flex justify-between items-center rounded-2xl bg-neutral-50 border-neutral-200">
+                            <Segment className="flex w-9/12 justify-between items-center rounded-2xl bg-neutral-50 border-neutral-200">
                                 <div>
                                     <Header as="h4">Locked rewards as today</Header>
                                     
