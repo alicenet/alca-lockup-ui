@@ -2,7 +2,7 @@ import React from "react";
 import ethAdapter from "eth/ethAdapter";
 import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
-import { Grid, Header, Button, Icon, Message, Segment } from "semantic-ui-react";
+import { Grid, Header, Button, Icon, Segment } from "semantic-ui-react";
 import { ConfirmationModal } from "components";
 
 const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://etherscan.io/tx/";
@@ -32,7 +32,7 @@ export function UnlockedClaim() {
             const tx = await ethAdapter.lockupStakedPosition(3);
             const rec = await tx.wait();
             if (rec.transactionHash) {
-                setStatus({ error: false, message: "Lockup Successful!" });
+                setStatus({ error: false, message: "Rewards Claimed Successful!" });
                 setHash(rec.transactionHash);
                 dispatch(APPLICATION_ACTIONS.updateBalances());
                 setWaiting(false);
@@ -77,13 +77,13 @@ export function UnlockedClaim() {
             open={openConfirmation}
             onClose={() => toggleConfirmModal(false)}
             onOpen={() => console.log('openned')}
+            actionLabel="Claim Rewards"
             onAccept={() => claimRewards()}
         >
             <p>You are about to claim the following rewards. This funds will be send to your wallet.</p>
 
             <div className="font-bold space-x-2">
                 <Icon name="ethereum"/>0.012344 ETH 
-
                 <Icon name="ethereum"/>344 ALCA
             </div>
         </ConfirmationModal>
@@ -94,29 +94,25 @@ export function UnlockedClaim() {
             {confirmation()}
 
             <Grid padded>
-                <Grid.Column width={16}>
-                    {claimHeader()}
-                </Grid.Column>
+                <Grid.Column width={16} className="flex mb-4">{claimHeader()}</Grid.Column>
 
                 <Grid.Column width={16}>
                     {(!status?.message || status.error) && (
                         <>
-                            <div className="flex items-center">
-                                <div className="mr-3">
-                                    <Icon bordered size="huge" color="grey" name="star" />
+                            <div className="flex mb-16">
+                                <div className="flex justify-center items-center mr-3 p-6 h-20 bg-neutral-300">
+                                    <Icon size="large" name="star" className="mr-0" />
                                 </div>
                             
                                 <div>
-                                    <Header as="h1">{stakedAlca} ALCA Staked Locked</Header>
-                                    <p>
-                                        You are now able to claim your lockup rewards, Claim now!
-                                    </p>
+                                    <Header as="h1" className="mb-0">{stakedAlca} ALCA Staked Locked</Header>
+                                    <p>You are now able to claim your lockup rewards, Claim now!</p>
                                 </div>
                             </div>
 
-                            <Segment className="flex justify-between items-center" color="teal">
+                            <Segment className="flex justify-between items-center rounded-2xl bg-teal-50 border-teal-200">
                                 <div>
-                                    <Header as="h3">Unlocked rewards as of today</Header>
+                                    <Header as="h4" color="teal">Unlocked rewards as of today</Header>
                                     
                                     <div className="font-bold space-x-2">
                                         <Icon name="ethereum"/>0.012344 ETH 
@@ -129,7 +125,7 @@ export function UnlockedClaim() {
                                     color="teal"
                                     loading={waiting}
                                     onClick={() => toggleConfirmModal(true)}
-                                    content={"Claim rewards"}
+                                    content={"Claim Rewards"}
                                 />      
                             </Segment>
                         </>

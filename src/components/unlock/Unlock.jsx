@@ -32,7 +32,7 @@ export function Unlock() {
             const tx = await ethAdapter.lockupStakedPosition(3);
             const rec = await tx.wait();
             if (rec.transactionHash) {
-                setStatus({ error: false, message: "Lockup Successful!" });
+                setStatus({ error: false, message: "Unlocked Successful!" });
                 setHash(rec.transactionHash);
                 dispatch(APPLICATION_ACTIONS.updateBalances());
                 setWaiting(false);
@@ -97,6 +97,7 @@ export function Unlock() {
             open={openConfirmation}
             onClose={() => toggleConfirmModal(false)}
             onOpen={() => console.log('openned')}
+            actionLabel="Unlock This Position"
             onAccept={() => unlockPosition()}
         >
             <Message warning>
@@ -122,18 +123,18 @@ export function Unlock() {
             {confirmation()}
 
             <Grid padded>
-                <Grid.Column width={16}>{unlockHeader()}</Grid.Column>
+                <Grid.Column width={16} className="flex mb-4">{unlockHeader()}</Grid.Column>
 
                 <Grid.Column width={16}>
                     {(!status?.message || status.error) && (
                         <>
-                            <div className="flex items-center">
-                                <div className="mr-3">
-                                    <Icon bordered size="huge" color="grey" name="lock" />
+                            <div className="flex mb-16">
+                                <div className="flex justify-center items-center mr-3 p-6 h-20 bg-neutral-300">
+                                    <Icon size="large" name="lock" className="mr-0" />
                                 </div>
                             
                                 <div>
-                                    <Header as="h1">{stakedAlca} ALCA Staked Locked</Header>
+                                    <Header as="h1" className="mb-0">{stakedAlca} ALCA Staked Locked</Header>
                                     <p>
                                         You can unlock your position at anytime, however to receive the complete lockup bonus rewards 
                                         it must not be unlocked until {unlockDate}
@@ -141,9 +142,9 @@ export function Unlock() {
                                 </div>
                             </div>
 
-                            <Segment className="flex justify-between items-center">
+                            <Segment className="flex justify-between items-center rounded-2xl bg-neutral-50 border-neutral-200">
                                 <div>
-                                    <Header as="h3">Locked rewards as today</Header>
+                                    <Header as="h4">Locked rewards as today</Header>
                                     
                                     <div className="font-bold space-x-2">
                                         <Icon name="ethereum"/>0.012344 ETH 

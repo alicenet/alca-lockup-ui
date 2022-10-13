@@ -155,7 +155,7 @@ export function Lockup() {
                         You have successfully locked {Number(stakedPosition.stakedAlca).toLocaleString(false, { maximumFractionDigits: 4 })} ALCA
                     </div>
                     <Header.Subheader>
-                        You can check the transaction hash below {hash}
+                        You can check the transaction hash below {hash} 
                     </Header.Subheader>
                 </Header>
             )
@@ -168,6 +168,7 @@ export function Lockup() {
             open={openConfirmation}
             onClose={() => toggleConfirmModal(false)}
             onOpen={() => console.log('openned')}
+            actionLabel="Lockup Position"
             onAccept={() => lockupPosition()}
         >
             <p>You are about to Lock-up <strong>{stakedPosition.stakedAlca}</strong> ALCA for 6 months with a XX multiplayer</p>
