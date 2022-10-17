@@ -47,54 +47,111 @@ export function Unlock() {
         }
     }
 
-    const unlockHeader = () => {
-        if(!status?.message || status.error) {
-            return (
-                <Grid.Row>
-                    <Header>
-                        Current lockup position
-                        <Header.Subheader className="mt-3">
-                            The early exit will have a 20% penalty of earned rewards, users will get the 80% of their 
-                            rewards and their original stake position.
-                        </Header.Subheader>
-                    </Header>
-
-                    <Grid className="mt-3"> 
-                        <div 
-                            className="cursor-pointer text-sm underline" 
-                            onClick={() => window.open(`${process.env.REACT_APP__ABOUT_EXTRA_ALCA_LOCKUP_URL}`, '_blank').focus()}
-                        >
-                            About extra ALCA lockup rewards
+    const requestUnlock = () => (
+        <Grid.Column width={16}>
+            {(!status?.message || status.error) && (
+                <>
+                    <div className="flex mb-16">
+                        <div className="flex justify-center items-center mr-3 p-6 h-20 bg-neutral-300">
+                            <Icon size="large" name="lock" className="mr-0" />
                         </div>
-
-                        <div 
-                            className="cursor-pointer text-sm underline" 
-                            onClick={() => window.open(`${process.env.REACT_APP__ABOUT_ETH_LOCKUP_URL}`, '_blank').focus()}
-                        >
-                            About ETH % lockup rewards
+                    
+                        <div>
+                            <Header as="h1" className="mb-0">{stakedAlca} ALCA Staked Locked</Header>
+                            <p>
+                                You can unlock your position at anytime, however to receive the complete lockup bonus rewards 
+                                it must not be unlocked until {unlockDate}
+                            </p>
                         </div>
-                    </Grid>
-                </Grid.Row>
-            )
-        } else {
-            return (
-                <Header>
-                    {status?.message}
-                    <div className="mt-4 mb-4 text-base">
-                        You have successfully locked {Number(stakedAlca).toLocaleString(false, { maximumFractionDigits: 4 })} ALCA
                     </div>
-                    <Header.Subheader>
-                        You can check the transaction hash below {hash}
-                        <Icon
-                            name="copy"
-                            className="cursor-pointer ml-1"
-                            onClick={() => utils.string.copyText(hash)}
-                        />
+
+                    <Segment className="flex w-9/12 justify-between items-center rounded-2xl bg-neutral-50 border-neutral-200">
+                        <div>
+                            <Header as="h4">Locked rewards as today</Header>
+                            
+                            <div className="font-bold space-x-2">
+                                <Icon name="ethereum"/>0.012344 ETH 
+
+                                <Icon name="cog"/>344 ALCA
+                            </div>
+                        </div>
+
+                        <Button
+                            color="pink"
+                            loading={waiting}
+                            onClick={() => toggleConfirmModal(true)}
+                            content={"Unlock Positions"}
+                        />      
+                    </Segment>
+                </>
+            )}
+        </Grid.Column>
+    )
+
+    const unlockSuccessful = () => (
+        <Grid.Column width={16}>
+            <div className="mb-10">
+                <Header as="h3">Claimed Rewards</Header>
+                
+                <div className="font-bold space-x-2">
+                    <Icon name="ethereum"/>0.012344 ETH 
+
+                    <Icon name="cog"/>344 ALCA
+                </div>
+            </div>
+
+            <Header.Subheader>
+                You can check the transaction hash below {hash}
+                <Icon
+                    name="copy"
+                    className="cursor-pointer ml-1"
+                    onClick={() => utils.string.copyText(hash)}
+                />
+            </Header.Subheader>
+
+            {status?.message && !status?.error && (
+                <div>
+                    <Button
+                        className="mt-4"
+                        content={"View on Etherscan"}
+                        color="black"
+                        onClick={() => window.open(`${ETHERSCAN_URL}${hash}`, '_blank').focus()}
+                    />
+                </div>
+            )}
+        </Grid.Column>
+    )
+
+    const unlockHeader = () => (
+        <Grid.Column width={16} className="flex mb-4">
+            <Grid.Row>
+                <Header>
+                    {status?.message || 'Current lockup position'}
+                    <Header.Subheader className="mt-3">
+                        {!hash 
+                        ? (`The early exit will have a 20% penalty of earned rewards, users will get the 80% of their rewards and their original stake position.`)
+                        : (`Your position 500 ALCA has been unlocked`)}
                     </Header.Subheader>
                 </Header>
-            )
-        }
-    }
+
+                <Grid className="mt-3"> 
+                    <div 
+                        className="cursor-pointer text-sm underline" 
+                        onClick={() => window.open(`${process.env.REACT_APP__ABOUT_EXTRA_ALCA_LOCKUP_URL}`, '_blank').focus()}
+                    >
+                        About extra ALCA lockup rewards
+                    </div>
+
+                    <div 
+                        className="cursor-pointer text-sm underline" 
+                        onClick={() => window.open(`${process.env.REACT_APP__ABOUT_ETH_LOCKUP_URL}`, '_blank').focus()}
+                    >
+                        About ETH % lockup rewards
+                    </div>
+                </Grid>
+            </Grid.Row>
+        </Grid.Column>
+    )
 
     const confirmation = () => (
         <ConfirmationModal 
@@ -128,57 +185,8 @@ export function Unlock() {
             {confirmation()}
 
             <Grid padded>
-                <Grid.Column width={16} className="flex mb-4">{unlockHeader()}</Grid.Column>
-
-                <Grid.Column width={16}>
-                    {(!status?.message || status.error) && (
-                        <>
-                            <div className="flex mb-16">
-                                <div className="flex justify-center items-center mr-3 p-6 h-20 bg-neutral-300">
-                                    <Icon size="large" name="lock" className="mr-0" />
-                                </div>
-                            
-                                <div>
-                                    <Header as="h1" className="mb-0">{stakedAlca} ALCA Staked Locked</Header>
-                                    <p>
-                                        You can unlock your position at anytime, however to receive the complete lockup bonus rewards 
-                                        it must not be unlocked until {unlockDate}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <Segment className="flex w-9/12 justify-between items-center rounded-2xl bg-neutral-50 border-neutral-200">
-                                <div>
-                                    <Header as="h4">Locked rewards as today</Header>
-                                    
-                                    <div className="font-bold space-x-2">
-                                        <Icon name="ethereum"/>0.012344 ETH 
-
-                                        <Icon name="cog"/>344 ALCA
-                                    </div>
-                                </div>
-
-                                <Button
-                                    color="pink"
-                                    loading={waiting}
-                                    onClick={() => toggleConfirmModal(true)}
-                                    content={"Unlock Positions"}
-                                />      
-                            </Segment>
-                        </>
-                    )}
-
-                    {status?.message && !status?.error && (
-                        <div>
-                            <Button
-                                className="mt-4"
-                                content={"View on Etherscan"}
-                                color="black"
-                                onClick={() => window.open(`${ETHERSCAN_URL}${hash}`, '_blank').focus()}
-                            />
-                        </div>
-                    )}
-                </Grid.Column>
+                {unlockHeader()}
+                {status?.message ? unlockSuccessful() : requestUnlock()}
             </Grid>
         </>
     )

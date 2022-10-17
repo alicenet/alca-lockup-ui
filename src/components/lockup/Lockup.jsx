@@ -30,7 +30,6 @@ export function Lockup() {
             setHash("");
             setStatus({});
             setWaiting(true);
-            toggleConfirmModal(true);
 
             const tx = await ethAdapter.sendLockupApproval(tokenID);
             await tx.wait();
@@ -62,8 +61,7 @@ export function Lockup() {
         try {
             setHash("");
             setStatus({});
-            setWaiting(true)
-            toggleConfirmModal(false);
+            setWaiting(true);
 
             const tx = await ethAdapter.lockupStakedPosition(tokenID);
             const rec = await tx.wait();
@@ -101,7 +99,15 @@ export function Lockup() {
                             className="mt-4"
                             color="black"
                             content={approvedLockup ? "Lockup Positions" : "Approve Lockup"}
-                            onClick={approvedLockup ? lockupPosition : approveLockup}
+                            onClick={() => {
+                                if (approvedLockup) {
+                                    toggleConfirmModal(true);
+                                    lockupPosition(); 
+                                } else {
+                                    toggleConfirmModal(true);
+                                    approveLockup();
+                                }
+                            }}
                             disabled={stakedPosition.stakedAlca === 0 || status?.error }
                             loading={waiting}
                         />      
@@ -111,7 +117,7 @@ export function Lockup() {
         </Grid.Column>
     )
 
-    const lockupSuccessfull = () => (
+    const lockupSuccessful = () => (
         <Grid.Column width={16}>
             <Header.Subheader>
                 You can check the transaction hash below {hash}
@@ -175,7 +181,7 @@ export function Lockup() {
             onClose={() => toggleConfirmModal(false)}
             onOpen={() => console.log('openned')}
             actionLabel="Lockup Position"
-            onAccept={() => lockupPosition()}
+            onAccept={() => toggleConfirmModal(false)}
         >
             <p>You are about to Lock-up <strong>{stakedPosition.stakedAlca}</strong> ALCA for 6 months with a XX multiplayer</p>
         </ConfirmationModal>
@@ -187,7 +193,7 @@ export function Lockup() {
 
             <Grid padded>
                 {lockupHeader()}
-                {lockedPosition.lockedAlca ? lockupSuccessfull() : lockupStakedAmount()}
+                {lockedPosition.lockedAlca ? lockupSuccessful() : lockupStakedAmount()}
             </Grid>
         </>
     )
