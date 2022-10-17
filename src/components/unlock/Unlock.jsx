@@ -3,6 +3,7 @@ import ethAdapter from "eth/ethAdapter";
 import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
 import { Grid, Header,  Button, Icon, Message, Segment } from "semantic-ui-react";
+import utils from "utils";
 import { ConfirmationModal } from "components";
 
 const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://etherscan.io/tx/";
@@ -58,24 +59,20 @@ export function Unlock() {
                         </Header.Subheader>
                     </Header>
 
-                    <Grid> 
-                        <Grid.Column width={5}>
-                            <div 
-                                className="cursor-pointer text-xs mt-4 underline" 
-                                onClick={() => window.open(`${process.env.REACT_APP__ABOUT_EXTRA_ALCA_LOCKUP_URL}`, '_blank').focus()}
-                            >
-                                About extra ALCA lockup rewards
-                            </div>
-                        </Grid.Column>
+                    <Grid className="mt-3"> 
+                        <div 
+                            className="cursor-pointer text-sm underline" 
+                            onClick={() => window.open(`${process.env.REACT_APP__ABOUT_EXTRA_ALCA_LOCKUP_URL}`, '_blank').focus()}
+                        >
+                            About extra ALCA lockup rewards
+                        </div>
 
-                        <Grid.Column width={5}>
-                            <div 
-                                className="cursor-pointer text-xs mt-4 underline" 
-                                onClick={() => window.open(`${process.env.REACT_APP__ABOUT_ETH_LOCKUP_URL}`, '_blank').focus()}
-                            >
-                                About ETH % lockup rewards
-                            </div>
-                        </Grid.Column>
+                        <div 
+                            className="cursor-pointer text-sm underline" 
+                            onClick={() => window.open(`${process.env.REACT_APP__ABOUT_ETH_LOCKUP_URL}`, '_blank').focus()}
+                        >
+                            About ETH % lockup rewards
+                        </div>
                     </Grid>
                 </Grid.Row>
             )
@@ -88,6 +85,11 @@ export function Unlock() {
                     </div>
                     <Header.Subheader>
                         You can check the transaction hash below {hash}
+                        <Icon
+                            name="copy"
+                            className="cursor-pointer ml-1"
+                            onClick={() => utils.string.copyText(hash)}
+                        />
                     </Header.Subheader>
                 </Header>
             )
@@ -116,7 +118,7 @@ export function Unlock() {
             <div className="font-bold space-x-2">
                 <Icon name="ethereum"/>0.012344 ETH 
 
-                <Icon name="ethereum"/>344 ALCA
+                <Icon name="cog"/>344 ALCA
             </div>
         </ConfirmationModal>
     )
@@ -152,7 +154,7 @@ export function Unlock() {
                                     <div className="font-bold space-x-2">
                                         <Icon name="ethereum"/>0.012344 ETH 
 
-                                        <Icon name="ethereum"/>344 ALCA
+                                        <Icon name="cog"/>344 ALCA
                                     </div>
                                 </div>
 

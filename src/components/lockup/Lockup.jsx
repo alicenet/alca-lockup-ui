@@ -2,8 +2,9 @@ import React from "react";
 import ethAdapter from "eth/ethAdapter";
 import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
-import { Grid, Header, Button } from "semantic-ui-react";
+import { Grid, Header, Button, Icon } from "semantic-ui-react";
 import { TOKEN_TYPES } from "redux/constants";
+import utils from "utils";
 import { ConfirmationModal } from "components";
 
 const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://etherscan.io/tx/";
@@ -86,79 +87,86 @@ export function Lockup() {
             });
         }
     }
+
+    const lockupStakedAmount = () => (
+        <Grid.Column width={16}>
+            {((!lockedPosition.lockedAlca) || status.error) && (
+                <>
+                    <div>
+                        <Header as="h2">{stakedPosition.stakedAlca} ALCA Staked</Header>
+                    </div>
+
+                    <div>
+                        <Button
+                            className="mt-4"
+                            color="black"
+                            content={approvedLockup ? "Lockup Positions" : "Approve Lockup"}
+                            onClick={approvedLockup ? lockupPosition : approveLockup}
+                            disabled={stakedPosition.stakedAlca === 0 || status?.error }
+                            loading={waiting}
+                        />      
+                    </div>
+                </>
+            )}
+        </Grid.Column>
+    )
+
+    const lockupSuccessfull = () => (
+        <Grid.Column width={16}>
+            <Header.Subheader>
+                You can check the transaction hash below {hash}
+                <Icon
+                    name="copy"
+                    className="cursor-pointer ml-1"
+                    onClick={() => utils.string.copyText(hash)}
+                />
+            </Header.Subheader>
+
+            {status?.message && (!status?.error && lockedPosition.lockedAlca > 0) && (
+                <div>
+                    <Button
+                        className="mt-4"
+                        content={"View on Etherscan"}
+                        color="black"
+                        onClick={() => window.open(`${ETHERSCAN_URL}${hash}`, '_blank').focus()}
+                    />
+                </div>
+            )}
+        </Grid.Column>
+    )
     
-    const LockupHeader = () => {
-        if(!status?.message || status.error || (!lockedPosition.lockedAlca && !approvedLockup)) {
-            return (
+    const lockupHeader = () => (
+        <>
+            <Grid.Column width={16} className="mb-10">
                 <Grid.Row>
                     <Header>
-                        Lockup Staked Positions
+                        {status?.message || 'Lockup Staked Positions'}
                         <Header.Subheader className="mt-3">
-                            You currently have a staked position of {Number(stakedPosition.stakedAlca).toLocaleString(false, { maximumFractionDigits: 4 })} of ALCA, a lockup will be a period of 6 months with 5X multiplayer
+                            {(!lockedPosition.lockedAlca) 
+                            ? (`You currently have a staked position of ${Number(stakedPosition.stakedAlca).toLocaleString(false, { maximumFractionDigits: 4 })} ALCA, a lockup will be a period of 6 months with 5X multiplayer`) 
+                            : (`You have Locked-up ${Number(stakedPosition.stakedAlca).toLocaleString(false, { maximumFractionDigits: 4 })}  ALCA for 6 months 5X multiplayer`)}
                         </Header.Subheader>
                     </Header>
                     
                     <Grid className="mt-3"> 
                         <div 
-                            className="cursor-pointer text-sm mt-4 underline" 
+                            className="cursor-pointer text-sm underline" 
                             onClick={() => window.open(`${process.env.REACT_APP__ABOUT_EXTRA_ALCA_LOCKUP_URL}`, '_blank').focus()}
                         >
                             About extra ALCA lockup rewards
                         </div>
 
                         <div 
-                            className="cursor-pointer text-sm mt-4 underline" 
+                            className="cursor-pointer text-sm underline" 
                             onClick={() => window.open(`${process.env.REACT_APP__ABOUT_ETH_LOCKUP_URL}`, '_blank').focus()}
                         >
                             About ETH % lockup rewards
                         </div>
                     </Grid>
                 </Grid.Row>
-            )
-        } 
-        
-        else if(!status.error && !lockedPosition.lockedAlca && approvedLockup){
-            return (
-                <Grid.Row>
-                    <Header>
-                        Lockup Staked Positions
-                        <Header.Subheader className="mt-3">
-                            {status?.message}, the lockup period is 6 months
-                        </Header.Subheader>
-                    </Header>
-
-                    <Grid className="mt-3"> 
-                        <div 
-                            className="cursor-pointer text-sm mt-4 underline" 
-                            onClick={() => window.open(`${process.env.REACT_APP__ABOUT_EXTRA_ALCA_LOCKUP_URL}`, '_blank').focus()}
-                        >
-                            About extra ALCA lockup rewards
-                        </div>
-                        
-                        <div 
-                            className="cursor-pointer text-sm mt-4 underline" 
-                            onClick={() => window.open(`${process.env.REACT_APP__ABOUT_ETH_LOCKUP_URL}`, '_blank').focus()}
-                        >
-                            About ETH % lockup rewards
-                        </div>
-                    </Grid>
-                </Grid.Row>
-            ) 
-        } 
-        else {
-            return (
-                <Header>
-                    {status?.message}
-                    <div className="mt-4 mb-4 text-base">
-                        You have successfully locked {Number(stakedPosition.stakedAlca).toLocaleString(false, { maximumFractionDigits: 4 })} ALCA
-                    </div>
-                    <Header.Subheader>
-                        You can check the transaction hash below {hash} 
-                    </Header.Subheader>
-                </Header>
-            )
-        }
-    }
+            </Grid.Column>
+        </>
+    )
 
     const confirmation = () => (
         <ConfirmationModal 
@@ -178,41 +186,8 @@ export function Lockup() {
             {confirmation()}
 
             <Grid padded>
-                <Grid.Column width={16} className="flex mb-16">
-                    <LockupHeader/>
-                </Grid.Column>
-
-                <Grid.Column width={16}>
-                    {((!lockedPosition.lockedAlca) || status.error) && (
-                        <>
-                            <div>
-                                <Header as="h2">{stakedPosition.stakedAlca} ALCA Staked</Header>
-                            </div>
-
-                            <div>
-                                <Button
-                                    className="mt-4"
-                                    color="black"
-                                    content={approvedLockup ? "Lockup Positions" : "Approve Lockup"}
-                                    onClick={approvedLockup ? lockupPosition : approveLockup}
-                                    disabled={stakedPosition.stakedAlca === 0 || status?.error }
-                                    loading={waiting}
-                                />      
-                            </div>
-                        </>
-                    )}
-
-                    {status?.message && (!status?.error && lockedPosition.lockedAlca > 0)  && (
-                        <div>
-                            <Button
-                                className="mt-4"
-                                content={"View on Etherscan"}
-                                color="black"
-                                onClick={() => window.open(`${ETHERSCAN_URL}${hash}`, '_blank').focus()}
-                            />
-                        </div>
-                    )}
-                </Grid.Column>
+                {lockupHeader()}
+                {lockedPosition.lockedAlca ? lockupSuccessfull() : lockupStakedAmount()}
             </Grid>
         </>
     )
