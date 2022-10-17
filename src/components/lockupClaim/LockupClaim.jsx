@@ -33,7 +33,7 @@ export function LockupClaim() {
             const tx = await ethAdapter.lockupStakedPosition(3);
             const rec = await tx.wait();
             if (rec.transactionHash) {
-                setStatus({ error: false, message: "Unlocked Successful!" });
+                setStatus({ error: false, message: "Rewards Claimed Successfully!" });
                 setHash(rec.transactionHash);
                 dispatch(APPLICATION_ACTIONS.updateBalances());
                 setWaiting(false);
@@ -47,35 +47,91 @@ export function LockupClaim() {
         }
     }
 
-    const claimHeader = () => {
-        if(!status?.message || status.error) {
-            return (
-                <Header>
-                    Claim Lockup Rewards
-                    <Header.Subheader className="mt-3">
-                        Lockup rewards can be claim without unlocking your position.
-                    </Header.Subheader>
-                </Header>
-            )
-        } else {
-            return (
-                <Header>
-                    {status?.message}
-                    <div className="mt-4 mb-4 text-base">
-                        You have successfully locked {Number(stakedAlca).toLocaleString(false, { maximumFractionDigits: 4 })} ALCA
+    const requestRewards = () => (
+        <Grid.Column width={16}>
+            {(!status?.message || status.error) && (
+                <>
+                    <div className="flex mb-16">
+                        <div className="flex justify-center items-center mr-3 p-6 h-20 bg-neutral-300">
+                            <Icon size="large" name="lock" className="mr-0" />
+                        </div>
+                    
+                        <div>
+                            <Header as="h1" className="mb-0">{stakedAlca} ALCA Staked Locked</Header>
+                            <p>
+                                You can claim your rewards at anytime, however early claiming will have a 20% penalty of earned rewards, 
+                                users will get the 80% of their rewards and their original stake position.
+                            </p>
+                        </div>
                     </div>
-                    <Header.Subheader>
-                        You can check the transaction hash below {hash}
-                        <Icon
-                            name="copy"
-                            className="cursor-pointer ml-1"
-                            onClick={() => utils.string.copyText(hash)}
-                        />
-                    </Header.Subheader>
-                </Header>
-            )
-        }
-    }
+
+                    <Segment className="flex w-9/12 justify-between items-center rounded-2xl bg-neutral-50 border-neutral-200">
+                        <div>
+                            <Header as="h4">Locked rewards as today</Header>
+                            
+                            <div className="font-bold space-x-2">
+                                <Icon name="ethereum"/>0.012344 ETH 
+
+                                <Icon name="cog"/>344 ALCA
+                            </div>
+                        </div>
+
+                        <Button
+                            color="blue"
+                            loading={waiting}
+                            onClick={() => toggleConfirmModal(true)}
+                            content={"Claim rewards"}
+                        />      
+                    </Segment>
+                </>
+            )}
+        </Grid.Column>
+    )
+
+    const claimSuccessful = () => (
+        <Grid.Column width={16}>
+            <div className="mb-10">
+                <Header as="h3">Claimed Rewards</Header>
+                
+                <div className="font-bold space-x-2">
+                    <Icon name="ethereum"/>0.012344 ETH 
+
+                    <Icon name="cog"/>344 ALCA
+                </div>
+            </div>
+
+            <Header.Subheader>
+                You can check the transaction hash below {hash}
+                <Icon
+                    name="copy"
+                    className="cursor-pointer ml-1"
+                    onClick={() => utils.string.copyText(hash)}
+                />
+            </Header.Subheader>
+
+            {status?.message && !status?.error && (
+                <Button
+                    className="mt-4"
+                    content={"View on Etherscan"}
+                    color="black"
+                    onClick={() => window.open(`${ETHERSCAN_URL}${hash}`, '_blank').focus()}
+                />
+            )}
+        </Grid.Column>
+    )
+
+    const claimHeader = () => (
+        <Grid.Column width={16} className="flex mb-4">
+            <Header>
+                {status?.message || 'Claim Lockup Rewards'}
+                <Header.Subheader className="mt-3">
+                    {hash 
+                        ? (`You have claimed your lockup rewards`) 
+                        : (`Lockup rewards can be claim without unlocking your position.`)}
+                </Header.Subheader>
+            </Header>
+        </Grid.Column>
+    )
 
     const confirmation = () => (
         <ConfirmationModal 
@@ -107,55 +163,9 @@ export function LockupClaim() {
             {confirmation()}
 
             <Grid padded>
-                <Grid.Column width={16} className="flex mb-4">{claimHeader()}</Grid.Column>
+                {claimHeader()}
 
-                <Grid.Column width={16}>
-                    {(!status?.message || status.error) && (
-                        <>
-                            <div className="flex mb-16">
-                                <div className="flex justify-center items-center mr-3 p-6 h-20 bg-neutral-300">
-                                    <Icon size="large" name="lock" className="mr-0" />
-                                </div>
-                            
-                                <div>
-                                    <Header as="h1" className="mb-0">{stakedAlca} ALCA Staked Locked</Header>
-                                    <p>
-                                        You can claim your rewards at anytime, however early claiming will have a 20% penalty of earned rewards, 
-                                        users will get the 80% of their rewards and their original stake position.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <Segment className="flex w-9/12 justify-between items-center rounded-2xl bg-neutral-50 border-neutral-200">
-                                <div>
-                                    <Header as="h4">Locked rewards as today</Header>
-                                    
-                                    <div className="font-bold space-x-2">
-                                        <Icon name="ethereum"/>0.012344 ETH 
-
-                                        <Icon name="cog"/>344 ALCA
-                                    </div>
-                                </div>
-
-                                <Button
-                                    color="blue"
-                                    loading={waiting}
-                                    onClick={() => toggleConfirmModal(true)}
-                                    content={"Claim rewards"}
-                                />      
-                            </Segment>
-                        </>
-                    )}
-
-                    {status?.message && !status?.error && (
-                        <Button
-                            className="mt-4"
-                            content={"View on Etherscan"}
-                            color="black"
-                            onClick={() => window.open(`${ETHERSCAN_URL}${hash}`, '_blank').focus()}
-                        />
-                    )}
-                </Grid.Column>
+                {hash ? claimSuccessful() : requestRewards()}
             </Grid>
         </>
     )

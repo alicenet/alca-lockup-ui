@@ -47,35 +47,90 @@ export function UnlockedClaim() {
         }
     }
 
-    const claimHeader = () => {
-        if(!status?.message || status.error) {
-            return (
-                <Header>
-                    Claim unlocked position rewards
-                    <Header.Subheader className="mt-3">
-                        Your 500 ALCA position is unlocked and ready to be claimed
-                    </Header.Subheader>
-                </Header>
-            )
-        } else {
-            return (
-                <Header>
-                    {status?.message}
-                    <div className="mt-4 mb-4 text-base">
-                        You have successfully locked {Number(stakedAlca).toLocaleString(false, { maximumFractionDigits: 4 })} ALCA
+    const requestRewards = () => (
+        <Grid.Column width={16}>
+            {(!status?.message || status.error) && (
+                <>
+                    <div className="flex mb-16">
+                        <div className="flex justify-center items-center mr-3 p-6 h-20 bg-neutral-300">
+                            <Icon size="large" name="star" className="mr-0" />
+                        </div>
+                    
+                        <div>
+                            <Header as="h1" className="mb-0">{stakedAlca} ALCA Staked Locked</Header>
+                            <p>You are now able to claim your lockup rewards, Claim now!</p>
+                        </div>
                     </div>
-                    <Header.Subheader>
-                        You can check the transaction hash below {hash}
-                        <Icon
-                            name="copy"
-                            className="cursor-pointer ml-1"
-                            onClick={() => utils.string.copyText(hash)}
-                        />
-                    </Header.Subheader>
-                </Header>
-            )
-        }
-    }
+
+                    <Segment className="flex w-9/12 justify-between items-center rounded-2xl bg-teal-50 border-teal-200">
+                        <div>
+                            <Header as="h4" color="teal">Unlocked rewards as of today</Header>
+                            
+                            <div className="font-bold space-x-2">
+                                <Icon name="ethereum"/>0.012344 ETH 
+
+                                <Icon name="cog"/>344 ALCA
+                            </div>
+                        </div>
+
+                        <Button
+                            color="teal"
+                            loading={waiting}
+                            onClick={() => toggleConfirmModal(true)}
+                            content={"Claim Rewards"}
+                        />      
+                    </Segment>
+                </>
+            )}
+
+        </Grid.Column>
+    )
+
+    const claimSuccessful = () => (
+        <Grid.Column width={16}>
+            <div className="mb-10">
+                <Header as="h3">Claimed Rewards</Header>
+                
+                <div className="font-bold space-x-2">
+                    <Icon name="ethereum"/>0.012344 ETH 
+
+                    <Icon name="cog"/>344 ALCA
+                </div>
+            </div>
+
+            <Header.Subheader>
+                You can check the transaction hash below {hash}
+                <Icon
+                    name="copy"
+                    className="cursor-pointer ml-1"
+                    onClick={() => utils.string.copyText(hash)}
+                />
+            </Header.Subheader>
+
+
+            {status?.message && !status?.error && (
+                <Button
+                    className="mt-4"
+                    content={"View on Etherscan"}
+                    color="black"
+                    onClick={() => window.open(`${ETHERSCAN_URL}${hash}`, '_blank').focus()}
+                />
+            )}
+        </Grid.Column>
+    )
+
+    const claimHeader = () => (
+        <Grid.Column width={16} className="flex mb-4">
+            <Header>
+                {status?.message || 'Claim unlocked position rewards'}
+                <Header.Subheader className="mt-3">
+                    {hash 
+                        ? (`The following rewards have been sent to your wallet`)
+                        : (`Your 500 ALCA position is unlocked and ready to be claimed`)}
+                </Header.Subheader>
+            </Header>
+        </Grid.Column>
+    )
 
     const confirmation = () => (
         <ConfirmationModal 
@@ -100,52 +155,9 @@ export function UnlockedClaim() {
             {confirmation()}
 
             <Grid padded>
-                <Grid.Column width={16} className="flex mb-4">{claimHeader()}</Grid.Column>
+                {claimHeader()}
 
-                <Grid.Column width={16}>
-                    {(!status?.message || status.error) && (
-                        <>
-                            <div className="flex mb-16">
-                                <div className="flex justify-center items-center mr-3 p-6 h-20 bg-neutral-300">
-                                    <Icon size="large" name="star" className="mr-0" />
-                                </div>
-                            
-                                <div>
-                                    <Header as="h1" className="mb-0">{stakedAlca} ALCA Staked Locked</Header>
-                                    <p>You are now able to claim your lockup rewards, Claim now!</p>
-                                </div>
-                            </div>
-
-                            <Segment className="flex w-9/12 justify-between items-center rounded-2xl bg-teal-50 border-teal-200">
-                                <div>
-                                    <Header as="h4" color="teal">Unlocked rewards as of today</Header>
-                                    
-                                    <div className="font-bold space-x-2">
-                                        <Icon name="ethereum"/>0.012344 ETH 
-
-                                        <Icon name="cog"/>344 ALCA
-                                    </div>
-                                </div>
-
-                                <Button
-                                    color="teal"
-                                    loading={waiting}
-                                    onClick={() => toggleConfirmModal(true)}
-                                    content={"Claim Rewards"}
-                                />      
-                            </Segment>
-                        </>
-                    )}
-
-                    {status?.message && !status?.error && (
-                        <Button
-                            className="mt-4"
-                            content={"View on Etherscan"}
-                            color="black"
-                            onClick={() => window.open(`${ETHERSCAN_URL}${hash}`, '_blank').focus()}
-                        />
-                    )}
-                </Grid.Column>
+                {hash ? claimSuccessful() : requestRewards()}
             </Grid>
         </>
     )
