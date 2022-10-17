@@ -49,11 +49,14 @@ export function Unlock() {
     const unlockHeader = () => {
         if(!status?.message || status.error) {
             return (
-                <Header>
-                    Current lockup position
-                    <Header.Subheader>
-                    The early exit will have a 20% penalty of earned rewards, users will get the 80% of their rewards and their original stake position.
-                    </Header.Subheader>
+                <Grid.Row>
+                    <Header>
+                        Current lockup position
+                        <Header.Subheader className="mt-3">
+                            The early exit will have a 20% penalty of earned rewards, users will get the 80% of their 
+                            rewards and their original stake position.
+                        </Header.Subheader>
+                    </Header>
 
                     <Grid> 
                         <Grid.Column width={5}>
@@ -74,7 +77,7 @@ export function Unlock() {
                             </div>
                         </Grid.Column>
                     </Grid>
-                </Header>
+                </Grid.Row>
             )
         } else {
             return (

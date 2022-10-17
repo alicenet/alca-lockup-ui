@@ -51,7 +51,7 @@ export function UnlockedClaim() {
             return (
                 <Header>
                     Claim unlocked position rewards
-                    <Header.Subheader>
+                    <Header.Subheader className="mt-3">
                         Your 500 ALCA position is unlocked and ready to be claimed
                     </Header.Subheader>
                 </Header>

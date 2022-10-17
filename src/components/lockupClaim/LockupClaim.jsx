@@ -51,7 +51,7 @@ export function LockupClaim() {
             return (
                 <Header>
                     Claim Lockup Rewards
-                    <Header.Subheader>
+                    <Header.Subheader className="mt-3">
                         Lockup rewards can be claim without unlocking your position.
                     </Header.Subheader>
                 </Header>

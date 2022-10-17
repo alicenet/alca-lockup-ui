@@ -90,11 +90,14 @@ export function Lockup() {
     const LockupHeader = () => {
         if(!status?.message || status.error || (!lockedPosition.lockedAlca && !approvedLockup)) {
             return (
-                <Header>Lockup Staked Positions
-                    <Header.Subheader>
-                        You currently have a staked position of {Number(stakedPosition.stakedAlca).toLocaleString(false, { maximumFractionDigits: 4 })} of ALCA, a lockup will be a period of 6 months with 5X multiplayer
-                    </Header.Subheader>
-
+                <Grid.Row>
+                    <Header>
+                        Lockup Staked Positions
+                        <Header.Subheader className="mt-3">
+                            You currently have a staked position of {Number(stakedPosition.stakedAlca).toLocaleString(false, { maximumFractionDigits: 4 })} of ALCA, a lockup will be a period of 6 months with 5X multiplayer
+                        </Header.Subheader>
+                    </Header>
+                    
                     <Grid className="mt-3"> 
                         <div 
                             className="cursor-pointer text-sm mt-4 underline" 
@@ -110,16 +113,19 @@ export function Lockup() {
                             About ETH % lockup rewards
                         </div>
                     </Grid>
-                </Header>
+                </Grid.Row>
             )
         } 
         
         else if(!status.error && !lockedPosition.lockedAlca && approvedLockup){
             return (
-                <Header>Lockup Staked Positions
-                    <Header.Subheader>
-                        {status?.message}, the lockup period is 6 months
-                    </Header.Subheader>
+                <Grid.Row>
+                    <Header>
+                        Lockup Staked Positions
+                        <Header.Subheader className="mt-3">
+                            {status?.message}, the lockup period is 6 months
+                        </Header.Subheader>
+                    </Header>
 
                     <Grid className="mt-3"> 
                         <div 
@@ -136,7 +142,7 @@ export function Lockup() {
                             About ETH % lockup rewards
                         </div>
                     </Grid>
-                </Header>
+                </Grid.Row>
             ) 
         } 
         else {
