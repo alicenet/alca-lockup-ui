@@ -236,6 +236,7 @@ class EthAdapter {
             
             // Lookup Contract Addresses
             for (let contract in this.contracts) {
+                if (contract === "Factory") { continue }
                 let address = await this._lookupContractName(contract);
                 this.addressesFromFactory[contract] = address;
             }
@@ -294,13 +295,6 @@ class EthAdapter {
         });
     }
 
-    async getPublicStakingAllowance(accountIndex = 0) {
-        return this._try(async () => {
-            let allowance = await this._tryCall(CONTRACT_NAMES.AToken, "allowance", [await this._getAddressByIndex(accountIndex), CONTRACT_ADDRESSES.PublicStaking]);
-            return allowance.toString();
-        });
-    }
-
     /**
      * Get staked ALCA
      * @param { Number } accountIndex - Account index to 
@@ -336,7 +330,7 @@ class EthAdapter {
         while (fetching) {
             try {
                 const tokenId = await this._tryCall(
-                    CONTRACT_NAMES.PublicStaking, 
+                    CONTRACT_NAMES.Lockup, 
                     "tokenOfOwnerByIndex", 
                     [address, index]
                 );
@@ -357,7 +351,7 @@ class EthAdapter {
         const { parseTokenMetaData } = utils.string;
 
         for (let id of tokenIds) {
-            const metadata = await this._tryCall(CONTRACT_NAMES.PublicStaking, "tokenURI", [id]);
+            const metadata = await this._tryCall(CONTRACT_NAMES.Lockup, "tokenURI", [id]);
             const { attributes } = parseTokenMetaData(metadata);
             const shares = findTokenAttributeByName(attributes, 'Shares');
             const ethRewards = await this.estimateEthCollection(id);
@@ -381,31 +375,13 @@ class EthAdapter {
     }
 
     /**
-     * Send a approve request for AToken allowance
-     * @returns { Object }
-     */
-    async sendStakingAllowanceRequest() {
-        return await this._try(async () => {
-            const tx = await this._trySend(
-                CONTRACT_NAMES.AToken, 
-                "approve", 
-                [
-                    CONTRACT_ADDRESSES.PublicStaking, 
-                    ethers.BigNumber.from("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
-                ]
-            )
-            return tx;
-        })
-    }
-
-    /**
      * Request a stake position to be opened
      * @param { Number } amount - Amount to be staked for a position
      * @returns { Object }
      */
-    async openStakingPosition(amount) {
+    async lockPosition(amount) {
         return await this._try(async () => {
-            const tx = await this._trySend(CONTRACT_NAMES.PublicStaking, "mint", [ethers.utils.parseEther(amount)]);
+            const tx = await this._trySend(CONTRACT_NAMES.Lockup, "mint", [ethers.utils.parseEther(amount)]);
             return tx;
         })
     }
@@ -415,68 +391,21 @@ class EthAdapter {
      * @param { Number } tokenId
      * @returns { Object }
      */
-    async unstakingPosition(tokenId) {
+    async unlockPosition(tokenId) {
         return await this._try(async () => {
-            const tx = await this._trySend(CONTRACT_NAMES.PublicStaking, "burn", [tokenId]);
+            const tx = await this._trySend(CONTRACT_NAMES.Lockup, "burn", [tokenId]);
             return tx;
-        })
-    }
-
-    /**
-     * Get ETH rewards for a given token
-     * @param { Number } tokenId
-     * @returns { String }
-     */
-    async estimateEthCollection(tokenId) {
-        return await this._try(async () => {
-            const payout = await this._trySend(CONTRACT_NAMES.PublicStaking, "estimateEthCollection", [tokenId]);
-            return ethers.utils.formatEther(payout);
-        })
-    }
-    
-    /**
-     * Get ALCA rewards for a given token
-     * @param { Number } tokenId 
-     * @returns { String }
-     */
-    async estimateTokenCollection(tokenId) {
-        return await this._try(async () => {
-            const payout = await this._trySend(CONTRACT_NAMES.PublicStaking, "estimateTokenCollection", [tokenId]);
-            return ethers.utils.formatEther(payout);
-        })
-    }
-
-    /**
-     * Claim all rewards for ETH
-     * @param { Number } tokenId 
-     * @returns { Object }
-     */
-    async collectEthProfits(tokenId) {
-        return await this._try(async () => {
-            const payoutTx = await this._trySend(CONTRACT_NAMES.PublicStaking, "collectEth", [tokenId]);
-            return payoutTx;
-        })
-    }
-
-    /**
-     * Claim all rewards for both ETH and ALCA
-     * @param { Number } tokenId 
-     * @returns { Object }
-     */
-    async collectAllProfits(tokenId) {
-        return await this._try(async () => {
-            const payoutTx = await this._trySend(CONTRACT_NAMES.PublicStaking, "collectAllProfits", [tokenId]);
-            return payoutTx;
         })
     }
     //Lockup
 
     /**
-     * approve lockup contract to transfer public staking nft token
+     * approve lockup contract 
      * @param tokenID nft id held by lockup
      * @returns { Object }
      */
      async sendLockupApproval(tokenID) {
+        // TODO remove testing conditional
         if(process.env.REACT_APP__MODE === "TESTING") {
             return {
                 wait: async () => { return {
@@ -486,7 +415,7 @@ class EthAdapter {
         } else {
             return await this._try(async () => {
                 const tx = await this._trySend(
-                    CONTRACT_NAMES.PublicStaking, 
+                    CONTRACT_NAMES.Lockup, 
                     "approve", 
                     [
                         CONTRACT_ADDRESSES.Lockup, 
@@ -505,6 +434,7 @@ class EthAdapter {
      * @returns { Object }
      */
      async lockupStakedPosition(tokenID) {
+        // TODO remove testing conditional
         if(process.env.REACT_APP__MODE === "TESTING"){
             return {
                 wait: async () => { return {
