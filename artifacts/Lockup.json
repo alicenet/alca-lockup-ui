@@ -1,1306 +1,792 @@
 [
     {
-      "inputs": [],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
-    {
-      "inputs": [
+    "inputs": [
         {
-          "internalType": "uint256",
-          "name": "magic",
-          "type": "uint256"
-        }
-      ],
-      "name": "BadMagic",
-      "type": "error"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "balance",
-          "type": "uint256"
+        "internalType": "uint256",
+        "name": "enrollmentPeriod_",
+        "type": "uint256"
         },
         {
-          "internalType": "uint256",
-          "name": "reserve",
-          "type": "uint256"
-        }
-      ],
-      "name": "BalanceLessThanReserve",
-      "type": "error"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "caller",
-          "type": "address"
-        }
-      ],
-      "name": "CallerNotTokenOwner",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "CannotCallContractMethodsOnZeroAddress",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "CannotTransferToZeroAddress",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "CircuitBreakerOpened",
-      "type": "error"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "erc20Address",
-          "type": "address"
+        "internalType": "uint256",
+        "name": "lockDuration_",
+        "type": "uint256"
         },
         {
-          "internalType": "address",
-          "name": "from",
-          "type": "address"
+        "internalType": "uint256",
+        "name": "totalBonusAmount_",
+        "type": "uint256"
+        }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+    },
+    {
+    "inputs": [],
+    "name": "AddressAlreadyLockedUp",
+    "type": "error"
+    },
+    {
+    "inputs": [],
+    "name": "AddressNotAllowedToSendEther",
+    "type": "error"
+    },
+    {
+    "inputs": [],
+    "name": "BonusRateNotSetImpossibleToDetermineProfits",
+    "type": "error"
+    },
+    {
+    "inputs": [],
+    "name": "CannotCallContractMethodsOnZeroAddress",
+    "type": "error"
+    },
+    {
+    "inputs": [],
+    "name": "CannotTransferToZeroAddress",
+    "type": "error"
+    },
+    {
+    "inputs": [
+        {
+        "internalType": "uint256",
+        "name": "tokenID_",
+        "type": "uint256"
+        }
+    ],
+    "name": "ContractDoesNotOwnTokenID",
+    "type": "error"
+    },
+    {
+    "inputs": [
+        {
+        "internalType": "address",
+        "name": "erc20Address",
+        "type": "address"
         },
         {
-          "internalType": "address",
-          "name": "to",
-          "type": "address"
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
         },
         {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "Erc20TransferFailed",
-      "type": "error"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "from",
-          "type": "address"
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
         },
         {
-          "internalType": "address",
-          "name": "to",
-          "type": "address"
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+        }
+    ],
+    "name": "Erc20TransferFailed",
+    "type": "error"
+    },
+    {
+    "inputs": [
+        {
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
         },
         {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "EthTransferFailed",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "FreeAfterTimeNotReached",
-      "type": "error"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
-        }
-      ],
-      "name": "InvalidTokenId",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "LockDurationGreaterThanGovernanceLock",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "LockDurationGreaterThanMintLock",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "LockDurationWithdrawTimeNotReached",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "MintAmountExceedsMaximumSupply",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "MintAmountZero",
-      "type": "error"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "sender",
-          "type": "address"
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
         },
         {
-          "internalType": "address",
-          "name": "expected",
-          "type": "address"
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
         }
-      ],
-      "name": "OnlyAToken",
-      "type": "error"
+    ],
+    "name": "EthTransferFailed",
+    "type": "error"
     },
     {
-      "inputs": [
+    "inputs": [],
+    "name": "InLockStateRequired",
+    "type": "error"
+    },
+    {
+    "inputs": [
         {
-          "internalType": "address",
-          "name": "sender",
-          "type": "address"
+        "internalType": "uint256",
+        "name": "exitValue",
+        "type": "uint256"
         },
         {
-          "internalType": "address",
-          "name": "expected",
-          "type": "address"
+        "internalType": "uint256",
+        "name": "currentBalance",
+        "type": "uint256"
         }
-      ],
-      "name": "OnlyFactory",
-      "type": "error"
+    ],
+    "name": "InsufficientBalanceForEarlyExit",
+    "type": "error"
     },
     {
-      "inputs": [
+    "inputs": [
         {
-          "internalType": "address",
-          "name": "sender",
-          "type": "address"
+        "internalType": "uint256",
+        "name": "withdrawFreeAfter",
+        "type": "uint256"
         },
         {
-          "internalType": "address",
-          "name": "expected",
-          "type": "address"
+        "internalType": "uint256",
+        "name": "endBlock",
+        "type": "uint256"
         }
-      ],
-      "name": "OnlyGovernance",
-      "type": "error"
+    ],
+    "name": "InvalidPositionWithdrawPeriod",
+    "type": "error"
     },
     {
-      "inputs": [
+    "inputs": [],
+    "name": "InvalidStartingBlock",
+    "type": "error"
+    },
+    {
+    "inputs": [
         {
-          "internalType": "address",
-          "name": "sender",
-          "type": "address"
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
         },
         {
-          "internalType": "address",
-          "name": "expected",
-          "type": "address"
+        "internalType": "address",
+        "name": "expected",
+        "type": "address"
         }
-      ],
-      "name": "OnlyStakingPositionDescriptor",
-      "type": "error"
+    ],
+    "name": "OnlyAToken",
+    "type": "error"
     },
     {
-      "inputs": [
+    "inputs": [
         {
-          "internalType": "address",
-          "name": "sender",
-          "type": "address"
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
         },
         {
-          "internalType": "address",
-          "name": "expected",
-          "type": "address"
+        "internalType": "address",
+        "name": "expected",
+        "type": "address"
         }
-      ],
-      "name": "OnlyValidatorPool",
-      "type": "error"
+    ],
+    "name": "OnlyFactory",
+    "type": "error"
     },
     {
-      "inputs": [
+    "inputs": [
         {
-          "internalType": "uint256",
-          "name": "slush",
-          "type": "uint256"
-        }
-      ],
-      "name": "SlushTooLarge",
-      "type": "error"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "owner",
-          "type": "address"
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
         },
         {
-          "indexed": true,
-          "internalType": "address",
-          "name": "approved",
-          "type": "address"
+        "internalType": "address",
+        "name": "expected",
+        "type": "address"
+        }
+    ],
+    "name": "OnlyPublicStaking",
+    "type": "error"
+    },
+    {
+    "inputs": [],
+    "name": "OnlyStakingNFTAllowed",
+    "type": "error"
+    },
+    {
+    "inputs": [],
+    "name": "PayoutSafe",
+    "type": "error"
+    },
+    {
+    "inputs": [],
+    "name": "PayoutUnsafe",
+    "type": "error"
+    },
+    {
+    "inputs": [],
+    "name": "PostLockStateNotAllowed",
+    "type": "error"
+    },
+    {
+    "inputs": [],
+    "name": "PostLockStateRequired",
+    "type": "error"
+    },
+    {
+    "inputs": [],
+    "name": "PreLockStateNotAllowed",
+    "type": "error"
+    },
+    {
+    "inputs": [],
+    "name": "PreLockStateRequired",
+    "type": "error"
+    },
+    {
+    "inputs": [
+        {
+        "internalType": "uint256",
+        "name": "tokenID_",
+        "type": "uint256"
+        }
+    ],
+    "name": "TokenIDAlreadyClaimed",
+    "type": "error"
+    },
+    {
+    "inputs": [
+        {
+        "internalType": "uint256",
+        "name": "tokenID_",
+        "type": "uint256"
+        }
+    ],
+    "name": "TokenIDNotLocked",
+    "type": "error"
+    },
+    {
+    "inputs": [],
+    "name": "UserHasNoPosition",
+    "type": "error"
+    },
+    {
+    "anonymous": false,
+    "inputs": [
+        {
+        "indexed": false,
+        "internalType": "address",
+        "name": "to_",
+        "type": "address"
         },
         {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tokenID_",
+        "type": "uint256"
         }
-      ],
-      "name": "Approval",
-      "type": "event"
+    ],
+    "name": "EarlyExit",
+    "type": "event"
     },
     {
-      "anonymous": false,
-      "inputs": [
+    "anonymous": false,
+    "inputs": [
         {
-          "indexed": true,
-          "internalType": "address",
-          "name": "owner",
-          "type": "address"
+        "indexed": false,
+        "internalType": "address",
+        "name": "from_",
+        "type": "address"
         },
         {
-          "indexed": true,
-          "internalType": "address",
-          "name": "operator",
-          "type": "address"
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tokenID_",
+        "type": "uint256"
+        }
+    ],
+    "name": "NewLockup",
+    "type": "event"
+    },
+    {
+    "inputs": [],
+    "name": "FRACTION_RESERVED",
+    "outputs": [
+        {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+        }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+    },
+    {
+    "inputs": [],
+    "name": "SCALING_FACTOR",
+    "outputs": [
+        {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+        }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+    },
+    {
+    "inputs": [],
+    "name": "aggregateProfits",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+    },
+    {
+    "inputs": [],
+    "name": "collectAllProfits",
+    "outputs": [
+        {
+        "internalType": "uint256",
+        "name": "payoutEth",
+        "type": "uint256"
         },
         {
-          "indexed": false,
-          "internalType": "bool",
-          "name": "approved",
-          "type": "bool"
+        "internalType": "uint256",
+        "name": "payoutToken",
+        "type": "uint256"
         }
-      ],
-      "name": "ApprovalForAll",
-      "type": "event"
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
     },
     {
-      "anonymous": false,
-      "inputs": [
+    "inputs": [
         {
-          "indexed": false,
-          "internalType": "uint8",
-          "name": "version",
-          "type": "uint8"
+        "internalType": "uint256",
+        "name": "tokenID_",
+        "type": "uint256"
         }
-      ],
-      "name": "Initialized",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
+    ],
+    "name": "estimateFinalBonusWithProfits",
+    "outputs": [
         {
-          "indexed": true,
-          "internalType": "address",
-          "name": "from",
-          "type": "address"
+        "internalType": "uint256",
+        "name": "positionShares_",
+        "type": "uint256"
         },
         {
-          "indexed": true,
-          "internalType": "address",
-          "name": "to",
-          "type": "address"
+        "internalType": "uint256",
+        "name": "bonusShares",
+        "type": "uint256"
         },
         {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
-        }
-      ],
-      "name": "Transfer",
-      "type": "event"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "to",
-          "type": "address"
+        "internalType": "uint256",
+        "name": "payoutEth",
+        "type": "uint256"
         },
         {
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
+        "internalType": "uint256",
+        "name": "payoutToken",
+        "type": "uint256"
         }
-      ],
-      "name": "approve",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
+    ],
+    "stateMutability": "view",
+    "type": "function"
     },
     {
-      "inputs": [
+    "inputs": [
         {
-          "internalType": "address",
-          "name": "owner",
-          "type": "address"
+        "internalType": "uint256",
+        "name": "tokenID_",
+        "type": "uint256"
         }
-      ],
-      "name": "balanceOf",
-      "outputs": [
+    ],
+    "name": "estimateProfits",
+    "outputs": [
         {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "tokenID_",
-          "type": "uint256"
-        }
-      ],
-      "name": "burn",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "payoutEth",
-          "type": "uint256"
+        "internalType": "uint256",
+        "name": "payoutEth",
+        "type": "uint256"
         },
         {
-          "internalType": "uint256",
-          "name": "payoutAToken",
-          "type": "uint256"
+        "internalType": "uint256",
+        "name": "payoutToken",
+        "type": "uint256"
         }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
+    ],
+    "stateMutability": "view",
+    "type": "function"
     },
     {
-      "inputs": [
+    "inputs": [],
+    "name": "getBonusPoolAddress",
+    "outputs": [
         {
-          "internalType": "address",
-          "name": "to_",
-          "type": "address"
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+        }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+    },
+    {
+    "inputs": [],
+    "name": "getCurrentNumberOfLockedPositions",
+    "outputs": [
+        {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+        }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+    },
+    {
+    "inputs": [
+        {
+        "internalType": "uint256",
+        "name": "tokenID_",
+        "type": "uint256"
+        }
+    ],
+    "name": "getIndexByTokenId",
+    "outputs": [
+        {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+        }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+    },
+    {
+    "inputs": [],
+    "name": "getLockupEndBlock",
+    "outputs": [
+        {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+        }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+    },
+    {
+    "inputs": [],
+    "name": "getLockupStartBlock",
+    "outputs": [
+        {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+        }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+    },
+    {
+    "inputs": [
+        {
+        "internalType": "bytes32",
+        "name": "_salt",
+        "type": "bytes32"
         },
         {
-          "internalType": "uint256",
-          "name": "tokenID_",
-          "type": "uint256"
+        "internalType": "address",
+        "name": "_factory",
+        "type": "address"
         }
-      ],
-      "name": "burnTo",
-      "outputs": [
+    ],
+    "name": "getMetamorphicContractAddress",
+    "outputs": [
         {
-          "internalType": "uint256",
-          "name": "payoutEth",
-          "type": "uint256"
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+        }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+    },
+    {
+    "inputs": [],
+    "name": "getOriginalLockedShares",
+    "outputs": [
+        {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+        }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+    },
+    {
+    "inputs": [
+        {
+        "internalType": "uint256",
+        "name": "index_",
+        "type": "uint256"
+        }
+    ],
+    "name": "getPositionByIndex",
+    "outputs": [
+        {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+        }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+    },
+    {
+    "inputs": [
+        {
+        "internalType": "uint256",
+        "name": "amount_",
+        "type": "uint256"
+        }
+    ],
+    "name": "getReservedAmount",
+    "outputs": [
+        {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+        }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+    },
+    {
+    "inputs": [],
+    "name": "getRewardPoolAddress",
+    "outputs": [
+        {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+        }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+    },
+    {
+    "inputs": [],
+    "name": "getState",
+    "outputs": [
+        {
+        "internalType": "enum Lockup.State",
+        "name": "",
+        "type": "uint8"
+        }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+    },
+    {
+    "inputs": [
+        {
+        "internalType": "address",
+        "name": "user_",
+        "type": "address"
+        }
+    ],
+    "name": "getTemporaryRewardBalance",
+    "outputs": [
+        {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
         },
         {
-          "internalType": "uint256",
-          "name": "payoutAToken",
-          "type": "uint256"
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
         }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
+    ],
+    "stateMutability": "view",
+    "type": "function"
     },
     {
-      "inputs": [],
-      "name": "circuitBreakerState",
-      "outputs": [
+    "inputs": [],
+    "name": "getTotalCurrentSharesLocked",
+    "outputs": [
         {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
         }
-      ],
-      "stateMutability": "view",
-      "type": "function"
+    ],
+    "stateMutability": "view",
+    "type": "function"
     },
     {
-      "inputs": [
+    "inputs": [
         {
-          "internalType": "uint256",
-          "name": "tokenID_",
-          "type": "uint256"
+        "internalType": "uint256",
+        "name": "tokenID_",
+        "type": "uint256"
         }
-      ],
-      "name": "collectAllProfits",
-      "outputs": [
+    ],
+    "name": "lockFromApproval",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+    },
+    {
+    "inputs": [
         {
-          "internalType": "uint256",
-          "name": "payoutToken",
-          "type": "uint256"
+        "internalType": "uint256",
+        "name": "tokenID_",
+        "type": "uint256"
         },
         {
-          "internalType": "uint256",
-          "name": "payoutEth",
-          "type": "uint256"
+        "internalType": "address",
+        "name": "tokenOwner_",
+        "type": "address"
         }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
+    ],
+    "name": "lockFromTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
     },
     {
-      "inputs": [
+    "inputs": [
         {
-          "internalType": "address",
-          "name": "to_",
-          "type": "address"
+        "internalType": "address",
+        "name": "",
+        "type": "address"
         },
         {
-          "internalType": "uint256",
-          "name": "tokenID_",
-          "type": "uint256"
-        }
-      ],
-      "name": "collectAllProfitsTo",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "payoutToken",
-          "type": "uint256"
+        "internalType": "address",
+        "name": "from_",
+        "type": "address"
         },
         {
-          "internalType": "uint256",
-          "name": "payoutEth",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "tokenID_",
-          "type": "uint256"
-        }
-      ],
-      "name": "collectEth",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "payout",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "to_",
-          "type": "address"
+        "internalType": "uint256",
+        "name": "tokenID_",
+        "type": "uint256"
         },
         {
-          "internalType": "uint256",
-          "name": "tokenID_",
-          "type": "uint256"
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
         }
-      ],
-      "name": "collectEthTo",
-      "outputs": [
+    ],
+    "name": "onERC721Received",
+    "outputs": [
         {
-          "internalType": "uint256",
-          "name": "payout",
-          "type": "uint256"
+        "internalType": "bytes4",
+        "name": "",
+        "type": "bytes4"
         }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
     },
     {
-      "inputs": [
+    "inputs": [
         {
-          "internalType": "uint256",
-          "name": "tokenID_",
-          "type": "uint256"
+        "internalType": "uint256",
+        "name": "tokenID_",
+        "type": "uint256"
         }
-      ],
-      "name": "collectToken",
-      "outputs": [
+    ],
+    "name": "ownerOf",
+    "outputs": [
         {
-          "internalType": "uint256",
-          "name": "payout",
-          "type": "uint256"
+        "internalType": "address payable",
+        "name": "",
+        "type": "address"
         }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
+    ],
+    "stateMutability": "view",
+    "type": "function"
     },
     {
-      "inputs": [
+    "inputs": [],
+    "name": "payoutSafe",
+    "outputs": [
         {
-          "internalType": "address",
-          "name": "to_",
-          "type": "address"
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+        }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+    },
+    {
+    "inputs": [
+        {
+        "internalType": "address",
+        "name": "acct_",
+        "type": "address"
+        }
+    ],
+    "name": "tokenOf",
+    "outputs": [
+        {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+        }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+    },
+    {
+    "inputs": [
+        {
+        "internalType": "address",
+        "name": "to_",
+        "type": "address"
         },
         {
-          "internalType": "uint256",
-          "name": "tokenID_",
-          "type": "uint256"
+        "internalType": "bool",
+        "name": "stakeExit_",
+        "type": "bool"
         }
-      ],
-      "name": "collectTokenTo",
-      "outputs": [
+    ],
+    "name": "unlock",
+    "outputs": [
         {
-          "internalType": "uint256",
-          "name": "payout",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint8",
-          "name": "magic_",
-          "type": "uint8"
-        }
-      ],
-      "name": "depositEth",
-      "outputs": [],
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint8",
-          "name": "magic_",
-          "type": "uint8"
+        "internalType": "uint256",
+        "name": "payoutEth",
+        "type": "uint256"
         },
         {
-          "internalType": "uint256",
-          "name": "amount_",
-          "type": "uint256"
+        "internalType": "uint256",
+        "name": "payoutToken",
+        "type": "uint256"
         }
-      ],
-      "name": "depositToken",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
     },
     {
-      "inputs": [
+    "inputs": [
         {
-          "internalType": "uint256",
-          "name": "tokenID_",
-          "type": "uint256"
-        }
-      ],
-      "name": "estimateEthCollection",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "payout",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "estimateExcessEth",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "excess",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "estimateExcessToken",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "excess",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "tokenID_",
-          "type": "uint256"
-        }
-      ],
-      "name": "estimateTokenCollection",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "payout",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getAccumulatorScaleFactor",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "pure",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
-        }
-      ],
-      "name": "getApproved",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getEthAccumulator",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "accumulator",
-          "type": "uint256"
+        "internalType": "uint256",
+        "name": "exitValue_",
+        "type": "uint256"
         },
         {
-          "internalType": "uint256",
-          "name": "slush",
-          "type": "uint256"
+        "internalType": "bool",
+        "name": "stakeExit_",
+        "type": "bool"
         }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getLatestMintedPositionID",
-      "outputs": [
+    ],
+    "name": "unlockEarly",
+    "outputs": [
         {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getMaxGovernanceLock",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "pure",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getMaxMintLock",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "pure",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "_salt",
-          "type": "bytes32"
+        "internalType": "uint256",
+        "name": "payoutEth",
+        "type": "uint256"
         },
         {
-          "internalType": "address",
-          "name": "_factory",
-          "type": "address"
+        "internalType": "uint256",
+        "name": "payoutToken",
+        "type": "uint256"
         }
-      ],
-      "name": "getMetamorphicContractAddress",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "pure",
-      "type": "function"
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "tokenID_",
-          "type": "uint256"
-        }
-      ],
-      "name": "getPosition",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "shares",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "freeAfter",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "withdrawFreeAfter",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "accumulatorEth",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "accumulatorToken",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getTokenAccumulator",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "accumulator",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "slush",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getTotalReserveAToken",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getTotalReserveEth",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getTotalShares",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "initialize",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "owner",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "operator",
-          "type": "address"
-        }
-      ],
-      "name": "isApprovedForAll",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "tokenID_",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "lockDuration_",
-          "type": "uint256"
-        }
-      ],
-      "name": "lockOwnPosition",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "caller_",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "tokenID_",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "lockDuration_",
-          "type": "uint256"
-        }
-      ],
-      "name": "lockPosition",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "tokenID_",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "lockDuration_",
-          "type": "uint256"
-        }
-      ],
-      "name": "lockWithdraw",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "amount_",
-          "type": "uint256"
-        }
-      ],
-      "name": "mint",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "tokenID",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "to_",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "amount_",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "lockDuration_",
-          "type": "uint256"
-        }
-      ],
-      "name": "mintTo",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "tokenID",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "name",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
-        }
-      ],
-      "name": "ownerOf",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "from",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "to",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
-        }
-      ],
-      "name": "safeTransferFrom",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "from",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "to",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
-        },
-        {
-          "internalType": "bytes",
-          "name": "data",
-          "type": "bytes"
-        }
-      ],
-      "name": "safeTransferFrom",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "operator",
-          "type": "address"
-        },
-        {
-          "internalType": "bool",
-          "name": "approved",
-          "type": "bool"
-        }
-      ],
-      "name": "setApprovalForAll",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "to_",
-          "type": "address"
-        }
-      ],
-      "name": "skimExcessEth",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "excess",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "to_",
-          "type": "address"
-        }
-      ],
-      "name": "skimExcessToken",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "excess",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes4",
-          "name": "interfaceId",
-          "type": "bytes4"
-        }
-      ],
-      "name": "supportsInterface",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "symbol",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "index",
-          "type": "uint256"
-        }
-      ],
-      "name": "tokenByIndex",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "owner",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "index",
-          "type": "uint256"
-        }
-      ],
-      "name": "tokenOfOwnerByIndex",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "tokenID_",
-          "type": "uint256"
-        }
-      ],
-      "name": "tokenURI",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "totalSupply",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "from",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "to",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
-        }
-      ],
-      "name": "transferFrom",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "tripCB",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
+    "stateMutability": "payable",
+    "type": "receive"
     }
-  ]
-  
+]
