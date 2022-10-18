@@ -31,16 +31,13 @@ export function Lockup() {
             setStatus({});
             setWaiting(true);
 
+            console.log({ tokenID })
+
             const tx = await ethAdapter.sendLockupApproval(tokenID);
             await tx.wait();
 
             setWaiting(false);
-            if(process.env.REACT_APP__MODE === "TESTING"){
-                console.log(process.env.REACT_APP__MODE)
-                
-            } else {
-                dispatch(APPLICATION_ACTIONS.updateBalances());
-            }
+            dispatch(APPLICATION_ACTIONS.updateBalances());
             setStatus({ 
                 error: false, 
                 message: "Approval granted to the lockup contract, you can now lockup your Staked ALCA" 
@@ -66,9 +63,7 @@ export function Lockup() {
             const tx = await ethAdapter.lockupStakedPosition(tokenID);
             const rec = await tx.wait();
             if (rec.transactionHash) {
-                if (process.env.REACT_APP__MODE !== "TESTING"){
-                    await dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
-                }
+                await dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
                 setStatus({ error: false, message: "Lockup Successful!" });
                 setHash(rec.transactionHash);
                 const tokenId = Array.isArray(stakedPosition.tokenID) ? stakedPosition.tokenID[0] : stakedPosition.tokenID
@@ -104,7 +99,7 @@ export function Lockup() {
                                     toggleConfirmModal(true);
                                     lockupPosition(); 
                                 } else {
-                                    toggleConfirmModal(true);
+                                    // toggleConfirmModal(true);
                                     approveLockup();
                                 }
                             }}

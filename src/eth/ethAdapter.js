@@ -48,10 +48,9 @@ class EthAdapter {
             console.log("balfail")
             return;
         }
-        if(process.env.REACT_APP__MODE !== "TESTING"){
-            await this.updateBalances();
-            setTimeout(this._balanceLoop.bind(this), this.timeBetweenBalancePolls);
-        }
+
+        await this.updateBalances();
+        setTimeout(this._balanceLoop.bind(this), this.timeBetweenBalancePolls);
     }
 
     /**
@@ -211,6 +210,7 @@ class EthAdapter {
 
     async _lookupContractName(cName) {
         const contractAddress = await this._tryCall(CONTRACT_NAMES.Factory, "lookup", [ethers.utils.formatBytes32String(cName)]);
+        console.log({ cName, contractAddress })
         return contractAddress;
     }
 
@@ -271,6 +271,19 @@ class EthAdapter {
             console.error(ex);
             cb({ error: ex.message });
         }
+    }
+
+    /**
+     * Request a network change to the active web wallet in window.ethereum
+     * @param { String } networkId - Network ID as a string -- Not Hexadecimal
+     */
+     async requestNetworkChange(networkId) {
+        const hexChainId = "0x" + parseInt(networkId).toString(16);
+        await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: hexChainId }],
+        });
+        this.updateBalances();
     }
 
     /**
@@ -363,18 +376,6 @@ class EthAdapter {
         return meta;
     }
 
-    /**
-     * Request a network change to the active web wallet in window.ethereum
-     * @param { String } networkId - Network ID as a string -- Not Hexadecimal
-     */
-    async requestNetworkChange(networkId) {
-        const hexChainId = "0x" + parseInt(networkId).toString(16);
-        await window.ethereum.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: hexChainId }],
-        });
-        this.updateBalances();
-    }
 
     /**
      * Request a stake position to be opened
@@ -407,27 +408,10 @@ class EthAdapter {
      * @returns { Object }
      */
      async sendLockupApproval(tokenID) {
-        // TODO remove testing conditional
-        if(process.env.REACT_APP__MODE === "TESTING") {
-            return {
-                wait: async () => { return {
-                    transactionHash: "0x60e95740d7453a76b0bf6cb60d0a6524330e628e0c7098a8e08eece5df93c93c"
-                }}
-            }
-        } else {
-            return await this._try(async () => {
-                const tx = await this._trySend(
-                    CONTRACT_NAMES.Lockup, 
-                    "approve", 
-                    [
-                        CONTRACT_ADDRESSES.Lockup, 
-                        ethers.BigNumber.from(tokenID)
-                    ]
-                )
-                return tx;
-            })
-        }
-        
+        return await this._try(async () => {
+            const tx = await this._trySend(CONTRACT_NAMES.Lockup, "lockFromApproval", [tokenID]);
+            return tx;
+        })
     }
 
     /**
@@ -436,19 +420,10 @@ class EthAdapter {
      * @returns { Object }
      */
      async lockupStakedPosition(tokenID) {
-        // TODO remove testing conditional
-        if(process.env.REACT_APP__MODE === "TESTING"){
-            return {
-                wait: async () => { return {
-                    transactionHash: "0x60e95740d7453a76b0bf6cb60d0a6524330e628e0c7098a8e08eece5df93c93c"
-                }}
-            }
-        } else {
-            return await this._try(async () => {
-                const tx = await this._trySend(CONTRACT_NAMES.Lockup, "lockTokens", [BigNumber.from(tokenID)]);
-                return tx;
-            })
-        }
+        return await this._try(async () => {
+            const tx = await this._trySend(CONTRACT_NAMES.Lockup, "lockTokens", [BigNumber.from(tokenID)]);
+            return tx;
+        })
     }
 
     /**

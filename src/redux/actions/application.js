@@ -154,6 +154,7 @@ export const updateBalances = tokenType => {
         }
 
         if(stakedPosition) {
+            console.log({ stakedPosition })
             dispatch({
                 type: APPLICATION_ACTION_TYPES.SET_STAKED_POSITION,
                 payload: {
