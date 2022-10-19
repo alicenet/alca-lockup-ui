@@ -205,7 +205,8 @@ class EthAdapter {
      * @param { Array } params - Contract method parameters as an array
      */
     async _trySend(contractName, methodName, params = []) {
-        console.log({ params })
+        console.log({ contractName, methodName, params })
+        console.log(this._getSignerContractInstance(contractName))
         return await this._getSignerContractInstance(contractName)[methodName](...params);
     }
 
@@ -435,7 +436,7 @@ class EthAdapter {
      */
      async safeTranferToLockup(tokenID) {
         return await this._try(async () => {
-            const tx = await this._trySend(CONTRACT_NAMES.PublicStaking, "safeTransferFrom", [
+            const tx = await this._trySend(CONTRACT_NAMES.PublicStaking, "safeTransferFrom(address,address,uint256)", [
                 await this._getAddressByIndex(0), 
                 this.contracts.Lockup.address, 
                 tokenID
