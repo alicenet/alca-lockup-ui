@@ -33,7 +33,7 @@ export function Lockup() {
 
             console.log({ tokenID })
 
-            const tx = await ethAdapter.sendLockupApproval(tokenID);
+            const tx = await ethAdapter.safeTranferToLockup(tokenID);
             await tx.wait();
 
             setWaiting(false);
