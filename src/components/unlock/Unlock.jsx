@@ -10,8 +10,7 @@ const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://ethers
 
 export function Unlock() {
 
-    const { stakedAlca, lockedAlca, unlockDate } = useSelector(state => ({
-        stakedAlca: state.application.stakedPosition.stakedAlca,
+    const { lockedAlca, unlockDate } = useSelector(state => ({
         lockedAlca: state.application.lockedPosition.lockedAlca,
         unlockDate: state.application.lockedPosition.unlockDate,
     }))
@@ -57,7 +56,7 @@ export function Unlock() {
                         </div>
                     
                         <div>
-                            <Header as="h1" className="mb-0">{stakedAlca} ALCA Staked Locked</Header>
+                            <Header as="h1" className="mb-0">{lockedAlca} ALCA Staked Locked</Header>
                             <p>
                                 You can unlock your position at anytime, however to receive the complete lockup bonus rewards 
                                 it must not be unlocked until {unlockDate}
@@ -65,7 +64,7 @@ export function Unlock() {
                         </div>
                     </div>
 
-                    <Segment className="flex w-9/12 justify-between items-center rounded-2xl bg-neutral-50 border-neutral-200">
+                    <Segment className="flex w-10/12 justify-between items-center rounded-2xl bg-neutral-50 border-neutral-200">
                         <div>
                             <Header as="h4">Locked rewards as today</Header>
                             
@@ -80,7 +79,7 @@ export function Unlock() {
                             color="pink"
                             loading={waiting}
                             onClick={() => toggleConfirmModal(true)}
-                            content={"Unlock Positions"}
+                            content={"Unlock position & rewards"}
                         />      
                     </Segment>
                 </>
@@ -187,6 +186,14 @@ export function Unlock() {
             <Grid padded>
                 {unlockHeader()}
                 {status?.message ? unlockSuccessful() : requestUnlock()}
+
+                {status.error && (
+                    <Grid.Column width={16}>
+                        <Message negative>
+                            <p>{status.message}</p>
+                        </Message>
+                    </Grid.Column>
+                )}
             </Grid>
         </>
     )

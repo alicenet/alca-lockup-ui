@@ -2,7 +2,7 @@ import React from "react";
 import ethAdapter from "eth/ethAdapter";
 import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
-import { Grid, Header, Button, Icon } from "semantic-ui-react";
+import { Grid, Header, Button, Icon, Message } from "semantic-ui-react";
 import utils from "utils";
 import { ConfirmationModal } from "components";
 
@@ -34,19 +34,22 @@ export function Lockup() {
             const tx = await ethAdapter.safeTranferToLockup(tokenID);
             await tx.wait();
 
-            setWaiting(false);
-            dispatch(APPLICATION_ACTIONS.updateBalances());
-            setStatus({ 
-                error: false, 
-                message: "Approval granted to the lockup contract, you can now lockup your Staked ALCA" 
-            });
-            setHash(tx?.hash);
+            if (tx?.hash) {
+                dispatch(APPLICATION_ACTIONS.updateBalances());
+                setStatus({ 
+                    error: false, 
+                    message: "Approval granted to the lockup contract, you can now lockup your Staked ALCA" 
+                });
+                setHash(tx?.hash);
+                setWaiting(false);
+            }
+
         } catch (exc) {
-            setWaiting(false);
             setStatus({ 
                 error: true, 
                 message: "There was a problem with your request, please verify or try again later" 
             });
+            setWaiting(false);
         }
     }
 
@@ -153,6 +156,14 @@ export function Lockup() {
             <Grid padded>
                 {lockupHeader()}
                 {lockedPosition.lockedAlca ? lockupSuccessful() : lockupStakedAmount()}
+
+                {status.error && (
+                    <Grid.Column width={16}>
+                        <Message negative>
+                            <p>{status.message}</p>
+                        </Message>
+                    </Grid.Column>
+                )}
             </Grid>
         </>
     )

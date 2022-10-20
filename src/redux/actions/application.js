@@ -59,7 +59,7 @@ export const updateNetwork = (networkId) => {
     }
 }
 
-// TODO remove
+// TODO clean up
 export const setLockedPosition = (
     lockedAlca,
     tokenId,
@@ -79,7 +79,7 @@ export const setLockedPosition = (
     }
 }
 
-// TODO remove
+// TODO clean up
 export const setStakedPosition = (
     stakedAlca,
     tokenId,

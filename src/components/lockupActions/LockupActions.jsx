@@ -22,7 +22,8 @@ export function LockupActions() {
         switch (activeItem) {
             case "welcome": return <LockupWelcome stepForward={() => lockedPosition.lockedAlca > 0 ? setActiveItem("unlock") : setActiveItem("lockup") } />
             case "lockup": return <Lockup />
-            case "unlock": return lockedPosition.lockedAlca < 0 ? <Unlock /> : <UnlockedClaim />
+            // TODO Route lockup time completed 
+            case "unlock": return lockedPosition.lockedAlca > 0 ? <Unlock /> : <UnlockedClaim />
             case "claim": return <LockupClaim />
             default: return;
         }
@@ -67,7 +68,7 @@ export function LockupActions() {
                                                 ALCA`}
                                         </div>
                                     </>}
-                                    disabled={Boolean(!hasReadTerms || stakedPosition.stakedAlca || !web3Connected)}
+                                    disabled={Boolean(!hasReadTerms || lockedPosition.lockedAlca || !web3Connected)}
                                     active={activeItem === 'lockup'}
                                     onClick={e => handleItemClick(e, { name: "lockup" })}
                                     className={activeMenuClass("lockup")}

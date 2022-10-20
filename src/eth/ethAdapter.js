@@ -241,7 +241,7 @@ class EthAdapter {
                 let address = await this._lookupContractName(contract);
                 this.addressesFromFactory[contract] = address;
             }
-            // TODO remove
+            // TODO clean up
             console.log(this.contracts);
 
             // Setup balance listener
