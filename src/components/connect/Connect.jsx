@@ -34,34 +34,26 @@ export function Connect() {
 
     return (
         <>
-            <Container fluid>
+            <div fluid className="flex justify-center items-center h-full w-full flex-grow">
                 <div className="text-sm text-right">
                     {web3Connected ? (<div>
-                        <Header as='h5' content={`${address} connected`} />
-
                         <Header.Subheader>
                             Connected {address}
                         </Header.Subheader>
-
                     </div>
                     ) : <div>
-                        <>{(agreeCookie?.agreed) ? 
-                            <>
-                                <Button
-                                    className="m-0 mt-8"
-                                    secondary
-                                    color="black"
-                                    onClick={connect}
-                                    content="Connect Wallet"
-                                    loading={loading}
-                                />
-                            </> : "Please read and agree to Staking T&C first"}
-                        </>
+                        <Button
+                            className=""
+                            secondary
+                            onClick={connect}
+                            content="Connect Wallet"
+                            loading={loading}
+                        />
                     </div>
 
                     }
                 </div>
-            </Container>
+            </div>
 
             <div className="absolute left-0 top-[100%]">
                 <Message
@@ -73,14 +65,6 @@ export function Connect() {
                 />
             </div>
 
-            <div className="absolute mt-4 right-0 top-[100%]">
-                <Button
-                    primary
-                    content="Continue"
-                    className={generic.classNames("m-0", { 'hidden': !web3Connected })}
-                    onClick={() => {}}
-                />
-            </div>
         </>
     );
 }

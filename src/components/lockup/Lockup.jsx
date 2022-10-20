@@ -29,8 +29,6 @@ export function Lockup() {
             setStatus({});
             setWaiting(true);
 
-            console.log({ tokenID })
-
             const tx = await ethAdapter.safeTranferToLockup(tokenID);
             await tx.wait();
 
