@@ -49,6 +49,7 @@ class EthAdapter {
             return;
         }
 
+        await this.getPositionByIndex(1);
         await this.updateBalances();
         setTimeout(this._balanceLoop.bind(this), this.timeBetweenBalancePolls);
     }
@@ -205,12 +206,10 @@ class EthAdapter {
      * @param { Array } params - Contract method parameters as an array
      */
     async _trySend(contractName, methodName, params = []) {
-        console.log({ contractName, methodName, params })
-        console.log(this._getSignerContractInstance(contractName))
         return await this._getSignerContractInstance(contractName)[methodName](...params);
     }
 
-    // TODO Refactor contract names to the expected Salt 
+    // TODO Rework contract names to the expected Salt 
     async _lookupContractName(cName) {
         const contractAddress = await this._tryCall(CONTRACT_NAMES.Factory, "lookup", [ethers.utils.formatBytes32String(cName)]);
         console.log({ cName, contractAddress })
@@ -430,7 +429,7 @@ class EthAdapter {
     //Lockup
 
     /**
-     * approve lockup contract 
+     * safe transfer  
      * @param tokenID nft id held by lockup
      * @returns { Object }
      */
@@ -443,6 +442,30 @@ class EthAdapter {
             ]);
             console.log({ tx })
             return tx;
+        })
+    }
+
+    /**
+     * Get current number of locked positions
+     * @returns { Object }
+     */
+     async getNumberOfLockedPositions() {
+        return await this._try(async () => {
+            const lockedPositions = await this._trySend(CONTRACT_NAMES.Lockup, "getCurrentNumberOfLockedPositions");
+            console.log({ lockedPositions: lockedPositions.toString() })
+            return lockedPositions;
+        })
+    }
+
+    /**
+     * Get position by index
+     * @returns { Object }
+     */
+     async getPositionByIndex(tokenID) {
+        return await this._try(async () => {
+            const position = await this._trySend(CONTRACT_NAMES.Lockup, "getPositionByIndex", [tokenID]);
+            console.log({ position: position.toString() })
+            return position;
         })
     }
 
