@@ -59,6 +59,7 @@ export const updateNetwork = (networkId) => {
     }
 }
 
+// TODO remove
 export const setLockedPosition = (
     lockedAlca,
     tokenId,
@@ -78,6 +79,7 @@ export const setLockedPosition = (
     }
 }
 
+// TODO remove
 export const setStakedPosition = (
     stakedAlca,
     tokenId,
@@ -131,6 +133,7 @@ export const updateBalances = tokenType => {
         let ethBalance = state.application.balances.ethereum;
         let alcaBal = state.application.balances.alca;
         let stakedPosition = state.application.balances.stakedPosition;
+        let lockedAlca = state.application.balances.stakedPosition;
 
         if (tokenType === TOKEN_TYPES.ETHEREUM || tokenType === TOKEN_TYPES.ALL) {
             ethBalance = await ethAdapter.getEthereumBalance(0);
@@ -138,6 +141,7 @@ export const updateBalances = tokenType => {
         if (tokenType === TOKEN_TYPES.ALCA || tokenType === TOKEN_TYPES.ALL) {
             alcaBal = await ethAdapter.getAlcaBalance(0);
             stakedPosition = await ethAdapter.getStakedAlca(0);
+            lockedAlca = await ethAdapter.getLockedAlca(0);
         }
 
         if (ethBalance.error) {
@@ -153,7 +157,7 @@ export const updateBalances = tokenType => {
             return; 
         }
 
-        if(stakedPosition) {
+        if (stakedPosition) {
             dispatch({
                 type: APPLICATION_ACTION_TYPES.SET_STAKED_POSITION,
                 payload: {
@@ -163,6 +167,14 @@ export const updateBalances = tokenType => {
                     alcaRewards: stakedPosition.alcaRewards,
                 }
             });
+        }
+
+        if (lockedAlca) {
+            dispatch({type: APPLICATION_ACTION_TYPES.SET_LOCKED_POSITION, 
+                payload: {
+                    lockedAlca: lockedAlca
+                }
+            })
         }
         
         dispatch({

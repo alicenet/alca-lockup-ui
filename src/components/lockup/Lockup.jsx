@@ -3,7 +3,6 @@ import ethAdapter from "eth/ethAdapter";
 import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
 import { Grid, Header, Button, Icon } from "semantic-ui-react";
-import { TOKEN_TYPES } from "redux/constants";
 import utils from "utils";
 import { ConfirmationModal } from "components";
 
@@ -22,10 +21,9 @@ export function Lockup() {
     const [waiting, setWaiting] = React.useState(false);
     const [status, setStatus] = React.useState({});
     const [openConfirmation, toggleConfirmModal] = React.useState(false);
-    const [approvedLockup, setApprovedLockup] = React.useState(0);
     const [hash, setHash] = React.useState("");
 
-    const approveLockup = async () => {
+    const lockupPosition = async () => {
         try {
             setHash("");
             setStatus({});
@@ -43,35 +41,6 @@ export function Lockup() {
                 message: "Approval granted to the lockup contract, you can now lockup your Staked ALCA" 
             });
             setHash(tx?.hash);
-            setApprovedLockup(true);
-        } catch (exc) {
-            setWaiting(false);
-            setStatus({ 
-                error: true, 
-                message: "There was a problem with your request, please verify or try again later" 
-            });
-            setApprovedLockup(false);
-        }
-    }
-
-    const lockupPosition = async () => {
-        try {
-            setHash("");
-            setStatus({});
-            setWaiting(true);
-
-            const tx = await ethAdapter.lockupStakedPosition(tokenID);
-            const rec = await tx.wait();
-            if (rec.transactionHash) {
-                await dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
-                setStatus({ error: false, message: "Lockup Successful!" });
-                setHash(rec.transactionHash);
-                const tokenId = Array.isArray(stakedPosition.tokenID) ? stakedPosition.tokenID[0] : stakedPosition.tokenID
-                
-                dispatch(APPLICATION_ACTIONS.setLockedPosition(stakedPosition.stakedAlca, tokenId, 0,0));
-                
-                setWaiting(false);
-            }
         } catch (exc) {
             setWaiting(false);
             setStatus({ 
@@ -93,15 +62,10 @@ export function Lockup() {
                         <Button
                             className="mt-4"
                             color="black"
-                            content={approvedLockup ? "Lockup Positions" : "Approve Lockup"}
+                            content={"Lockup Positions"}
                             onClick={() => {
-                                if (approvedLockup) {
-                                    toggleConfirmModal(true);
-                                    lockupPosition(); 
-                                } else {
-                                    // toggleConfirmModal(true);
-                                    approveLockup();
-                                }
+                                toggleConfirmModal(true);
+                                lockupPosition(); 
                             }}
                             disabled={stakedPosition.stakedAlca === 0 || status?.error }
                             loading={waiting}

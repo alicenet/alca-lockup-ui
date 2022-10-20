@@ -24,6 +24,7 @@ export function LockupWelcome({stepForward}) {
         finalCheck: false,
     })
     React.useEffect(() => {
+        // TODO Remove
         if(process.env.REACT_APP__MODE === "TESTING"){
             dispatch(APPLICATION_ACTIONS.setStakedPosition(500,1,0,0));
         }

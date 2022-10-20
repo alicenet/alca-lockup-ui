@@ -49,7 +49,6 @@ class EthAdapter {
             return;
         }
 
-        await this.getPositionByIndex(1);
         await this.updateBalances();
         setTimeout(this._balanceLoop.bind(this), this.timeBetweenBalancePolls);
     }
@@ -440,32 +439,22 @@ class EthAdapter {
                 this.contracts.Lockup.address, 
                 tokenID
             ]);
-            console.log({ tx })
             return tx;
         })
     }
 
     /**
-     * Get current number of locked positions
+     * Get token by address
      * @returns { Object }
      */
-     async getNumberOfLockedPositions() {
+     async getLockedAlca(accountIndex = 0) {
         return await this._try(async () => {
-            const lockedPositions = await this._trySend(CONTRACT_NAMES.Lockup, "getCurrentNumberOfLockedPositions");
-            console.log({ lockedPositions: lockedPositions.toString() })
-            return lockedPositions;
-        })
-    }
+            const address = await this._getAddressByIndex(accountIndex);
+            const tokenID = await this._trySend(CONTRACT_NAMES.Lockup, "tokenOf", [address]);
+            const { shares } = await this._trySend(CONTRACT_NAMES.PublicStaking, "getPosition", [tokenID]);
 
-    /**
-     * Get position by index
-     * @returns { Object }
-     */
-     async getPositionByIndex(tokenID) {
-        return await this._try(async () => {
-            const position = await this._trySend(CONTRACT_NAMES.Lockup, "getPositionByIndex", [tokenID]);
-            console.log({ position: position.toString() })
-            return position;
+            console.log({ shares: ethers.utils.formatEther(shares) })
+            return ethers.utils.formatEther(shares); 
         })
     }
 
@@ -477,7 +466,6 @@ class EthAdapter {
      async sendLockupApproval(tokenID) {
         return await this._try(async () => {
             const tx = await this._trySend(CONTRACT_NAMES.Lockup, "lockFromApproval", [tokenID]);
-            console.log({ tx })
             return tx;
         })
     }
@@ -501,13 +489,7 @@ class EthAdapter {
      */
     async sendExitLock(tokenID) {
         return await this._try(async () => {
-            const tx = await this._trySend(
-                CONTRACT_NAMES.Lockup, 
-                "exitLock", 
-                [ 
-                    ethers.BigNumber.from(tokenID)
-                ]
-            )
+            const tx = await this._trySend(CONTRACT_NAMES.Lockup, "exitLock", [ethers.BigNumber.from(tokenID)]);
             return tx;
         })
     }
@@ -518,13 +500,7 @@ class EthAdapter {
      */
     async sendEarlyExit(tokenID) {
         return await this._try(async () => {
-            const tx = await this._trySend(
-                CONTRACT_NAMES.Lockup, 
-                "earlyExit", 
-                [ 
-                    ethers.BigNumber.from(tokenID)
-                ]
-            )
+            const tx = await this._trySend(CONTRACT_NAMES.Lockup, "earlyExit", [ethers.BigNumber.from(tokenID)]);
             return tx;
         })
     }
@@ -618,5 +594,5 @@ class EthAdapter {
     }
 }
 
-let ethAdapter = new EthAdapter();
+const ethAdapter = new EthAdapter();
 export default ethAdapter;
