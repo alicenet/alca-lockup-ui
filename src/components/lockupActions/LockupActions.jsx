@@ -11,7 +11,7 @@ export function LockupActions() {
         stakedPosition: state.application.stakedPosition,
         lockedPosition: state.application.lockedPosition,
     }))
-    
+
     const [activeItem, setActiveItem] = React.useState("welcome");
 
     const handleItemClick = (e, { name }) => {
@@ -20,7 +20,7 @@ export function LockupActions() {
 
     const getActiveTab = () => {
         switch (activeItem) {
-            case "welcome": return <LockupWelcome stepForward={() => lockedPosition.lockedAlca > 0 ? setActiveItem("unlock") : setActiveItem("lockup") } />
+            case "welcome": return <LockupWelcome stepForward={() => lockedPosition.lockedAlca > 0 ? setActiveItem("unlock") : setActiveItem("lockup")} />
             case "lockup": return <Lockup />
             case "unlock": return lockedPosition.lockedAlca < 0 ? <Unlock /> : <UnlockedClaim />
             case "claim": return <LockupClaim />
@@ -31,14 +31,13 @@ export function LockupActions() {
     const activeMenuClass = (checkAgainst) => {
         return checkAgainst === activeItem ? "border-l-aliceblue border-l-[3px]" : ""
     }
-    
+
     return (
         <div className="flex justify-center w-full">
             <div className="max-w-[1200px] w-full mt-12">
 
                 <Grid padded className="flex h-full">
-                    <Connect />
-                    
+
                     <Grid.Row>
                         <Grid.Column width={4} stretched className="pr-0">
                             <Menu fluid vertical tabular>
@@ -52,18 +51,18 @@ export function LockupActions() {
 
                                 <Menu.Item
                                     content={<>
-                                        <Header 
-                                            className={classNames({ 
-                                                "opacity-40": !hasReadTerms || lockedPosition.lockedAlca || !web3Connected, 
+                                        <Header
+                                            className={classNames({
+                                                "opacity-40": !hasReadTerms || lockedPosition.lockedAlca || !web3Connected,
                                                 "text-base": true,
-                                                "mb-0": true 
-                                            })} 
+                                                "mb-0": true
+                                            })}
                                             as="h3"
                                         >
                                             Position Available to Lockup
                                         </Header>
                                         <div className="text-xs">
-                                        {`${stakedPosition.stakedAlca}
+                                            {`${stakedPosition.stakedAlca}
                                                 ALCA`}
                                         </div>
                                     </>}
@@ -76,18 +75,18 @@ export function LockupActions() {
                                 <Menu.Item
                                     content={<>
                                         <Header
-                                            className={classNames({ 
-                                                "opacity-40": !hasReadTerms || !lockedPosition.lockedAlca || !web3Connected, 
+                                            className={classNames({
+                                                "opacity-40": !hasReadTerms || !lockedPosition.lockedAlca || !web3Connected,
                                                 "text-base": true,
                                                 "mb-0": true
-                                            })} 
+                                            })}
                                             as="h3"
                                         >
                                             Current Lockup Position
                                         </Header>
-                                        
+
                                         <div className="text-xs">
-                                        {`${lockedPosition.lockedAlca}
+                                            {`${lockedPosition.lockedAlca}
                                                 ALCA`}
                                         </div>
                                     </>}
@@ -100,11 +99,11 @@ export function LockupActions() {
                                 <Menu.Item
                                     content={<>
                                         <Header
-                                            className={classNames({ 
-                                                "opacity-40": !hasReadTerms || !lockedPosition.lockedAlca || !web3Connected, 
+                                            className={classNames({
+                                                "opacity-40": !hasReadTerms || !lockedPosition.lockedAlca || !web3Connected,
                                                 "text-base": true,
                                                 "mb-0": true
-                                            })} 
+                                            })}
                                             as="h3"
                                         >
                                             Claim Lockup Rewards
@@ -124,7 +123,7 @@ export function LockupActions() {
                         </Grid.Column>
 
                         <Grid.Column stretched width={12} className="pl-0">
-                            <Segment className="border-l-0 shadow-none rounded-none">
+                            <Segment className="border-l-0 shadow-none rounded-none flex w-full h-full flex-grow">
                                 {getActiveTab()}
                             </Segment>
                         </Grid.Column>

@@ -31,8 +31,6 @@ export function Lockup() {
             setStatus({});
             setWaiting(true);
 
-            console.log({ tokenID })
-
             const tx = await ethAdapter.safeTranferToLockup(tokenID);
             await tx.wait();
 
@@ -92,8 +90,8 @@ export function Lockup() {
                     <div>
                         <Button
                             className="mt-4"
-                            color="black"
-                            content={approvedLockup ? "Lockup Positions" : "Approve Lockup"}
+                            secondary
+                            content={approvedLockup ? "Lockup Position" : "Lockup Position"}
                             onClick={() => {
                                 if (approvedLockup) {
                                     toggleConfirmModal(true);
