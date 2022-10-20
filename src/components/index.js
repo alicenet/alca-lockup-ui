@@ -1,5 +1,6 @@
 export * from './about/About';
 export * from './connect/Connect';
+export * from './confirmationModal/ConfirmationModal';
 export * from './footer/Footer';
 export * from './header/Header';
 export * from './logo/Logo';
@@ -8,9 +9,5 @@ export * from './lockupActions/LockupActions';
 export * from './lockupClaim/LockupClaim';
 export * from './lockupWelcome/LockupWelcome';
 export * from './tos/TOS';
-export * from './stakeActions/StakeActions';
-export * from "./stakeStake/StakeStake";
-export * from "./stakeUnstake/StakeUnstake";
-export * from "./stakeClaim/StakeClaim";
-export * from "./stakeWelcome/StakeWelcome";
+export * from "./unlockedClaim/UnlockedClaim";
 export * from "./unlock/Unlock";

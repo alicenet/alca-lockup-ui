@@ -140,17 +140,15 @@ export const updateBalances = tokenType => {
             stakedPosition = await ethAdapter.getStakedAlca(0);
         }
 
-        let publicStakingAllowance = await ethAdapter.getPublicStakingAllowance();
-
         if (ethBalance.error) {
             toast("Error fetching ETH balance.", { type: "error", position: "bottom-center", autoClose: 1000 })
         }
 
-        if (alcaBal.error || publicStakingAllowance.error) {
+        if (alcaBal.error) {
             toast("Error fetching ALCA balance.", { type: "error", position: "bottom-center", autoClose: 1000 })
         }
 
-        if (ethBalance.error || alcaBal.error || publicStakingAllowance.error) {
+        if (ethBalance.error || alcaBal.error) {
             console.error("Contract error, are you on the correct network?");
             return; 
         }
@@ -172,12 +170,6 @@ export const updateBalances = tokenType => {
             payload: {
                 ethereum: ethBalance,
                 alca: alcaBal || 0, // Fallback to 0 if token doesn't exist on network
-            }
-        });
-        dispatch({
-            type: APPLICATION_ACTION_TYPES.SET_ALLOWANCES,
-            payload: {
-                alcaStakeAllowance: publicStakingAllowance || "0"
             }
         });
 

@@ -2,8 +2,8 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Container } from "semantic-ui-react";
 import { useSelector } from "react-redux";
-import { StakeActions, Footer, Header, LockupActions } from "components";
-import { ToastContainer } from 'react-toastify';
+import { Footer, Header, LockupActions } from "components";
+import { ToastContainer } from "react-toastify";
 
 function App() {
 
@@ -39,14 +39,13 @@ function App() {
         <Container fluid className="">
             <BrowserRouter>
                 <Header />
-                <div className="overflow-auto pb-[112px] ">
+                    <div className="overflow-auto pb-[112px] ">
                         <Routes>
-
                             {DefaultRoutes()}
-
                         </Routes>
-                    <ToastContainer />
-                </div>
+                        
+                        <ToastContainer />
+                    </div>
                 <Footer />
             </BrowserRouter>
         </Container>

@@ -48,10 +48,9 @@ class EthAdapter {
             console.log("balfail")
             return;
         }
-        if(process.env.REACT_APP__MODE !== "TESTING"){
-            await this.updateBalances();
-            setTimeout(this._balanceLoop.bind(this), this.timeBetweenBalancePolls);
-        }
+
+        await this.updateBalances();
+        setTimeout(this._balanceLoop.bind(this), this.timeBetweenBalancePolls);
     }
 
     /**
@@ -206,11 +205,15 @@ class EthAdapter {
      * @param { Array } params - Contract method parameters as an array
      */
     async _trySend(contractName, methodName, params = []) {
+        console.log({ contractName, methodName, params })
+        console.log(this._getSignerContractInstance(contractName))
         return await this._getSignerContractInstance(contractName)[methodName](...params);
     }
 
+    // TODO Refactor contract names to the expected Salt 
     async _lookupContractName(cName) {
         const contractAddress = await this._tryCall(CONTRACT_NAMES.Factory, "lookup", [ethers.utils.formatBytes32String(cName)]);
+        console.log({ cName, contractAddress })
         return contractAddress;
     }
 
@@ -236,10 +239,13 @@ class EthAdapter {
             
             // Lookup Contract Addresses
             for (let contract in this.contracts) {
+                if (contract === "Factory") { continue }
                 let address = await this._lookupContractName(contract);
                 this.addressesFromFactory[contract] = address;
             }
-            
+            // TODO remove
+            console.log(this.contracts);
+
             // Setup balance listener
             await this._balanceLoop();
             
@@ -271,6 +277,19 @@ class EthAdapter {
     }
 
     /**
+     * Request a network change to the active web wallet in window.ethereum
+     * @param { String } networkId - Network ID as a string -- Not Hexadecimal
+     */
+     async requestNetworkChange(networkId) {
+        const hexChainId = "0x" + parseInt(networkId).toString(16);
+        await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: hexChainId }],
+        });
+        this.updateBalances();
+    }
+
+    /**
      * Get Ether balance
      * @param { Number } accountIndex - Account index of this.accounts[i] to check balance for
      * @returns { Promise<String> } - Ethereum balance of this.accounts[accountIndex] as formatted string
@@ -291,13 +310,6 @@ class EthAdapter {
         return this._try(async () => {
             let balance = await this._tryCall(CONTRACT_NAMES.AToken, "balanceOf", [await this._getAddressByIndex(accountIndex)]);
             return ethers.utils.formatEther(balance);
-        });
-    }
-
-    async getPublicStakingAllowance(accountIndex = 0) {
-        return this._try(async () => {
-            let allowance = await this._tryCall(CONTRACT_NAMES.AToken, "allowance", [await this._getAddressByIndex(accountIndex), CONTRACT_ADDRESSES.PublicStaking]);
-            return allowance.toString();
         });
     }
 
@@ -368,66 +380,11 @@ class EthAdapter {
     }
 
     /**
-     * Request a network change to the active web wallet in window.ethereum
-     * @param { String } networkId - Network ID as a string -- Not Hexadecimal
-     */
-    async requestNetworkChange(networkId) {
-        const hexChainId = "0x" + parseInt(networkId).toString(16);
-        await window.ethereum.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: hexChainId }],
-        });
-        this.updateBalances();
-    }
-
-    /**
-     * Send a approve request for AToken allowance
-     * @returns { Object }
-     */
-    async sendStakingAllowanceRequest() {
-        return await this._try(async () => {
-            const tx = await this._trySend(
-                CONTRACT_NAMES.AToken, 
-                "approve", 
-                [
-                    CONTRACT_ADDRESSES.PublicStaking, 
-                    ethers.BigNumber.from("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
-                ]
-            )
-            return tx;
-        })
-    }
-
-    /**
-     * Request a stake position to be opened
-     * @param { Number } amount - Amount to be staked for a position
-     * @returns { Object }
-     */
-    async openStakingPosition(amount) {
-        return await this._try(async () => {
-            const tx = await this._trySend(CONTRACT_NAMES.PublicStaking, "mint", [ethers.utils.parseEther(amount)]);
-            return tx;
-        })
-    }
-
-    /**
-     * Request to exit a staked position
-     * @param { Number } tokenId
-     * @returns { Object }
-     */
-    async unstakingPosition(tokenId) {
-        return await this._try(async () => {
-            const tx = await this._trySend(CONTRACT_NAMES.PublicStaking, "burn", [tokenId]);
-            return tx;
-        })
-    }
-
-    /**
      * Get ETH rewards for a given token
      * @param { Number } tokenId
      * @returns { String }
      */
-    async estimateEthCollection(tokenId) {
+     async estimateEthCollection(tokenId) {
         return await this._try(async () => {
             const payout = await this._trySend(CONTRACT_NAMES.PublicStaking, "estimateEthCollection", [tokenId]);
             return ethers.utils.formatEther(payout);
@@ -446,77 +403,72 @@ class EthAdapter {
         })
     }
 
+
     /**
-     * Claim all rewards for ETH
-     * @param { Number } tokenId 
+     * Request a stake position to be opened
+     * @param { Number } amount - Amount to be staked for a position
      * @returns { Object }
      */
-    async collectEthProfits(tokenId) {
+    async lockPosition(amount) {
         return await this._try(async () => {
-            const payoutTx = await this._trySend(CONTRACT_NAMES.PublicStaking, "collectEth", [tokenId]);
-            return payoutTx;
+            const tx = await this._trySend(CONTRACT_NAMES.Lockup, "mint", [ethers.utils.parseEther(amount)]);
+            return tx;
         })
     }
 
     /**
-     * Claim all rewards for both ETH and ALCA
-     * @param { Number } tokenId 
+     * Request to exit a staked position
+     * @param { Number } tokenId
      * @returns { Object }
      */
-    async collectAllProfits(tokenId) {
+    async unlockPosition(tokenId) {
         return await this._try(async () => {
-            const payoutTx = await this._trySend(CONTRACT_NAMES.PublicStaking, "collectAllProfits", [tokenId]);
-            return payoutTx;
+            const tx = await this._trySend(CONTRACT_NAMES.Lockup, "burn", [tokenId]);
+            return tx;
         })
     }
     //Lockup
 
     /**
-     * approve lockup contract to transfer public staking nft token
+     * approve lockup contract 
+     * @param tokenID nft id held by lockup
+     * @returns { Object }
+     */
+     async safeTranferToLockup(tokenID) {
+        return await this._try(async () => {
+            const tx = await this._trySend(CONTRACT_NAMES.PublicStaking, "safeTransferFrom(address,address,uint256)", [
+                await this._getAddressByIndex(0), 
+                this.contracts.Lockup.address, 
+                tokenID
+            ]);
+            console.log({ tx })
+            return tx;
+        })
+    }
+
+    /**
+     * approve lockup contract 
      * @param tokenID nft id held by lockup
      * @returns { Object }
      */
      async sendLockupApproval(tokenID) {
-        if(process.env.REACT_APP__MODE === "TESTING"){
-            return {
-                wait: async () => { return {
-                    transactionHash: "0x60e95740d7453a76b0bf6cb60d0a6524330e628e0c7098a8e08eece5df93c93c"
-                }}
-            }
-        } else {
-            return await this._try(async () => {
-                const tx = await this._trySend(
-                    CONTRACT_NAMES.PublicStaking, 
-                    "approve", 
-                    [
-                        CONTRACT_ADDRESSES.Lockup, 
-                        ethers.BigNumber.from(tokenID)
-                    ]
-                )
-                return tx;
-            })
-        }
-        
+        return await this._try(async () => {
+            const tx = await this._trySend(CONTRACT_NAMES.Lockup, "lockFromApproval", [tokenID]);
+            console.log({ tx })
+            return tx;
+        })
     }
 
     /**
-     * calls the lockup contract to initiate token transfer
+     * Calls the lockup contract to initiate token transfer
      * @param { Number } tokenID - Amount to be staked for a position
      * @returns { Object }
      */
      async lockupStakedPosition(tokenID) {
-        if(process.env.REACT_APP__MODE === "TESTING"){
-            return {
-                wait: async () => { return {
-                    transactionHash: "0x60e95740d7453a76b0bf6cb60d0a6524330e628e0c7098a8e08eece5df93c93c"
-                }}
-            }
-        } else {
-            return await this._try(async () => {
-                const tx = await this._trySend(CONTRACT_NAMES.Lockup, "lockTokens", [BigNumber.from(tokenID)]);
-                return tx;
-            })
-        }
+        return await this._try(async () => {
+            const tx = await this._trySend(CONTRACT_NAMES.Lockup, "lockTokens", [BigNumber.from(tokenID)]);
+            return tx;
+        })
     }
 
     /**
@@ -641,7 +593,6 @@ class EthAdapter {
     async updateBalances() {
         await store.dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
     }
-
 }
 
 let ethAdapter = new EthAdapter();

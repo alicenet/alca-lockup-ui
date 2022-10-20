@@ -4,7 +4,11 @@ module.exports = {
   ],
   important: true,
   theme: {
-    extend: {},
+    extend: {
+        colors: {
+            aliceblue: '#245979',
+        },
+    },
   },
   plugins: [],
 }

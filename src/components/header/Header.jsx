@@ -24,7 +24,7 @@ export function Header() {
                     content="ALCA Migration"
                 />
                 
-                <Menu.Item as={Link} to="/">
+                <Menu.Item as={Link} active={true} to="/">
                     ALCA Lockup
                 </Menu.Item>
 
