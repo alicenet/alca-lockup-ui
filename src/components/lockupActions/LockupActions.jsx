@@ -5,10 +5,12 @@ import { Lockup, Unlock, LockupWelcome, LockupClaim, UnlockedClaim } from "compo
 import { classNames } from "utils/generic";
 
 export function LockupActions() {
-    const {  web3Connected, lockedPosition, stakedPosition } = useSelector(state => ({
+    const {  web3Connected, lockedPosition, stakedPosition, ethReward, alcaReward } = useSelector(state => ({
         web3Connected: state.application.web3Connected,
         stakedPosition: state.application.stakedPosition,
         lockedPosition: state.application.lockedPosition,
+        ethReward: state.application.lockedPosition.ethReward,
+        alcaReward: state.application.lockedPosition.alcaReward,
     }))
 
     const [activeItem, setActiveItem] = React.useState("welcome");
@@ -108,8 +110,7 @@ export function LockupActions() {
                                         </Header>
 
                                         <div className="text-xs">
-                                            {`${lockedPosition.lockedAlca || 0}
-                                                ALCA`}
+                                            {ethReward || 0} ETH / {alcaReward || 0} ALCA
                                         </div>
                                     </>}
                                     disabled={Boolean(!lockedPosition.lockedAlca || lockedPosition.lockupCompleted || !web3Connected)}

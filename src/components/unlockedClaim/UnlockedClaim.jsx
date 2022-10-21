@@ -22,6 +22,8 @@ export function UnlockedClaim() {
     const [waiting, setWaiting] = React.useState(false);
     const [openConfirmation, toggleConfirmModal] = React.useState(false);
     const [status, setStatus] = React.useState({});
+    const [claimedEth, setClaimedEth] = React.useState(0);
+    const [claimedAlca, setClaimedAlca] = React.useState(0);
     const [hash, setHash] = React.useState("");
 
     const claimRewards = async () => {
@@ -38,8 +40,10 @@ export function UnlockedClaim() {
             if (rec.transactionHash) {
                 setStatus({ error: false, message: "Rewards Claimed Successful!" });
                 setHash(rec.transactionHash);
-                dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
                 setWaiting(false);
+                setClaimedEth(ethReward);
+                setClaimedAlca(alcaReward);
+                dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
             }
         } catch (exception) {
             setStatus({ 
@@ -95,9 +99,9 @@ export function UnlockedClaim() {
                 <Header as="h3">Claimed Rewards</Header>
                 
                 <div className="font-bold space-x-2">
-                    <Icon name="ethereum"/>{ethReward} ETH 
+                    <Icon name="ethereum"/>{claimedEth} ETH 
 
-                    <Icon name="cog"/>{alcaReward} ALCA
+                    <Icon name="cog"/>{claimedAlca} ALCA
                 </div>
             </div>
 

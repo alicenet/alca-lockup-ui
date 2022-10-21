@@ -1,5 +1,5 @@
 import 'ethers';
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import config from 'config/_config';
 import store from 'redux/store/store';
 import { APPLICATION_ACTIONS } from 'redux/actions';
@@ -245,6 +245,7 @@ class EthAdapter {
                 this.addressesFromFactory[contract] = address;
             }
             // TODO clean up
+            console.log(this.contracts);
             console.log(this.addressesFromFactory);
 
             // Setup balance listener

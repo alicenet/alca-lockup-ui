@@ -23,6 +23,8 @@ export function LockupClaim() {
     const [waiting, setWaiting] = React.useState(false);
     const [openConfirmation, toggleConfirmModal] = React.useState(false);
     const [status, setStatus] = React.useState({});
+    const [claimedEth, setClaimedEth] = React.useState(0);
+    const [claimedAlca, setClaimedAlca] = React.useState(0);
     const [hash, setHash] = React.useState("");
 
     const claimRewards = async () => {
@@ -37,10 +39,12 @@ export function LockupClaim() {
             const rec = await tx.wait();
 
             if (rec.transactionHash) {
-                await dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
                 setStatus({ error: false, message: "Rewards Claimed Successfully!" });
                 setHash(rec.transactionHash);
                 setWaiting(false);
+                setClaimedEth(ethReward);
+                setClaimedAlca(alcaReward);
+                await dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
             }
         } catch (exception) {
             setWaiting(false);
@@ -98,9 +102,9 @@ export function LockupClaim() {
                 <Header as="h3">Claimed Rewards</Header>
                 
                 <div className="font-bold space-x-2">
-                    <Icon name="ethereum"/>{ethReward} ETH 
+                    <Icon name="ethereum"/>{claimedEth} ETH 
 
-                    <Icon name="cog"/>{alcaReward} ALCA
+                    <Icon name="cog"/>{claimedAlca} ALCA
                 </div>
             </div>
 

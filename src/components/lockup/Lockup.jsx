@@ -102,11 +102,11 @@ export function Lockup() {
             <Grid.Column width={16} className="mb-10">
                 <Grid.Row>
                     <Header>
-                        {status?.message || 'Lockup Staked Positions'}
+                        {lockedPosition.lockedAlca ? 'Lockup Successful!' : 'Lockup Staked Positions'}
                         <Header.Subheader className="mt-3">
                             {(!lockedPosition.lockedAlca) 
-                            ? (`You currently have a staked position of ${Number(stakedPosition.stakedAlca).toLocaleString(false, { maximumFractionDigits: 4 })} ALCA, a lockup will be a period of 6 months with 5X multiplayer`) 
-                            : (`You have Locked-up ${Number(stakedPosition.stakedAlca).toLocaleString(false, { maximumFractionDigits: 4 })}  ALCA for 6 months 5X multiplayer`)}
+                            ? (`You currently have a staked position of ${stakedPosition.stakedAlca} ALCA, a lockup will be a period of 6 months with 5X multiplayer`) 
+                            : (`You have Locked-up ${lockedPosition.lockedAlca} ALCA for 6 months 5X multiplayer`)}
                         </Header.Subheader>
                     </Header>
                     
@@ -139,7 +139,7 @@ export function Lockup() {
             actionLabel="Lockup Position"
             onAccept={() => lockupPosition()}
         >
-            <p>You are about to Lock-up <strong>{stakedPosition.stakedAlca}</strong> ALCA for 6 months with a XX multiplayer</p>
+            <p>You are about to Lock-up <strong>{stakedPosition.stakedAlca}</strong> ALCA for 6 months with a 5X multiplayer</p>
         </ConfirmationModal>
     )
 

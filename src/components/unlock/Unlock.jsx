@@ -23,6 +23,8 @@ export function Unlock() {
     const [status, setStatus] = React.useState({});
     const [openConfirmation, toggleConfirmModal] = React.useState(false);
     const [waiting, setWaiting] = React.useState(false);
+    const [claimedEth, setClaimedEth] = React.useState(0);
+    const [claimedAlca, setClaimedAlca] = React.useState(0);
     const [hash, setHash] = React.useState("");
 
     const unlockPosition = async () => {
@@ -40,6 +42,8 @@ export function Unlock() {
                 setHash(rec.transactionHash);
                 setStatus({ error: false, message: "Unlocked Successful!" });
                 setWaiting(false);
+                setClaimedEth(ethReward);
+                setClaimedAlca(alcaReward);
                 await dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
             }
         } catch (exception) {
@@ -98,9 +102,9 @@ export function Unlock() {
                 <Header as="h3">Claimed Rewards</Header>
                 
                 <div className="font-bold space-x-2">
-                    <Icon name="ethereum"/>{ethReward} ETH 
+                    <Icon name="ethereum"/>{claimedEth} ETH 
 
-                    <Icon name="cog"/>{alcaReward} ALCA
+                    <Icon name="cog"/>{claimedAlca} ALCA
                 </div>
             </div>
 
