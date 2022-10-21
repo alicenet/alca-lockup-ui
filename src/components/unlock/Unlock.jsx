@@ -11,11 +11,13 @@ const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://ethers
 
 export function Unlock() {
 
-    const { lockedAlca, ethReward, alcaReward, unlockDate } = useSelector(state => ({
+    const { lockedAlca, ethReward, alcaReward, unlockDate, penalty, remainingRewards } = useSelector(state => ({
         lockedAlca: state.application.lockedPosition.lockedAlca,
         ethReward: state.application.lockedPosition.ethReward,
         alcaReward: state.application.lockedPosition.alcaReward,
-        unlockDate: state.application.lockedPosition.unlockDate
+        unlockDate: state.application.lockedPosition.unlockDate,
+        penalty: state.application.lockedPosition.penalty,
+        remainingRewards: state.application.lockedPosition.remainingRewards
     }))
 
     const dispatch = useDispatch();
@@ -134,11 +136,11 @@ export function Unlock() {
         <Grid.Column width={16} className="flex mb-4">
             <Grid.Row>
                 <Header>
-                    {status?.message || 'Current lockup position'}
+                    {hash ? 'Unlocked Successful!' : 'Current lockup position'}
                     <Header.Subheader className="mt-3">
                         {!hash 
-                        ? (`The early exit will have a 20% penalty of earned rewards, users will get the 80% of their rewards and their original stake position.`)
-                        : (`Your position 500 ALCA has been unlocked`)}
+                        ? (`The early exit will have a ${penalty}% penalty of earned rewards, users will get the ${remainingRewards}% of their rewards and their original stake position.`)
+                        : (`Your position {lockedAlca} ALCA has been unlocked`)}
                     </Header.Subheader>
                 </Header>
 
@@ -171,12 +173,12 @@ export function Unlock() {
             onAccept={() => unlockPosition()}
         >
             <Message warning>
-                <Message.Header>You are about unlock this 500 ALCA position and lose potential rewards</Message.Header>
-                <p>The early exit will have a 20% penalty for earned rewards, users will get the 80%<br />
+                <Message.Header>You are about unlock this {lockedAlca} ALCA position and lose potential rewards</Message.Header>
+                <p>The early exit will have a {penalty}% penalty for earned rewards, users will get the {remainingRewards}%<br />
                     of their rewards and their original stake position.</p>
             </Message>
 
-            <p>You are about to unlock this 500 ALCA before the lock-up period this means....</p>
+            <p>You are about to unlock this {lockedAlca} ALCA before the lock-up period this means....</p>
 
             <Header as="h3">Locked rewards as today</Header>
             

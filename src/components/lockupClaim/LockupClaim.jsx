@@ -10,12 +10,14 @@ import { ConfirmationModal } from "components";
 const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://etherscan.io/tx/";
 
 export function LockupClaim() {
-    const { lockedAlca, tokenId, ethReward, alcaReward, lockupCompleted } = useSelector(state => ({
+    const { lockedAlca, tokenId, ethReward, alcaReward, lockupCompleted, penalty, remainingRewards } = useSelector(state => ({
         lockedAlca: state.application.lockedPosition.lockedAlca,
         tokenId: state.application.lockedPosition.tokenId,
         ethReward: state.application.lockedPosition.ethReward,
         alcaReward: state.application.lockedPosition.alcaReward,
-        lockupCompleted: state.application.lockedPosition.lockupCompleted
+        lockupCompleted: state.application.lockedPosition.lockupCompleted,
+        penalty: state.application.lockedPosition.penalty,
+        remainingRewards: state.application.lockedPosition.remainingRewards
     }))
 
     const dispatch = useDispatch();
@@ -67,8 +69,8 @@ export function LockupClaim() {
                         <div>
                             <Header as="h1" className="mb-0">{lockedAlca} ALCA Staked Locked</Header>
                             <p>
-                                You can claim your rewards at anytime, however early claiming will have a 20% penalty of earned rewards, 
-                                users will get the 80% of their rewards and their original stake position.
+                                You can claim your rewards at anytime, however early claiming will have a {penalty}% penalty of earned rewards, 
+                                users will get the {remainingRewards}% of their rewards and their original stake position.
                             </p>
                         </div>
                     </div>
@@ -131,7 +133,7 @@ export function LockupClaim() {
     const claimHeader = () => (
         <Grid.Column width={16} className="flex mb-4">
             <Header>
-                {status?.message || 'Claim Lockup Rewards'}
+                {hash ? 'Rewards Claimed Successfully!' : 'Claim Lockup Rewards'}
                 <Header.Subheader className="mt-3">
                     {hash 
                         ? (`You have claimed your lockup rewards`) 
@@ -152,13 +154,13 @@ export function LockupClaim() {
         >
             {!lockupCompleted && (
                 <Message warning>
-                    <Message.Header>You are about unlock this 500 ALCA position and lose potential rewards</Message.Header>
-                    <p>The early exit will have a 20% penalty for earned rewards, users will get the 80%<br />
+                    <Message.Header>You are about unlock this {lockedAlca} ALCA position and lose potential rewards</Message.Header>
+                    <p>The early exit will have a {penalty}% penalty for earned rewards, users will get the {remainingRewards}%<br />
                         of their rewards and their original stake position.</p>
                 </Message>
             )}
 
-            <p>You are about to unlock this 500 ALCA before the lock-up period this means....</p>
+            <p>You are about to unlock this {lockedAlca} ALCA before the lock-up period this means....</p>
 
             <div className="font-bold space-x-2">
                 <Icon name="ethereum"/>{ethReward} ETH 

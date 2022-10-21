@@ -97,22 +97,24 @@ export function LockupActions() {
                                 />
 
                                 <Menu.Item
-                                    content={<>
-                                        <Header
-                                            className={classNames({
-                                                "opacity-40": !lockedPosition.lockedAlca || lockedPosition.lockupCompleted || !web3Connected,
-                                                "text-base": true,
-                                                "mb-0": true
-                                            })}
-                                            as="h3"
-                                        >
-                                            Claim Lockup Rewards
-                                        </Header>
+                                    content={
+                                        <>
+                                            <Header
+                                                className={classNames({
+                                                    "opacity-40": !lockedPosition.lockedAlca || lockedPosition.lockupCompleted || !web3Connected,
+                                                    "text-base": true,
+                                                    "mb-0": true
+                                                })}
+                                                as="h3"
+                                            >
+                                                Claim Lockup Rewards
+                                            </Header>
 
-                                        <div className="text-xs">
-                                            {ethReward || 0} ETH / {alcaReward || 0} ALCA
-                                        </div>
-                                    </>}
+                                            <div className="text-xs">
+                                                {ethReward || 0} ETH / {alcaReward || 0} ALCA
+                                            </div>
+                                        </>
+                                    }
                                     disabled={Boolean(!lockedPosition.lockedAlca || lockedPosition.lockupCompleted || !web3Connected)}
                                     active={activeItem === 'claim'}
                                     onClick={e => handleItemClick(e, { name: "claim" })}

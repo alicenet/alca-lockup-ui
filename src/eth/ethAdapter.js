@@ -244,9 +244,6 @@ class EthAdapter {
                 let address = await this._lookupContractName(contract);
                 this.addressesFromFactory[contract] = address;
             }
-            // TODO clean up
-            console.log(this.contracts);
-            console.log(this.addressesFromFactory);
 
             // Setup balance listener
             await this._balanceLoop();
@@ -254,7 +251,7 @@ class EthAdapter {
             cb(null, connectedAddress);
             store.dispatch(APPLICATION_ACTIONS.setWeb3Connected(true));
             
-            return
+            return;
         } catch (ex) {
             console.error(ex);
             store.dispatch(APPLICATION_ACTIONS.setWeb3Connected(false));
@@ -462,20 +459,30 @@ class EthAdapter {
             const end = await this.getLockupEnd();
             const { shares } = await this._trySend(CONTRACT_NAMES.PublicStaking, "getPosition", [tokenId]);
             const blockNumber = await this.provider.getBlockNumber();
+            const SCALING_FACTOR = await this._tryCall(CONTRACT_NAMES.Lockup, "SCALING_FACTOR");
+            const FRACTION_RESERVED = await this._tryCall(CONTRACT_NAMES.Lockup, "FRACTION_RESERVED");
+            const penalty = ethers.BigNumber.from(FRACTION_RESERVED).mul(100).div(SCALING_FACTOR);
+            const remainingRewards = 100 - penalty
 
             // TODO clean up
+            console.log(this.contracts);
+            console.log(this.addressesFromFactory);
             console.log({ 
-                shares: ethers.utils.formatEther(shares), 
+                penalty: penalty.toString(),
+                remainingRewards: 100 - penalty,
                 start: start.toString(),
                 end: end.toString(),
                 currentBlock: blockNumber.toString()
             })
+            
             return { 
                 lockedAlca: ethers.utils.formatEther(shares),
                 payoutEth: ethers.utils.formatEther(payoutEth), 
                 payoutToken: ethers.utils.formatEther(payoutToken),
                 tokenId,
-                lockupCompleted: blockNumber > end
+                lockupCompleted: blockNumber > end,
+                penalty: penalty.toString(),
+                remainingRewards
             }; 
         })
     }
