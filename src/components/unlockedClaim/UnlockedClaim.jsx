@@ -2,6 +2,7 @@ import React from "react";
 import ethAdapter from "eth/ethAdapter";
 import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
+import { TOKEN_TYPES } from "redux/constants";
 import { Grid, Header, Button, Icon, Message, Segment } from "semantic-ui-react";
 import utils from "utils";
 import { ConfirmationModal } from "components";
@@ -37,7 +38,7 @@ export function UnlockedClaim() {
             if (rec.transactionHash) {
                 setStatus({ error: false, message: "Rewards Claimed Successful!" });
                 setHash(rec.transactionHash);
-                dispatch(APPLICATION_ACTIONS.updateBalances());
+                dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
                 setWaiting(false);
             }
         } catch (exception) {

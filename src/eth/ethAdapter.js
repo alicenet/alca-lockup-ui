@@ -245,7 +245,7 @@ class EthAdapter {
                 this.addressesFromFactory[contract] = address;
             }
             // TODO clean up
-            console.log(this.contracts);
+            console.log(this.addressesFromFactory);
 
             // Setup balance listener
             await this._balanceLoop();
@@ -546,6 +546,17 @@ class EthAdapter {
      async collectAllProfits() {
         return await this._try(async () => {
             const payoutTx = await this._trySend(CONTRACT_NAMES.Lockup, "collectAllProfits");
+            return payoutTx;
+        })
+    }
+
+    /**
+     * Claim all rewards for both ETH and ALCA from lockup
+     * @returns { Object }
+     */
+     async aggregateProfits() {
+        return await this._try(async () => {
+            const payoutTx = await this._trySend(CONTRACT_NAMES.Lockup, "aggregateProfits");
             return payoutTx;
         })
     }

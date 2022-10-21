@@ -2,6 +2,7 @@ import React from "react";
 import ethAdapter from "eth/ethAdapter";
 import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
+import { TOKEN_TYPES } from "redux/constants";
 import { Grid, Header, Button, Icon, Message } from "semantic-ui-react";
 import utils from "utils";
 import { ConfirmationModal } from "components";
@@ -35,13 +36,10 @@ export function Lockup() {
             const rec = await tx.wait();
 
             if (rec.transactionHash) {
-                await dispatch(APPLICATION_ACTIONS.updateBalances());
-                setStatus({ 
-                    error: false, 
-                    message: "Lockup Successful!"  
-                });
                 setHash(rec.transactionHash);
+                setStatus({ error: false, message: "Lockup Successful!" });
                 setWaiting(false);
+                await dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
             }
         } catch (exception) {
             setStatus({ 

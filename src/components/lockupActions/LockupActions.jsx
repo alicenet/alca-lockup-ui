@@ -84,7 +84,7 @@ export function LockupActions() {
                                         </Header>
 
                                         <div className="text-xs">
-                                            {`${lockedPosition.lockedAlca}
+                                            {`${lockedPosition.lockedAlca || 0}
                                                 ALCA`}
                                         </div>
                                     </>}
@@ -108,7 +108,7 @@ export function LockupActions() {
                                         </Header>
 
                                         <div className="text-xs">
-                                            {`${lockedPosition.lockedAlca}
+                                            {`${lockedPosition.lockedAlca || 0}
                                                 ALCA`}
                                         </div>
                                     </>}
