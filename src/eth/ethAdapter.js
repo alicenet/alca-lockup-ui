@@ -433,11 +433,12 @@ class EthAdapter {
      * @returns { Object }
      */
      async lockupStakedPosition(tokenID) {
+        console.log(this.addressesFromFactory)
         return await this._try(async () => {
             const address = await this._getAddressByIndex(0);
             const tx = await this._trySend(CONTRACT_NAMES.PublicStaking, "safeTransferFrom(address,address,uint256)", [
                 address, 
-                this.contracts.Lockup.address, 
+                this.addressesFromFactory.Lockup, 
                 tokenID
             ]);
             return tx;
