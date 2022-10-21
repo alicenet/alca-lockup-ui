@@ -175,7 +175,8 @@ export const updateBalances = tokenType => {
                     lockedAlca: lockedPosition.lockedAlca,
                     tokenId: lockedPosition.tokenId,
                     ethReward: lockedPosition.payoutEth, 
-                    alcaReward: lockedPosition.payoutToken
+                    alcaReward: lockedPosition.payoutToken,
+                    lockupCompleted: lockedPosition.lockupCompleted,
                 }
             })
         }

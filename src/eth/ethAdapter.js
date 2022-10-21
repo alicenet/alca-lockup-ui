@@ -453,18 +453,24 @@ class EthAdapter {
             const address = await this._getAddressByIndex(accountIndex);
             const tokenId = await this._trySend(CONTRACT_NAMES.Lockup, "tokenOf", [address]);
             const { payoutEth = 0, payoutToken = 0 } = await this.estimateProfits(tokenId);
+            const start = await this.getLockupStart();
+            const end = await this.getLockupEnd();
             const { shares } = await this._trySend(CONTRACT_NAMES.PublicStaking, "getPosition", [tokenId]);
+            const blockNumber = await this.provider.getBlockNumber();
 
+            // TODO clean up
             console.log({ 
                 shares: ethers.utils.formatEther(shares), 
-                payoutEth: payoutEth.toString(), 
-                payoutToken: payoutToken.toString() 
+                start: start.toString(),
+                end: end.toString(),
+                currentBlock: blockNumber.toString()
             })
             return { 
                 lockedAlca: ethers.utils.formatEther(shares),
                 payoutEth: ethers.utils.formatEther(payoutEth), 
                 payoutToken: ethers.utils.formatEther(payoutToken),
-                tokenId
+                tokenId,
+                lockupCompleted: blockNumber > end
             }; 
         })
     }
@@ -512,8 +518,8 @@ class EthAdapter {
      */
      async estimateProfits(tokenId) {
         return await this._try(async () => {
-            const payout = await this._tryCall(CONTRACT_NAMES.Lockup, "estimateProfits", [tokenId]);
-            return payout;
+            const payoutTx = await this._trySend(CONTRACT_NAMES.Lockup, "estimateProfits", [tokenId]);
+            return payoutTx;
         })
     }
     
@@ -524,8 +530,8 @@ class EthAdapter {
      */
     async estimateFinalBonusProfits(tokenId) {
         return await this._try(async () => {
-            const payout = await this._trySend(CONTRACT_NAMES.Lockup, "estimateFinalBonusWithProfits", [tokenId]);
-            return payout;
+            const payoutTx = await this._trySend(CONTRACT_NAMES.Lockup, "estimateFinalBonusWithProfits", [tokenId]);
+            return payoutTx;
         })
     }
 
@@ -537,6 +543,28 @@ class EthAdapter {
         return await this._try(async () => {
             const payoutTx = await this._trySend(CONTRACT_NAMES.Lockup, "collectAllProfits");
             return payoutTx;
+        })
+    }
+
+    /**
+     * Claim all rewards for both ETH and ALCA from lockup
+     * @returns { Object }
+     */
+     async getLockupStart() {
+        return await this._try(async () => {
+            const block = await this._trySend(CONTRACT_NAMES.Lockup, "getLockupStartBlock");
+            return block;
+        })
+    }
+
+    /**
+     * Claim all rewards for both ETH and ALCA from lockup
+     * @returns { Object }
+     */
+     async getLockupEnd() {
+        return await this._try(async () => {
+            const block = await this._trySend(CONTRACT_NAMES.Lockup, "getLockupEndBlock");
+            return block;
         })
     }
 

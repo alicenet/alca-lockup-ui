@@ -22,7 +22,7 @@ export function LockupActions() {
             case "welcome": return <LockupWelcome stepForward={() => lockedPosition.lockedAlca > 0 ? setActiveItem("unlock") : setActiveItem("lockup")} />
             case "lockup": return <Lockup />
             // TODO Route lockup time completed 
-            case "unlock": return lockedPosition.lockedAlca > 0 ? <Unlock /> : <UnlockedClaim />
+            case "unlock": return lockedPosition.lockupCompleted ? <UnlockedClaim /> : <Unlock />
             case "claim": return <LockupClaim />
             default: return;
         }
