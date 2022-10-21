@@ -49,6 +49,9 @@ class EthAdapter {
             return;
         }
 
+        const blockNumber = await this.provider.getBlockNumber();
+        console.log({ blockNumber })
+
         await this.updateBalances();
         setTimeout(this._balanceLoop.bind(this), this.timeBetweenBalancePolls);
     }

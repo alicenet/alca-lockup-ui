@@ -36,9 +36,9 @@ export function Unlock() {
             const rec = await tx.wait();
 
             if (rec.transactionHash) {
+                await dispatch(APPLICATION_ACTIONS.updateBalances());
                 setStatus({ error: false, message: "Unlocked Successful!" });
                 setHash(rec.transactionHash);
-                dispatch(APPLICATION_ACTIONS.updateBalances());
                 setWaiting(false);
             }
         } catch (exception) {

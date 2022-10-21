@@ -9,11 +9,12 @@ import { ConfirmationModal } from "components";
 const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://etherscan.io/tx/";
 
 export function LockupClaim() {
-    const { lockedAlca, tokenId, ethReward, alcaReward } = useSelector(state => ({
+    const { lockedAlca, tokenId, ethReward, alcaReward, lockupCompleted } = useSelector(state => ({
         lockedAlca: state.application.lockedPosition.lockedAlca,
         tokenId: state.application.lockedPosition.tokenId,
         ethReward: state.application.lockedPosition.ethReward,
-        alcaReward: state.application.lockedPosition.alcaReward
+        alcaReward: state.application.lockedPosition.alcaReward,
+        lockupCompleted: state.application.lockedPosition.lockupCompleted
     }))
 
     const dispatch = useDispatch();
@@ -35,9 +36,9 @@ export function LockupClaim() {
             const rec = await tx.wait();
 
             if (rec.transactionHash) {
+                await dispatch(APPLICATION_ACTIONS.updateBalances());
                 setStatus({ error: false, message: "Rewards Claimed Successfully!" });
                 setHash(rec.transactionHash);
-                dispatch(APPLICATION_ACTIONS.updateBalances());
                 setWaiting(false);
             }
         } catch (exception) {
@@ -144,11 +145,13 @@ export function LockupClaim() {
             actionLabel="Claim Rewards"
             onAccept={() => claimRewards()}
         >
-            <Message warning>
-                <Message.Header>You are about unlock this 500 ALCA position and lose potential rewards</Message.Header>
-                <p>The early exit will have a 20% penalty for earned rewards, users will get the 80%<br />
-                    of their rewards and their original stake position.</p>
-            </Message>
+            {!lockupCompleted && (
+                <Message warning>
+                    <Message.Header>You are about unlock this 500 ALCA position and lose potential rewards</Message.Header>
+                    <p>The early exit will have a 20% penalty for earned rewards, users will get the 80%<br />
+                        of their rewards and their original stake position.</p>
+                </Message>
+            )}
 
             <p>You are about to unlock this 500 ALCA before the lock-up period this means....</p>
 
