@@ -9,9 +9,9 @@ import { ConfirmationModal } from "components";
 const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://etherscan.io/tx/";
 
 export function LockupClaim() {
-    const { stakedAlca, lockedAlca, ethReward, alcaReward } = useSelector(state => ({
-        stakedAlca: state.application.stakedPosition.stakedAlca,
+    const { lockedAlca, tokenId, ethReward, alcaReward } = useSelector(state => ({
         lockedAlca: state.application.lockedPosition.lockedAlca,
+        tokenId: state.application.lockedPosition.tokenId,
         ethReward: state.application.lockedPosition.ethReward,
         alcaReward: state.application.lockedPosition.alcaReward
     }))
@@ -30,19 +30,21 @@ export function LockupClaim() {
             setWaiting(true)
             toggleConfirmModal(false);
 
-            const tx = await ethAdapter.lockupStakedPosition(3);
+            const tx = await ethAdapter.collectAllProfits(tokenId);
+            if (tx.error) throw tx.error;
             const rec = await tx.wait();
+
             if (rec.transactionHash) {
                 setStatus({ error: false, message: "Rewards Claimed Successfully!" });
                 setHash(rec.transactionHash);
                 dispatch(APPLICATION_ACTIONS.updateBalances());
                 setWaiting(false);
             }
-        } catch (exc) {
+        } catch (exception) {
             setWaiting(false);
             setStatus({ 
                 error: true, 
-                message: "There was a problem with your request, please verify or try again later" 
+                message: exception || "There was a problem with your request, please verify or try again later" 
             });
         }
     }
@@ -57,7 +59,7 @@ export function LockupClaim() {
                         </div>
                     
                         <div>
-                            <Header as="h1" className="mb-0">{stakedAlca} ALCA Staked Locked</Header>
+                            <Header as="h1" className="mb-0">{lockedAlca} ALCA Staked Locked</Header>
                             <p>
                                 You can claim your rewards at anytime, however early claiming will have a 20% penalty of earned rewards, 
                                 users will get the 80% of their rewards and their original stake position.
@@ -70,9 +72,9 @@ export function LockupClaim() {
                             <Header as="h4">Locked rewards as today</Header>
                             
                             <div className="font-bold space-x-2">
-                                <Icon name="ethereum"/>0.012344 ETH 
+                                <Icon name="ethereum"/>{ethReward} ETH 
 
-                                <Icon name="cog"/>344 ALCA
+                                <Icon name="cog"/>{alcaReward} ALCA
                             </div>
                         </div>
 
@@ -94,9 +96,9 @@ export function LockupClaim() {
                 <Header as="h3">Claimed Rewards</Header>
                 
                 <div className="font-bold space-x-2">
-                    <Icon name="ethereum"/>0.012344 ETH 
+                    <Icon name="ethereum"/>{ethReward} ETH 
 
-                    <Icon name="cog"/>344 ALCA
+                    <Icon name="cog"/>{alcaReward} ALCA
                 </div>
             </div>
 
@@ -151,9 +153,9 @@ export function LockupClaim() {
             <p>You are about to unlock this 500 ALCA before the lock-up period this means....</p>
 
             <div className="font-bold space-x-2">
-                <Icon name="ethereum"/>0.012344 ETH 
+                <Icon name="ethereum"/>{ethReward} ETH 
 
-                <Icon name="cog"/>344 ALCA
+                <Icon name="cog"/>{alcaReward} ALCA
             </div>
         </ConfirmationModal>
     )
@@ -164,8 +166,15 @@ export function LockupClaim() {
 
             <Grid padded>
                 {claimHeader()}
-
                 {hash ? claimSuccessful() : requestRewards()}
+
+                {status.error && (
+                    <Grid.Column width={16}>
+                        <Message negative>
+                            <p>{status.message}</p>
+                        </Message>
+                    </Grid.Column>
+                )}
             </Grid>
         </>
     )

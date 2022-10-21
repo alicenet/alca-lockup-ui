@@ -10,9 +10,11 @@ const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://ethers
 
 export function Unlock() {
 
-    const { lockedAlca, unlockDate } = useSelector(state => ({
+    const { lockedAlca, ethReward, alcaReward, unlockDate } = useSelector(state => ({
         lockedAlca: state.application.lockedPosition.lockedAlca,
-        unlockDate: state.application.lockedPosition.unlockDate,
+        ethReward: state.application.lockedPosition.ethReward,
+        alcaReward: state.application.lockedPosition.alcaReward,
+        unlockDate: state.application.lockedPosition.unlockDate
     }))
 
     const dispatch = useDispatch();
@@ -29,19 +31,21 @@ export function Unlock() {
             setWaiting(true)
             toggleConfirmModal(false);
 
-            const tx = await ethAdapter.lockupStakedPosition(3);
+            const tx = await ethAdapter.sendEarlyExit(lockedAlca);
+            if (tx.error) throw tx.error;
             const rec = await tx.wait();
+
             if (rec.transactionHash) {
                 setStatus({ error: false, message: "Unlocked Successful!" });
                 setHash(rec.transactionHash);
                 dispatch(APPLICATION_ACTIONS.updateBalances());
                 setWaiting(false);
             }
-        } catch (exc) {
+        } catch (exception) {
             setWaiting(false);
             setStatus({ 
                 error: true, 
-                message: "There was a problem with your request, please verify or try again later" 
+                message: exception || "There was a problem with your request, please verify or try again later" 
             });
         }
     }
@@ -69,9 +73,9 @@ export function Unlock() {
                             <Header as="h4">Locked rewards as today</Header>
                             
                             <div className="font-bold space-x-2">
-                                <Icon name="ethereum"/>0.012344 ETH 
+                                <Icon name="ethereum"/>{ethReward} ETH 
 
-                                <Icon name="cog"/>344 ALCA
+                                <Icon name="cog"/>{alcaReward} ALCA
                             </div>
                         </div>
 
@@ -93,9 +97,9 @@ export function Unlock() {
                 <Header as="h3">Claimed Rewards</Header>
                 
                 <div className="font-bold space-x-2">
-                    <Icon name="ethereum"/>0.012344 ETH 
+                    <Icon name="ethereum"/>{ethReward} ETH 
 
-                    <Icon name="cog"/>344 ALCA
+                    <Icon name="cog"/>{alcaReward} ALCA
                 </div>
             </div>
 
@@ -172,9 +176,9 @@ export function Unlock() {
             <Header as="h3">Locked rewards as today</Header>
             
             <div className="font-bold space-x-2">
-                <Icon name="ethereum"/>0.012344 ETH 
+                <Icon name="ethereum"/>{ethReward} ETH 
 
-                <Icon name="cog"/>344 ALCA
+                <Icon name="cog"/>{alcaReward} ALCA
             </div>
         </ConfirmationModal>
     )
@@ -185,7 +189,7 @@ export function Unlock() {
 
             <Grid padded>
                 {unlockHeader()}
-                {status?.message ? unlockSuccessful() : requestUnlock()}
+                {hash ? unlockSuccessful() : requestUnlock()}
 
                 {status.error && (
                     <Grid.Column width={16}>

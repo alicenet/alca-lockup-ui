@@ -10,8 +10,8 @@ const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://ethers
 
 export function Lockup() {
 
-    const { stakedPosition, tokenID, lockedPosition } = useSelector(state => ({
-        tokenID: state.application.stakedPosition.tokenId,
+    const { stakedPosition, tokenId, lockedPosition } = useSelector(state => ({
+        tokenId: state.application.stakedPosition.tokenId,
         stakedPosition: state.application.stakedPosition,
         lockedPosition: state.application.lockedPosition,
     }))
@@ -28,24 +28,25 @@ export function Lockup() {
             setHash("");
             setStatus({});
             setWaiting(true);
+            toggleConfirmModal(false);
 
-            const tx = await ethAdapter.safeTranferToLockup(tokenID);
-            await tx.wait();
+            const tx = await ethAdapter.lockupStakedPosition(tokenId);
+            if (tx.error) throw tx.error;
+            const rec = await tx.wait();
 
-            if (tx?.hash) {
-                dispatch(APPLICATION_ACTIONS.updateBalances());
+            if (rec.transactionHash) {
+                await dispatch(APPLICATION_ACTIONS.updateBalances());
                 setStatus({ 
                     error: false, 
-                    message: "Approval granted to the lockup contract, you can now lockup your Staked ALCA" 
+                    message: "Lockup Successful!"  
                 });
-                setHash(tx?.hash);
+                setHash(rec.transactionHash);
                 setWaiting(false);
             }
-
-        } catch (exc) {
+        } catch (exception) {
             setStatus({ 
                 error: true, 
-                message: "There was a problem with your request, please verify or try again later" 
+                message: exception || "There was a problem with your request, please verify or try again later" 
             });
             setWaiting(false);
         }
@@ -64,11 +65,8 @@ export function Lockup() {
                             className="mt-4"
                             color="black"
                             content={"Lockup Positions"}
-                            onClick={() => {
-                                toggleConfirmModal(true);
-                                lockupPosition(); 
-                            }}
-                            disabled={stakedPosition.stakedAlca === 0 || status?.error }
+                            onClick={() => toggleConfirmModal(true)}
+                            disabled={stakedPosition.stakedAlca === 0}
                             loading={waiting}
                         />      
                     </div>
@@ -141,7 +139,7 @@ export function Lockup() {
             onClose={() => toggleConfirmModal(false)}
             onOpen={() => console.log('openned')}
             actionLabel="Lockup Position"
-            onAccept={() => toggleConfirmModal(false)}
+            onAccept={() => lockupPosition()}
         >
             <p>You are about to Lock-up <strong>{stakedPosition.stakedAlca}</strong> ALCA for 6 months with a XX multiplayer</p>
         </ConfirmationModal>

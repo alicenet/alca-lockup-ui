@@ -432,10 +432,11 @@ class EthAdapter {
      * @param tokenID nft id held by lockup
      * @returns { Object }
      */
-     async safeTranferToLockup(tokenID) {
+     async lockupStakedPosition(tokenID) {
         return await this._try(async () => {
+            const address = await this._getAddressByIndex(0);
             const tx = await this._trySend(CONTRACT_NAMES.PublicStaking, "safeTransferFrom(address,address,uint256)", [
-                await this._getAddressByIndex(0), 
+                address, 
                 this.contracts.Lockup.address, 
                 tokenID
             ]);
@@ -447,14 +448,24 @@ class EthAdapter {
      * Get token by address
      * @returns { Object }
      */
-     async getLockedAlca(accountIndex = 0) {
+     async getLockedPosition(accountIndex = 0) {
         return await this._try(async () => {
             const address = await this._getAddressByIndex(accountIndex);
-            const tokenID = await this._trySend(CONTRACT_NAMES.Lockup, "tokenOf", [address]);
-            const { shares } = await this._trySend(CONTRACT_NAMES.PublicStaking, "getPosition", [tokenID]);
+            const tokenId = await this._trySend(CONTRACT_NAMES.Lockup, "tokenOf", [address]);
+            const { payoutEth = 0, payoutToken = 0 } = await this.estimateProfits(tokenId);
+            const { shares } = await this._trySend(CONTRACT_NAMES.PublicStaking, "getPosition", [tokenId]);
 
-            console.log({ shares: ethers.utils.formatEther(shares) })
-            return ethers.utils.formatEther(shares); 
+            console.log({ 
+                shares: ethers.utils.formatEther(shares), 
+                payoutEth: payoutEth.toString(), 
+                payoutToken: payoutToken.toString() 
+            })
+            return { 
+                lockedAlca: ethers.utils.formatEther(shares),
+                payoutEth: ethers.utils.formatEther(payoutEth), 
+                payoutToken: ethers.utils.formatEther(payoutToken),
+                tokenId
+            }; 
         })
     }
 
@@ -471,36 +482,25 @@ class EthAdapter {
     }
 
     /**
-     * Calls the lockup contract to initiate token transfer
-     * @param { Number } tokenID - Amount to be staked for a position
-     * @returns { Object }
-     */
-     async lockupStakedPosition(tokenID) {
-        return await this._try(async () => {
-            const tx = await this._trySend(CONTRACT_NAMES.Lockup, "lockTokens", [BigNumber.from(tokenID)]);
-            return tx;
-        })
-    }
-
-    /**
      * unlock and claim ownership of locked position and rewards
      * @param tokenID nft id held by lockup
      * @returns { Object }
      */
     async sendExitLock(tokenID) {
         return await this._try(async () => {
-            const tx = await this._trySend(CONTRACT_NAMES.Lockup, "exitLock", [ethers.BigNumber.from(tokenID)]);
+            const address = await this._getAddressByIndex(0);
+            const tx = await this._trySend(CONTRACT_NAMES.Lockup, "unlock", [address, tokenID]);
             return tx;
         })
     }
     /**
      * early exit on your locked position, loses 20% of rewards and bonus ALCA
-     * @param tokenID nft id held by lockup
+     * @param exitValue nft id held by lockup
      * @returns { Object }
      */
-    async sendEarlyExit(tokenID) {
+    async sendEarlyExit(exitValue) {
         return await this._try(async () => {
-            const tx = await this._trySend(CONTRACT_NAMES.Lockup, "earlyExit", [ethers.BigNumber.from(tokenID)]);
+            const tx = await this._trySend(CONTRACT_NAMES.Lockup, "unlockEarly", [ethers.utils.parseEther(exitValue), false]);
             return tx;
         })
     }
@@ -510,10 +510,10 @@ class EthAdapter {
      * @param { Number } tokenId
      * @returns { String }
      */
-     async estimateEthCollectionLockup(tokenId) {
+     async estimateProfits(tokenId) {
         return await this._try(async () => {
-            const payout = await this._trySend(CONTRACT_NAMES.Lockup, "estimateEthCollection", [tokenId]);
-            return ethers.utils.formatEther(payout);
+            const payout = await this._tryCall(CONTRACT_NAMES.Lockup, "estimateProfits", [tokenId]);
+            return payout;
         })
     }
     
@@ -522,45 +522,20 @@ class EthAdapter {
      * @param { Number } tokenId 
      * @returns { String }
      */
-    async estimateTokenCollectioninLockup(tokenId) {
+    async estimateFinalBonusProfits(tokenId) {
         return await this._try(async () => {
-            const payout = await this._trySend(CONTRACT_NAMES.Lockup, "estimateTokenCollection", [tokenId]);
-            return ethers.utils.formatEther(payout);
-        })
-    }
-
-    /**
-     * Claim all rewards for ETH from lockup
-     * @param { Number } tokenId 
-     * @returns { Object }
-     */
-     async collectEthProfitsLockup(tokenId) {
-        return await this._try(async () => {
-            const payoutTx = await this._trySend(CONTRACT_NAMES.Lockup, "collectEth", [tokenId]);
-            return payoutTx;
-        })
-    }
-
-    /**
-     * Claim rewards for ALCA from lockup
-     * @param { Number } tokenId 
-     * @returns { Object }
-     */
-     async collectALCARewardsLockup(tokenId) {
-        return await this._try(async () => {
-            const payoutTx = await this._trySend(CONTRACT_NAMES.Lockup, "collectALCA", [tokenId]);
-            return payoutTx;
+            const payout = await this._trySend(CONTRACT_NAMES.Lockup, "estimateFinalBonusWithProfits", [tokenId]);
+            return payout;
         })
     }
 
     /**
      * Claim all rewards for both ETH and ALCA from lockup
-     * @param { Number } tokenId 
      * @returns { Object }
      */
-     async collectAllProfitsLockup(tokenId) {
+     async collectAllProfits() {
         return await this._try(async () => {
-            const payoutTx = await this._trySend(CONTRACT_NAMES.Lockup, "collectAllProfits", [tokenId]);
+            const payoutTx = await this._trySend(CONTRACT_NAMES.Lockup, "collectAllProfits");
             return payoutTx;
         })
     }

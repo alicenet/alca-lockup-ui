@@ -34,7 +34,7 @@ export function Connect() {
 
     return (
         <>
-            <div fluid className="flex justify-center items-center h-full w-full flex-grow">
+            <div className="flex justify-center items-center h-full w-full flex-grow">
                 <div className="text-sm text-right">
                     {web3Connected ? (<div>
                         <Header.Subheader>

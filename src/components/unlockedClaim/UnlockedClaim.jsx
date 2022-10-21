@@ -2,16 +2,16 @@ import React from "react";
 import ethAdapter from "eth/ethAdapter";
 import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
-import { Grid, Header, Button, Icon, Segment } from "semantic-ui-react";
+import { Grid, Header, Button, Icon, Message, Segment } from "semantic-ui-react";
 import utils from "utils";
 import { ConfirmationModal } from "components";
 
 const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://etherscan.io/tx/";
 
 export function UnlockedClaim() {
-    const { stakedAlca, lockedAlca, ethReward, alcaReward } = useSelector(state => ({
-        stakedAlca: state.application.stakedPosition.stakedAlca,
+    const { lockedAlca, tokenId, ethReward, alcaReward } = useSelector(state => ({
         lockedAlca: state.application.lockedPosition.lockedAlca,
+        tokenId: state.application.lockedPosition.tokenId,
         ethReward: state.application.lockedPosition.ethReward,
         alcaReward: state.application.lockedPosition.alcaReward
     }))
@@ -27,23 +27,25 @@ export function UnlockedClaim() {
         try {
             setHash("");
             setStatus({});
-            setWaiting(true)
+            setWaiting(true);
             toggleConfirmModal(false);
 
-            const tx = await ethAdapter.lockupStakedPosition(3);
+            const tx = await ethAdapter.sendExitLock(tokenId);
+            if (tx.error) throw tx.error;
             const rec = await tx.wait();
+
             if (rec.transactionHash) {
                 setStatus({ error: false, message: "Rewards Claimed Successful!" });
                 setHash(rec.transactionHash);
                 dispatch(APPLICATION_ACTIONS.updateBalances());
                 setWaiting(false);
             }
-        } catch (exc) {
-            setWaiting(false);
+        } catch (exception) {
             setStatus({ 
                 error: true, 
-                message: "There was a problem with your request, please verify or try again later" 
+                message: exception || "There was a problem with your request, please verify or try again later" 
             });
+            setWaiting(false);
         }
     }
 
@@ -57,7 +59,7 @@ export function UnlockedClaim() {
                         </div>
                     
                         <div>
-                            <Header as="h1" className="mb-0">{stakedAlca} ALCA Staked Locked</Header>
+                            <Header as="h1" className="mb-0">{lockedAlca} ALCA Staked Locked</Header>
                             <p>You are now able to claim your lockup rewards, Claim now!</p>
                         </div>
                     </div>
@@ -67,9 +69,9 @@ export function UnlockedClaim() {
                             <Header as="h4" color="teal">Unlocked rewards as of today</Header>
                             
                             <div className="font-bold space-x-2">
-                                <Icon name="ethereum"/>0.012344 ETH 
+                                <Icon name="ethereum"/>{ethReward} ETH 
 
-                                <Icon name="cog"/>344 ALCA
+                                <Icon name="cog"/>{alcaReward} ALCA
                             </div>
                         </div>
 
@@ -92,9 +94,9 @@ export function UnlockedClaim() {
                 <Header as="h3">Claimed Rewards</Header>
                 
                 <div className="font-bold space-x-2">
-                    <Icon name="ethereum"/>0.012344 ETH 
+                    <Icon name="ethereum"/>{ethReward} ETH 
 
-                    <Icon name="cog"/>344 ALCA
+                    <Icon name="cog"/>{alcaReward} ALCA
                 </div>
             </div>
 
@@ -144,8 +146,8 @@ export function UnlockedClaim() {
             <p>You are about to claim the following rewards. This funds will be send to your wallet.</p>
 
             <div className="font-bold space-x-2">
-                <Icon name="ethereum"/>0.012344 ETH 
-                <Icon name="cog"/>344 ALCA
+                <Icon name="ethereum"/>{ethReward} ETH 
+                <Icon name="cog"/>{alcaReward} ALCA
             </div>
         </ConfirmationModal>
     )
@@ -156,8 +158,15 @@ export function UnlockedClaim() {
 
             <Grid padded>
                 {claimHeader()}
-
                 {hash ? claimSuccessful() : requestRewards()}
+
+                {status.error && (
+                    <Grid.Column width={16}>
+                        <Message negative>
+                            <p>{status.message}</p>
+                        </Message>
+                    </Grid.Column>
+                )}
             </Grid>
         </>
     )
