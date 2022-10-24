@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Container } from "semantic-ui-react";
 import { useSelector } from "react-redux";
 import { Footer, Header, LockupActions } from "components";
+import ethAdapter from "eth/ethAdapter";
 import { ToastContainer } from "react-toastify";
 
 function App() {
@@ -17,9 +18,19 @@ function App() {
             }
         }
 
+        const aggregateProfits = async (ev) => {
+            if (ev.keyCode === 69 && ev.shiftKey) {
+                console.log("Aggregate Profits");
+                await ethAdapter.aggregateProfits();
+                return;
+            }
+        }
+
+        document.addEventListener("keydown", aggregateProfits);
         document.addEventListener("keydown", debugPrint);
 
         return () => {
+            document.removeEventListener("keydown", aggregateProfits);
             document.removeEventListener("keydown", debugPrint);
         }
 

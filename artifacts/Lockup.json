@@ -32,11 +32,6 @@
     },
     {
       "inputs": [],
-      "name": "BonusRateNotSetImpossibleToDetermineProfits",
-      "type": "error"
-    },
-    {
-      "inputs": [],
       "name": "CannotCallContractMethodsOnZeroAddress",
       "type": "error"
     },
@@ -138,11 +133,6 @@
         }
       ],
       "name": "InvalidPositionWithdrawPeriod",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "InvalidStartingBlock",
       "type": "error"
     },
     {
@@ -530,14 +520,8 @@
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "amount_",
-          "type": "uint256"
-        }
-      ],
-      "name": "getReservedAmount",
+      "inputs": [],
+      "name": "getReservedPercentage",
       "outputs": [
         {
           "internalType": "uint256",

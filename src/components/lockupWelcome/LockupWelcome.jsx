@@ -17,6 +17,7 @@ export function LockupWelcome({ stepForward }) {
         if (web3Connected) {
             stepForward();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [web3Connected])
 
     React.useEffect(() => {

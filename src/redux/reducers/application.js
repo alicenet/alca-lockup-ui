@@ -28,6 +28,9 @@ const initialApplicationState = {
         alcaReward: 0,
         ethReward: 0,
         unlockDate: 0,
+        lockupCompleted: false,
+        penalty: 0,
+        remainingRewards: 0
     },
     connectedAddress: "",
     approvalHash: "",

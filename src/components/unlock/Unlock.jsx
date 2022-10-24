@@ -2,6 +2,7 @@ import React from "react";
 import ethAdapter from "eth/ethAdapter";
 import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
+import { TOKEN_TYPES } from "redux/constants";
 import { Grid, Header,  Button, Icon, Message, Segment } from "semantic-ui-react";
 import utils from "utils";
 import { ConfirmationModal } from "components";
@@ -10,10 +11,13 @@ const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://ethers
 
 export function Unlock() {
 
-    const { stakedAlca, lockedAlca, unlockDate } = useSelector(state => ({
-        stakedAlca: state.application.stakedPosition.stakedAlca,
+    const { lockedAlca, ethReward, alcaReward, unlockDate, penalty, remainingRewards } = useSelector(state => ({
         lockedAlca: state.application.lockedPosition.lockedAlca,
+        ethReward: state.application.lockedPosition.ethReward,
+        alcaReward: state.application.lockedPosition.alcaReward,
         unlockDate: state.application.lockedPosition.unlockDate,
+        penalty: state.application.lockedPosition.penalty,
+        remainingRewards: state.application.lockedPosition.remainingRewards
     }))
 
     const dispatch = useDispatch();
@@ -21,6 +25,8 @@ export function Unlock() {
     const [status, setStatus] = React.useState({});
     const [openConfirmation, toggleConfirmModal] = React.useState(false);
     const [waiting, setWaiting] = React.useState(false);
+    const [claimedEth, setClaimedEth] = React.useState(0);
+    const [claimedAlca, setClaimedAlca] = React.useState(0);
     const [hash, setHash] = React.useState("");
 
     const unlockPosition = async () => {
@@ -30,19 +36,23 @@ export function Unlock() {
             setWaiting(true)
             toggleConfirmModal(false);
 
-            const tx = await ethAdapter.lockupStakedPosition(3);
+            const tx = await ethAdapter.sendEarlyExit(lockedAlca);
+            if (tx.error) throw tx.error;
             const rec = await tx.wait();
+
             if (rec.transactionHash) {
-                setStatus({ error: false, message: "Unlocked Successful!" });
                 setHash(rec.transactionHash);
-                dispatch(APPLICATION_ACTIONS.updateBalances());
+                setStatus({ error: false, message: "Unlocked Successful!" });
                 setWaiting(false);
+                setClaimedEth(ethReward);
+                setClaimedAlca(alcaReward);
+                await dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
             }
-        } catch (exc) {
+        } catch (exception) {
             setWaiting(false);
             setStatus({ 
                 error: true, 
-                message: "There was a problem with your request, please verify or try again later" 
+                message: exception || "There was a problem with your request, please verify or try again later" 
             });
         }
     }
@@ -57,7 +67,7 @@ export function Unlock() {
                         </div>
                     
                         <div>
-                            <Header as="h1" className="mb-0">{stakedAlca} ALCA Staked Locked</Header>
+                            <Header as="h1" className="mb-0">{lockedAlca} ALCA Staked Locked</Header>
                             <p>
                                 You can unlock your position at anytime, however to receive the complete lockup bonus rewards 
                                 it must not be unlocked until {unlockDate}
@@ -65,14 +75,14 @@ export function Unlock() {
                         </div>
                     </div>
 
-                    <Segment className="flex w-9/12 justify-between items-center rounded-2xl bg-neutral-50 border-neutral-200">
+                    <Segment className="flex w-10/12 justify-between items-center rounded-2xl bg-neutral-50 border-neutral-200">
                         <div>
                             <Header as="h4">Locked rewards as today</Header>
                             
                             <div className="font-bold space-x-2">
-                                <Icon name="ethereum"/>0.012344 ETH 
+                                <Icon name="ethereum"/>{ethReward} ETH 
 
-                                <Icon name="cog"/>344 ALCA
+                                <Icon name="cog"/>{alcaReward} ALCA
                             </div>
                         </div>
 
@@ -80,7 +90,7 @@ export function Unlock() {
                             color="pink"
                             loading={waiting}
                             onClick={() => toggleConfirmModal(true)}
-                            content={"Unlock Positions"}
+                            content={"Unlock position & rewards"}
                         />      
                     </Segment>
                 </>
@@ -94,9 +104,9 @@ export function Unlock() {
                 <Header as="h3">Claimed Rewards</Header>
                 
                 <div className="font-bold space-x-2">
-                    <Icon name="ethereum"/>0.012344 ETH 
+                    <Icon name="ethereum"/>{claimedEth} ETH 
 
-                    <Icon name="cog"/>344 ALCA
+                    <Icon name="cog"/>{claimedAlca} ALCA
                 </div>
             </div>
 
@@ -126,11 +136,11 @@ export function Unlock() {
         <Grid.Column width={16} className="flex mb-4">
             <Grid.Row>
                 <Header>
-                    {status?.message || 'Current lockup position'}
+                    {hash ? 'Unlocked Successful!' : 'Current lockup position'}
                     <Header.Subheader className="mt-3">
                         {!hash 
-                        ? (`The early exit will have a 20% penalty of earned rewards, users will get the 80% of their rewards and their original stake position.`)
-                        : (`Your position 500 ALCA has been unlocked`)}
+                        ? (`The early exit will have a ${penalty}% penalty of earned rewards, users will get the ${remainingRewards}% of their rewards and their original stake position.`)
+                        : (`Your position {lockedAlca} ALCA has been unlocked`)}
                     </Header.Subheader>
                 </Header>
 
@@ -163,19 +173,19 @@ export function Unlock() {
             onAccept={() => unlockPosition()}
         >
             <Message warning>
-                <Message.Header>You are about unlock this 500 ALCA position and lose potential rewards</Message.Header>
-                <p>The early exit will have a 20% penalty for earned rewards, users will get the 80%<br />
+                <Message.Header>You are about unlock this {lockedAlca} ALCA position and lose potential rewards</Message.Header>
+                <p>The early exit will have a {penalty}% penalty for earned rewards, users will get the {remainingRewards}%<br />
                     of their rewards and their original stake position.</p>
             </Message>
 
-            <p>You are about to unlock this 500 ALCA before the lock-up period this means....</p>
+            <p>You are about to unlock this {lockedAlca} ALCA before the lock-up period this means....</p>
 
             <Header as="h3">Locked rewards as today</Header>
             
             <div className="font-bold space-x-2">
-                <Icon name="ethereum"/>0.012344 ETH 
+                <Icon name="ethereum"/>{ethReward} ETH 
 
-                <Icon name="cog"/>344 ALCA
+                <Icon name="cog"/>{alcaReward} ALCA
             </div>
         </ConfirmationModal>
     )
@@ -186,7 +196,15 @@ export function Unlock() {
 
             <Grid padded>
                 {unlockHeader()}
-                {status?.message ? unlockSuccessful() : requestUnlock()}
+                {hash ? unlockSuccessful() : requestUnlock()}
+
+                {status.error && (
+                    <Grid.Column width={16}>
+                        <Message negative>
+                            <p>{status.message}</p>
+                        </Message>
+                    </Grid.Column>
+                )}
             </Grid>
         </>
     )
