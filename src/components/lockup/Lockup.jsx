@@ -64,7 +64,7 @@ export function Lockup() {
                             color="black"
                             content={"Lockup Positions"}
                             onClick={() => toggleConfirmModal(true)}
-                            disabled={stakedPosition.stakedAlca === 0}
+                            disabled={stakedPosition.stakedAlca === 0 || !lockedPosition.lockupPeriod}
                             loading={waiting}
                         />      
                     </div>
@@ -105,8 +105,8 @@ export function Lockup() {
                         {lockedPosition.lockedAlca ? 'Lockup Successful!' : 'Lockup Staked Positions'}
                         <Header.Subheader className="mt-3">
                             {(!lockedPosition.lockedAlca) 
-                            ? (`You currently have a staked position of ${stakedPosition.stakedAlca} ALCA, a lockup will be a period of 6 months with 5X multiplayer`) 
-                            : (`You have Locked-up ${lockedPosition.lockedAlca} ALCA for 6 months 5X multiplayer`)}
+                            ? (`You currently have a staked position of ${stakedPosition.stakedAlca} ALCA, a lockup will be a period of 6 months with 5X multiplayer (TBD)`) 
+                            : (`You have Locked-up ${lockedPosition.lockedAlca} ALCA for 6 months 5X multiplayer (TBD)`)}
                         </Header.Subheader>
                     </Header>
                     
@@ -139,7 +139,7 @@ export function Lockup() {
             actionLabel="Lockup Position"
             onAccept={() => lockupPosition()}
         >
-            <p>You are about to Lock-up <strong>{stakedPosition.stakedAlca}</strong> ALCA for 6 months with a 5X multiplayer</p>
+            <p>You are about to Lock-up <strong>{stakedPosition.stakedAlca}</strong> ALCA for 6 months with a 5X multiplayer (TBD)</p>
         </ConfirmationModal>
     )
 
@@ -149,6 +149,11 @@ export function Lockup() {
 
             <Grid padded>
                 {lockupHeader()}
+                {!lockedPosition.lockupPeriod && (
+                    <Grid.Column width={16}>
+                        <Message warning><p>{'Lockup is not available outside the lockup period'}</p></Message>
+                    </Grid.Column>
+                )}
                 {lockedPosition.lockedAlca ? lockupSuccessful() : lockupStakedAmount()}
 
                 {status.error && (

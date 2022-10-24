@@ -69,7 +69,7 @@ export function UnlockedClaim() {
                         </div>
                     </div>
 
-                    <Segment className="flex w-9/12 justify-between items-center rounded-2xl bg-teal-50 border-teal-200">
+                    <Segment className="flex justify-between items-center rounded-2xl bg-teal-50 border-teal-200">
                         <div>
                             <Header as="h4" color="teal">Unlocked rewards as of today</Header>
                             

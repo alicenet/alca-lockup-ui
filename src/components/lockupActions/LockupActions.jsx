@@ -23,7 +23,7 @@ export function LockupActions() {
         switch (activeItem) {
             case "welcome": return <LockupWelcome stepForward={() => lockedPosition.lockedAlca > 0 ? setActiveItem("unlock") : setActiveItem("lockup")} />
             case "lockup": return <Lockup />
-            case "unlock": return lockedPosition.lockupCompleted ? <UnlockedClaim /> : <Unlock />
+            case "unlock": return !lockedPosition.lockupPeriod ? <UnlockedClaim /> : <Unlock />
             case "claim": return <LockupClaim />
             default: return;
         }
@@ -32,6 +32,8 @@ export function LockupActions() {
     const activeMenuClass = (checkAgainst) => {
         return checkAgainst === activeItem ? "border-l-aliceblue border-l-[3px]" : ""
     }
+
+    console.log({ lockupPeriod: lockedPosition.lockupPeriod })
 
     return (
         <div className="flex justify-center w-full">
@@ -59,7 +61,7 @@ export function LockupActions() {
                                             })}
                                             as="h3"
                                         >
-                                            Position Available to Lockup
+                                            {lockedPosition.lockupPeriod ? 'Position Available to Lockup' : 'Currently Staked Position'}
                                         </Header>
                                         <div className="text-xs">
                                             {`${stakedPosition.stakedAlca}
@@ -101,7 +103,7 @@ export function LockupActions() {
                                         <>
                                             <Header
                                                 className={classNames({
-                                                    "opacity-40": !lockedPosition.lockedAlca || lockedPosition.lockupCompleted || !web3Connected,
+                                                    "opacity-40": !lockedPosition.lockedAlca || !lockedPosition.lockupPeriod || !web3Connected,
                                                     "text-base": true,
                                                     "mb-0": true
                                                 })}
@@ -115,7 +117,7 @@ export function LockupActions() {
                                             </div>
                                         </>
                                     }
-                                    disabled={Boolean(!lockedPosition.lockedAlca || lockedPosition.lockupCompleted || !web3Connected)}
+                                    disabled={Boolean(!lockedPosition.lockedAlca || !lockedPosition.lockupPeriod || !web3Connected)}
                                     active={activeItem === 'claim'}
                                     onClick={e => handleItemClick(e, { name: "claim" })}
                                     className={activeMenuClass("claim")}

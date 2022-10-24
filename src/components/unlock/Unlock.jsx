@@ -25,6 +25,7 @@ export function Unlock() {
     const [status, setStatus] = React.useState({});
     const [openConfirmation, toggleConfirmModal] = React.useState(false);
     const [waiting, setWaiting] = React.useState(false);
+    const [unlockedPosition, setUnlockedPosition] = React.useState(0);
     const [claimedEth, setClaimedEth] = React.useState(0);
     const [claimedAlca, setClaimedAlca] = React.useState(0);
     const [hash, setHash] = React.useState("");
@@ -44,6 +45,7 @@ export function Unlock() {
                 setHash(rec.transactionHash);
                 setStatus({ error: false, message: "Unlocked Successful!" });
                 setWaiting(false);
+                setUnlockedPosition(lockedAlca);
                 setClaimedEth(ethReward);
                 setClaimedAlca(alcaReward);
                 await dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
@@ -75,7 +77,7 @@ export function Unlock() {
                         </div>
                     </div>
 
-                    <Segment className="flex w-10/12 justify-between items-center rounded-2xl bg-neutral-50 border-neutral-200">
+                    <Segment className="flex justify-between items-center rounded-2xl bg-neutral-50 border-neutral-200">
                         <div>
                             <Header as="h4">Locked rewards as today</Header>
                             
@@ -139,8 +141,8 @@ export function Unlock() {
                     {hash ? 'Unlocked Successful!' : 'Current lockup position'}
                     <Header.Subheader className="mt-3">
                         {!hash 
-                        ? (`The early exit will have a ${penalty}% penalty of earned rewards, users will get the ${remainingRewards}% of their rewards and their original stake position.`)
-                        : (`Your position {lockedAlca} ALCA has been unlocked`)}
+                        ? (`The early exit will have a ${penalty}% penalty of earned rewards, users will get the ${remainingRewards}% of their rewards and their original staked position's ALCA.`)
+                        : (`Your position ${unlockedPosition} ALCA has been unlocked`)}
                     </Header.Subheader>
                 </Header>
 
@@ -173,14 +175,14 @@ export function Unlock() {
             onAccept={() => unlockPosition()}
         >
             <Message warning>
-                <Message.Header>You are about unlock this {lockedAlca} ALCA position and lose potential rewards</Message.Header>
+                <Message.Header>You are about to unlock this {lockedAlca} ALCA position and lose potential rewards</Message.Header>
                 <p>The early exit will have a {penalty}% penalty for earned rewards, users will get the {remainingRewards}%<br />
-                    of their rewards and their original stake position.</p>
+                    of their rewards and their original staked position's ALCA.</p>
             </Message>
 
-            <p>You are about to unlock this {lockedAlca} ALCA before the lock-up period this means....</p>
+            <p>You are about to unlock this {lockedAlca} ALCA before the lock-up period this means.... (TBD)</p>
 
-            <Header as="h3">Locked rewards as today</Header>
+            <Header as="h3">Locked rewards as of today</Header>
             
             <div className="font-bold space-x-2">
                 <Icon name="ethereum"/>{ethReward} ETH 

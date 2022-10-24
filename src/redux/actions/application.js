@@ -133,7 +133,7 @@ export const updateBalances = tokenType => {
         let ethBalance = state.application.balances.ethereum;
         let alcaBal = state.application.balances.alca;
         let stakedPosition = state.application.balances.stakedPosition;
-        let lockedPosition = state.application.balances.stakedPosition;
+        let lockedPosition = state.application.balances.lockedPosition;
 
         if (tokenType === TOKEN_TYPES.ETHEREUM || tokenType === TOKEN_TYPES.ALL) {
             ethBalance = await ethAdapter.getEthereumBalance(0);
@@ -157,7 +157,7 @@ export const updateBalances = tokenType => {
             return; 
         }
 
-        if (stakedPosition) {
+        if (!stakedPosition.error) {
             dispatch({
                 type: APPLICATION_ACTION_TYPES.SET_STAKED_POSITION,
                 payload: {
@@ -168,15 +168,16 @@ export const updateBalances = tokenType => {
                 }
             });
         }
+        console.log({ lockedPosition })
 
-        if (lockedPosition) {
+        if (!lockedPosition.error) {
             dispatch({type: APPLICATION_ACTION_TYPES.SET_LOCKED_POSITION, 
                 payload: {
                     lockedAlca: lockedPosition.lockedAlca,
                     tokenId: lockedPosition.tokenId,
                     ethReward: lockedPosition.payoutEth, 
                     alcaReward: lockedPosition.payoutToken,
-                    lockupCompleted: lockedPosition.lockupCompleted,
+                    lockupPeriod: lockedPosition.lockupPeriod,
                     penalty: lockedPosition.penalty,
                     remainingRewards: lockedPosition.remainingRewards
                 }
