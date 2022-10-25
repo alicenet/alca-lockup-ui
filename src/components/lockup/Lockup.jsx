@@ -44,7 +44,7 @@ export function Lockup() {
         } catch (exception) {
             setStatus({ 
                 error: true, 
-                message: exception || "There was a problem with your request, please verify or try again later" 
+                message: exception.toString() || "There was a problem with your request, please verify or try again later" 
             });
             setWaiting(false);
         }
