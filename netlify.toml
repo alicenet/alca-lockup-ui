@@ -2,6 +2,7 @@
     CI="FALSE"
     NODE_OPTIONS = "--max_old_space_size=4096"
     REACT_APP__ENV="STAGING"
+    REACT_APP__ISPRODLIVE="FALSE"
     REACT_APP__ETHEREUM_ENDPOINT_LOCAL="http://localhost:8545"
     REACT_APP__ETHEREUM_ENDPOINT_STAGING="https://hh.staging.alice.net"
     REACT_APP__ETHEREUM_ENDPOINT_PRODUCTION="https://eth.alice.net"

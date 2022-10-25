@@ -1,5 +1,10 @@
-## One of: LOCAL, STAGING, PRODUCTION
+
+## Change to production to make app live
 REACT_APP__ENV="STAGING"
+
+## Change to TRUE to show app instead of alice.net link when "PRODUCTION" environment is set
+REACT_APP__ISPRODLIVE="FALSE"
+
 REACT_APP__MODE="TESTING"
 
 ## Ethereum Endpoints for JSON RPC requests if desired ( Allows Pre Wallet Connect Reads )
