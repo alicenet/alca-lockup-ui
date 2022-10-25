@@ -52,7 +52,7 @@ export function Lockup() {
 
     const lockupStakedAmount = () => (
         <Grid.Column width={16}>
-            {((!lockedPosition.lockedAlca) || status.error) && (
+            {((!lockedPosition.lockedAlca || !hash) || status.error) && (
                 <>
                     <div>
                         <Header as="h2">{stakedPosition.stakedAlca} ALCA Staked</Header>
@@ -102,7 +102,7 @@ export function Lockup() {
             <Grid.Column width={16} className="mb-10">
                 <Grid.Row>
                     <Header>
-                        {lockedPosition.lockedAlca ? 'Lockup Successful!' : 'Lockup Staked Positions'}
+                        {lockedPosition.lockedAlca && hash ? 'Lockup Successful!' : 'Lockup Staked Positions'}
                         <Header.Subheader className="mt-3">
                             {(!lockedPosition.lockedAlca) 
                             ? (`You currently have a staked position of ${stakedPosition.stakedAlca} ALCA, a lockup will be a period of 6 months with 5X multiplayer (TBD)`) 
@@ -154,7 +154,7 @@ export function Lockup() {
                         <Message warning><p>{'Lockup is not available outside the lockup period'}</p></Message>
                     </Grid.Column>
                 )}
-                {lockedPosition.lockedAlca ? lockupSuccessful() : lockupStakedAmount()}
+                {lockedPosition.lockedAlca && hash ? lockupSuccessful() : lockupStakedAmount()}
 
                 {status.error && (
                     <Grid.Column width={16}>

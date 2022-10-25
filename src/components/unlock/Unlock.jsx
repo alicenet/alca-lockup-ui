@@ -2,7 +2,7 @@ import React from "react";
 import ethAdapter from "eth/ethAdapter";
 import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
-import { TOKEN_TYPES } from "redux/constants";
+import { APPLICATION_ACTION_TYPES, TOKEN_TYPES } from "redux/constants";
 import { Grid, Header, Button, Icon, Message, Segment } from "semantic-ui-react";
 import utils from "utils";
 import { ConfirmationModal } from "components";
@@ -43,7 +43,8 @@ export function Unlock() {
                 setWaiting(false);
                 setClaimedEth(ethReward);
                 setClaimedAlca(alcaReward);
-                dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
+                dispatch({type: APPLICATION_ACTION_TYPES.SET_LOCKED_POSITION, payload: { lockedAlca: 0 }})
+                await dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
             }
         } catch (exception) {
             setStatus({ 

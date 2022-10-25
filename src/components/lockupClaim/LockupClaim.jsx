@@ -89,6 +89,7 @@ export function LockupClaim() {
                         <Button
                             color="blue"
                             loading={waiting}
+                            disabled={['0.0', 0].includes(ethReward) && ['0.0', 0].includes(alcaReward)}
                             onClick={() => toggleConfirmModal(true)}
                             content={"Claim rewards"}
                         />      
