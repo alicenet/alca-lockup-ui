@@ -3,83 +3,75 @@ import ethAdapter from "eth/ethAdapter";
 import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
 import { TOKEN_TYPES } from "redux/constants";
-import { Grid, Header,  Button, Icon, Message, Segment } from "semantic-ui-react";
+import { Grid, Header, Button, Icon, Message, Segment } from "semantic-ui-react";
 import utils from "utils";
 import { ConfirmationModal } from "components";
 
 const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://etherscan.io/tx/";
 
 export function Unlock() {
-
-    const { lockedAlca, ethReward, alcaReward, unlockDate, penalty, remainingRewards } = useSelector(state => ({
+    const { lockedAlca, tokenId, ethReward, alcaReward } = useSelector(state => ({
         lockedAlca: state.application.lockedPosition.lockedAlca,
+        tokenId: state.application.lockedPosition.tokenId,
         ethReward: state.application.lockedPosition.ethReward,
-        alcaReward: state.application.lockedPosition.alcaReward,
-        unlockDate: state.application.lockedPosition.unlockDate,
-        penalty: state.application.lockedPosition.penalty,
-        remainingRewards: state.application.lockedPosition.remainingRewards
+        alcaReward: state.application.lockedPosition.alcaReward
     }))
 
     const dispatch = useDispatch();
-    
-    const [status, setStatus] = React.useState({});
-    const [openConfirmation, toggleConfirmModal] = React.useState(false);
+
     const [waiting, setWaiting] = React.useState(false);
-    const [unlockedPosition, setUnlockedPosition] = React.useState(0);
+    const [openConfirmation, toggleConfirmModal] = React.useState(false);
+    const [status, setStatus] = React.useState({});
     const [claimedEth, setClaimedEth] = React.useState(0);
     const [claimedAlca, setClaimedAlca] = React.useState(0);
     const [hash, setHash] = React.useState("");
 
-    const unlockPosition = async () => {
+    const claimRewards = async () => {
         try {
             setHash("");
             setStatus({});
-            setWaiting(true)
+            setWaiting(true);
             toggleConfirmModal(false);
 
-            const tx = await ethAdapter.sendEarlyExit(lockedAlca);
+            const tx = await ethAdapter.sendExitLock(tokenId);
             if (tx.error) throw tx.error;
             const rec = await tx.wait();
 
             if (rec.transactionHash) {
+                setStatus({ error: false, message: "Rewards Claimed Successful!" });
                 setHash(rec.transactionHash);
-                setStatus({ error: false, message: "Unlocked Successful!" });
                 setWaiting(false);
-                setUnlockedPosition(lockedAlca);
                 setClaimedEth(ethReward);
                 setClaimedAlca(alcaReward);
-                await dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
+                dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
             }
         } catch (exception) {
-            setWaiting(false);
             setStatus({ 
                 error: true, 
                 message: exception || "There was a problem with your request, please verify or try again later" 
             });
+            setWaiting(false);
         }
     }
 
-    const requestUnlock = () => (
+    const requestRewards = () => (
         <Grid.Column width={16}>
             {(!status?.message || status.error) && (
                 <>
                     <div className="flex mb-16">
                         <div className="flex justify-center items-center mr-3 p-6 h-20 bg-neutral-300">
-                            <Icon size="large" name="lock" className="mr-0" />
+                            <Icon size="large" name="star" className="mr-0" />
                         </div>
                     
                         <div>
                             <Header as="h1" className="mb-0">{lockedAlca} ALCA Staked Locked</Header>
-                            <p>
-                                You can unlock your position at anytime, however to receive the complete lockup bonus rewards 
-                                it must not be unlocked until {unlockDate}
-                            </p>
+                            <p>You are now able to claim your lockup rewards, Claim now!</p>
                         </div>
                     </div>
 
-                    <Segment className="flex justify-between items-center rounded-2xl bg-neutral-50 border-neutral-200">
+                    <Segment className="flex justify-between items-center rounded-2xl bg-teal-50 border-teal-200">
                         <div>
-                            <Header as="h4">Locked rewards as today</Header>
+                            <Header as="h4" color="teal">Unlocked rewards as of today</Header>
                             
                             <div className="font-bold space-x-2">
                                 <Icon name="ethereum"/>{ethReward} ETH 
@@ -89,18 +81,19 @@ export function Unlock() {
                         </div>
 
                         <Button
-                            color="pink"
+                            color="teal"
                             loading={waiting}
                             onClick={() => toggleConfirmModal(true)}
-                            content={"Unlock position & rewards"}
+                            content={"Claim Rewards"}
                         />      
                     </Segment>
                 </>
             )}
+
         </Grid.Column>
     )
 
-    const unlockSuccessful = () => (
+    const claimSuccessful = () => (
         <Grid.Column width={16}>
             <div className="mb-10">
                 <Header as="h3">Claimed Rewards</Header>
@@ -121,72 +114,44 @@ export function Unlock() {
                 />
             </Header.Subheader>
 
+
             {status?.message && !status?.error && (
-                <div>
-                    <Button
-                        className="mt-4"
-                        content={"View on Etherscan"}
-                        color="black"
-                        onClick={() => window.open(`${ETHERSCAN_URL}${hash}`, '_blank').focus()}
-                    />
-                </div>
+                <Button
+                    className="mt-4"
+                    content={"View on Etherscan"}
+                    color="black"
+                    onClick={() => window.open(`${ETHERSCAN_URL}${hash}`, '_blank').focus()}
+                />
             )}
         </Grid.Column>
     )
 
-    const unlockHeader = () => (
+    const claimHeader = () => (
         <Grid.Column width={16} className="flex mb-4">
-            <Grid.Row>
-                <Header>
-                    {hash ? 'Unlocked Successful!' : 'Current lockup position'}
-                    <Header.Subheader className="mt-3">
-                        {!hash 
-                        ? (`The early exit will have a ${penalty}% penalty of earned rewards, users will get the ${remainingRewards}% of their rewards and their original staked position's ALCA.`)
-                        : (`Your position ${unlockedPosition} ALCA has been unlocked`)}
-                    </Header.Subheader>
-                </Header>
-
-                <Grid className="mt-3"> 
-                    <div 
-                        className="cursor-pointer text-sm underline" 
-                        onClick={() => window.open(`${process.env.REACT_APP__ABOUT_EXTRA_ALCA_LOCKUP_URL}`, '_blank').focus()}
-                    >
-                        About extra ALCA lockup rewards
-                    </div>
-
-                    <div 
-                        className="cursor-pointer text-sm underline" 
-                        onClick={() => window.open(`${process.env.REACT_APP__ABOUT_ETH_LOCKUP_URL}`, '_blank').focus()}
-                    >
-                        About ETH % lockup rewards
-                    </div>
-                </Grid>
-            </Grid.Row>
+            <Header>
+                {hash ? 'Rewards Claimed Successful!' : 'Claim unlocked position rewards'}
+                <Header.Subheader className="mt-3">
+                    {hash 
+                        ? (`The following rewards have been sent to your wallet`)
+                        : (`Your ${lockedAlca} ALCA position is unlocked and ready to be claimed`)}
+                </Header.Subheader>
+            </Header>
         </Grid.Column>
     )
 
     const confirmation = () => (
         <ConfirmationModal 
-            title="Unlock this position"
+            title="Claim Reward"
             open={openConfirmation}
             onClose={() => toggleConfirmModal(false)}
             onOpen={() => console.log('openned')}
-            actionLabel="Unlock This Position"
-            onAccept={() => unlockPosition()}
+            actionLabel="Claim Rewards"
+            onAccept={() => claimRewards()}
         >
-            <Message warning>
-                <Message.Header>You are about to unlock this {lockedAlca} ALCA position and lose potential rewards</Message.Header>
-                <p>The early exit will have a {penalty}% penalty for earned rewards, users will get the {remainingRewards}%<br />
-                    of their rewards and their original staked position's ALCA.</p>
-            </Message>
+            <p>You are about to claim the following rewards. This funds will be send to your wallet.</p>
 
-            <p>You are about to unlock this {lockedAlca} ALCA before the lock-up period this means.... (TBD)</p>
-
-            <Header as="h3">Locked rewards as of today</Header>
-            
             <div className="font-bold space-x-2">
                 <Icon name="ethereum"/>{ethReward} ETH 
-
                 <Icon name="cog"/>{alcaReward} ALCA
             </div>
         </ConfirmationModal>
@@ -197,8 +162,8 @@ export function Unlock() {
             {confirmation()}
 
             <Grid padded>
-                {unlockHeader()}
-                {hash ? unlockSuccessful() : requestUnlock()}
+                {claimHeader()}
+                {hash ? claimSuccessful() : requestRewards()}
 
                 {status.error && (
                     <Grid.Column width={16}>

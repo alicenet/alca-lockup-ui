@@ -168,7 +168,6 @@ export const updateBalances = tokenType => {
                 }
             });
         }
-        console.log({ lockedPosition })
 
         if (!lockedPosition.error) {
             dispatch({type: APPLICATION_ACTION_TYPES.SET_LOCKED_POSITION, 
@@ -179,7 +178,8 @@ export const updateBalances = tokenType => {
                     alcaReward: lockedPosition.payoutToken,
                     lockupPeriod: lockedPosition.lockupPeriod,
                     penalty: lockedPosition.penalty,
-                    remainingRewards: lockedPosition.remainingRewards
+                    remainingRewards: lockedPosition.remainingRewards,
+                    unlockDate: lockedPosition.blockUntilUnlock
                 }
             })
         }

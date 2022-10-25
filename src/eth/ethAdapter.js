@@ -480,9 +480,10 @@ class EthAdapter {
                 payoutEth: ethers.utils.formatEther(payoutEth), 
                 payoutToken: ethers.utils.formatEther(payoutToken),
                 tokenId,
-                lockupPeriod: blockNumber < end,
+                lockupPeriod: (blockNumber < end),
                 penalty: penalty.toString(),
-                remainingRewards
+                blockUntilUnlock: (end - blockNumber),
+                remainingRewards,
             }; 
         })
     }
