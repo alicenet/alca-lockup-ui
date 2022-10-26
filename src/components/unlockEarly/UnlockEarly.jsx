@@ -170,7 +170,6 @@ export function UnlockEarly() {
             title="Unlock this position"
             open={openConfirmation}
             onClose={() => toggleConfirmModal(false)}
-            onOpen={() => console.log('openned')}
             actionLabel="Unlock This Position"
             onAccept={() => unlockPosition()}
         >

@@ -49,9 +49,6 @@ class EthAdapter {
             return;
         }
 
-        const blockNumber = await this.provider.getBlockNumber();
-        console.log({ blockNumber })
-
         await this.updateBalances();
         setTimeout(this._balanceLoop.bind(this), this.timeBetweenBalancePolls);
     }
@@ -107,7 +104,6 @@ class EthAdapter {
         return new ethers.Contract(this.addressesFromFactory[contractName] || this.contracts[contractName].address, this.contracts[contractName].abi, this.signer);
     }
 
-    // TODO: FINISH DETERMINISTIC CONFIG SETUP
     /**
      * Get deterministic create2 contract address by contract name
      * @param { ContractName } contractName - One of the available contract name strings from config
@@ -214,7 +210,6 @@ class EthAdapter {
     // TODO Rework contract names to the expected Salt 
     async _lookupContractName(cName) {
         const contractAddress = await this._tryCall(CONTRACT_NAMES.Factory, "lookup", [ethers.utils.formatBytes32String(cName)]);
-        console.log({ cName, contractAddress })
         return contractAddress;
     }
 
@@ -434,7 +429,6 @@ class EthAdapter {
      * @returns { Object }
      */
      async lockupStakedPosition(tokenID) {
-        console.log(this.addressesFromFactory)
         return await this._try(async () => {
             const address = await this._getAddressByIndex(0);
             const tx = await this._trySend(CONTRACT_NAMES.PublicStaking, "safeTransferFrom(address,address,uint256)", [
@@ -455,7 +449,6 @@ class EthAdapter {
             const address = await this._getAddressByIndex(accountIndex);
             const tokenId = await this._trySend(CONTRACT_NAMES.Lockup, "tokenOf", [address]);
             const { payoutEth = 0, payoutToken = 0 } = await this.estimateProfits(tokenId);
-            const start = await this.getLockupStart();
             const end = await this.getLockupEnd();
             const { shares } = await this._trySend(CONTRACT_NAMES.PublicStaking, "getPosition", [tokenId]);
             const blockNumber = await this.provider.getBlockNumber();
@@ -464,17 +457,6 @@ class EthAdapter {
             const penalty = ethers.BigNumber.from(FRACTION_RESERVED).mul(100).div(SCALING_FACTOR);
             const remainingRewards = 100 - penalty
 
-            // TODO clean up
-            console.log(this.contracts);
-            console.log(this.addressesFromFactory);
-            console.log({ 
-                penalty: penalty.toString(),
-                remainingRewards: 100 - penalty,
-                start: start.toString(),
-                end: end.toString(),
-                currentBlock: blockNumber.toString()
-            })
-            
             return { 
                 lockedAlca: ethers.utils.formatEther(shares),
                 payoutEth: ethers.utils.formatEther(payoutEth), 

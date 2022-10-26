@@ -33,8 +33,6 @@ export function LockupActions() {
         return checkAgainst === activeItem ? "border-l-aliceblue border-l-[3px]" : ""
     }
 
-    console.log({ stakedPosition, lockedPosition, lockedAlca: lockedPosition.lockedAlca })
-
     return (
         <div className="flex justify-center w-full">
             <div className="max-w-[1200px] w-full mt-12">

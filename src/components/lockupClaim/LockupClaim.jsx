@@ -149,7 +149,6 @@ export function LockupClaim() {
             title="Claim Reward"
             open={openConfirmation}
             onClose={() => toggleConfirmModal(false)}
-            onOpen={() => console.log('openned')}
             actionLabel="Claim Rewards"
             onAccept={() => claimRewards()}
         >

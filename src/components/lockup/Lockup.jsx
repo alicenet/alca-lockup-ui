@@ -135,7 +135,6 @@ export function Lockup() {
             title="Lockup this staked position"
             open={openConfirmation}
             onClose={() => toggleConfirmModal(false)}
-            onOpen={() => console.log('openned')}
             actionLabel="Lockup Position"
             onAccept={() => lockupPosition()}
         >
