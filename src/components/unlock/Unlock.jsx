@@ -10,7 +10,8 @@ import { ConfirmationModal } from "components";
 const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://etherscan.io/tx/";
 
 export function Unlock() {
-    const { lockedAlca, tokenId, ethReward, alcaReward } = useSelector(state => ({
+    const { lockedAlca, tokenId, ethReward, alcaReward, lockedPosition } = useSelector(state => ({
+        lockedPosition: state.application.lockedPosition,
         lockedAlca: state.application.lockedPosition.lockedAlca,
         tokenId: state.application.lockedPosition.tokenId,
         ethReward: state.application.lockedPosition.ethReward,
@@ -43,8 +44,8 @@ export function Unlock() {
                 setWaiting(false);
                 setClaimedEth(ethReward);
                 setClaimedAlca(alcaReward);
-                dispatch({type: APPLICATION_ACTION_TYPES.SET_LOCKED_POSITION, payload: { lockedAlca: 0 }})
-                await dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
+                dispatch({type: APPLICATION_ACTION_TYPES.SET_LOCKED_POSITION, payload: { ...lockedPosition, lockedAlca: 0 }})
+                dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
             }
         } catch (exception) {
             setStatus({ 

@@ -2,7 +2,7 @@ import React from "react";
 import ethAdapter from "eth/ethAdapter";
 import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
-import { TOKEN_TYPES } from "redux/constants";
+import { APPLICATION_ACTION_TYPES, TOKEN_TYPES } from "redux/constants";
 import { Grid, Header,  Button, Icon, Message, Segment } from "semantic-ui-react";
 import utils from "utils";
 import { ConfirmationModal } from "components";
@@ -11,7 +11,8 @@ const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://ethers
 
 export function UnlockEarly() {
 
-    const { lockedAlca, ethReward, alcaReward, unlockDate, penalty, remainingRewards } = useSelector(state => ({
+    const { lockedAlca, ethReward, alcaReward, unlockDate, penalty, remainingRewards, lockedPosition } = useSelector(state => ({
+        lockedPosition: state.application.lockedPosition,
         lockedAlca: state.application.lockedPosition.lockedAlca,
         ethReward: state.application.lockedPosition.ethReward,
         alcaReward: state.application.lockedPosition.alcaReward,
@@ -48,7 +49,8 @@ export function UnlockEarly() {
                 setUnlockedPosition(lockedAlca);
                 setClaimedEth(ethReward);
                 setClaimedAlca(alcaReward);
-                await dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
+                dispatch({type: APPLICATION_ACTION_TYPES.SET_LOCKED_POSITION, payload: { ...lockedPosition, lockedAlca: 0 }})
+                dispatch(APPLICATION_ACTIONS.updateBalances(TOKEN_TYPES.ALL));
             }
         } catch (exception) {
             setWaiting(false);
