@@ -397,34 +397,8 @@ class EthAdapter {
         })
     }
 
-
     /**
-     * Request a stake position to be opened
-     * @param { Number } amount - Amount to be staked for a position
-     * @returns { Object }
-     */
-    async lockPosition(amount) {
-        return await this._try(async () => {
-            const tx = await this._trySend(CONTRACT_NAMES.Lockup, "mint", [ethers.utils.parseEther(amount)]);
-            return tx;
-        })
-    }
-
-    /**
-     * Request to exit a staked position
-     * @param { Number } tokenId
-     * @returns { Object }
-     */
-    async unlockPosition(tokenId) {
-        return await this._try(async () => {
-            const tx = await this._trySend(CONTRACT_NAMES.Lockup, "burn", [tokenId]);
-            return tx;
-        })
-    }
-    //Lockup
-
-    /**
-     * safe transfer  
+     * Safe transfer  
      * @param tokenID nft id held by lockup
      * @returns { Object }
      */
@@ -442,6 +416,7 @@ class EthAdapter {
 
     /**
      * Get token by address
+     * @param { Number } accountIndex - Account index of this.accounts[i]
      * @returns { Object }
      */
      async getLockedPosition(accountIndex = 0) {
@@ -471,19 +446,7 @@ class EthAdapter {
     }
 
     /**
-     * approve lockup contract 
-     * @param tokenID nft id held by lockup
-     * @returns { Object }
-     */
-     async sendLockupApproval(tokenID) {
-        return await this._try(async () => {
-            const tx = await this._trySend(CONTRACT_NAMES.Lockup, "lockFromApproval", [tokenID]);
-            return tx;
-        })
-    }
-
-    /**
-     * unlock and claim ownership of locked position and rewards
+     * Unlock and claim ownership of locked position and rewards
      * @param tokenID nft id held by lockup
      * @returns { Object }
      */
@@ -494,8 +457,9 @@ class EthAdapter {
             return tx;
         })
     }
+
     /**
-     * early exit on your locked position, loses 20% of rewards and bonus ALCA
+     * Early exit on your locked position, loses 20% of rewards and bonus ALCA
      * @param exitValue nft id held by lockup
      * @returns { Object }
      */
@@ -509,7 +473,7 @@ class EthAdapter {
     /**
      * Get ETH rewards for a given token in lockup
      * @param { Number } tokenId
-     * @returns { String }
+     * @returns { Object }
      */
      async estimateProfits(tokenId) {
         return await this._try(async () => {
@@ -521,7 +485,7 @@ class EthAdapter {
     /**
      * Get ALCA rewards for a given token in lockup
      * @param { Number } tokenId 
-     * @returns { String }
+     * @returns { Object }
      */
     async estimateFinalBonusProfits(tokenId) {
         return await this._try(async () => {
@@ -542,7 +506,7 @@ class EthAdapter {
     }
 
     /**
-     * Claim all rewards for both ETH and ALCA from lockup
+     * Aggregate all profits
      * @returns { Object }
      */
      async aggregateProfits() {
@@ -553,8 +517,8 @@ class EthAdapter {
     }
 
     /**
-     * Claim all rewards for both ETH and ALCA from lockup
-     * @returns { Object }
+     * Get first block number in the lockup period
+     * @returns { Number }
      */
      async getLockupStart() {
         return await this._try(async () => {
@@ -564,7 +528,7 @@ class EthAdapter {
     }
 
     /**
-     * Claim all rewards for both ETH and ALCA from lockup
+     * Get end block number in the lockup period
      * @returns { Object }
      */
      async getLockupEnd() {

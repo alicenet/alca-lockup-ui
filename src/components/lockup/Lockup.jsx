@@ -49,7 +49,6 @@ export function Lockup() {
             setWaiting(false);
         }
     }
-    console.log(lockedPosition.lockupPeriod)
 
     const lockupStakedAmount = () => (
         <Grid.Column width={16}>
