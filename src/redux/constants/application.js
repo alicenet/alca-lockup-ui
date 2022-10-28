@@ -40,6 +40,6 @@ export const TOKEN_TYPES = {
  */
 export const LOCKUP_PERIOD_STATUS = {
     START: "START",
-    INLOCK: "INLOCK",
+    LOCKED: "LOCKED",
     END: "END"
 }

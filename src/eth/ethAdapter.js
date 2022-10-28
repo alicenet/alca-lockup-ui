@@ -436,7 +436,7 @@ class EthAdapter {
                 payoutEth: ethers.utils.formatEther(payoutEth), 
                 payoutToken: ethers.utils.formatEther(payoutToken),
                 tokenId,
-                lockupPeriod: (blockNumber < end) ? LOCKUP_PERIOD_STATUS.INLOCK : LOCKUP_PERIOD_STATUS.END,
+                lockupPeriod: (blockNumber < end) ? LOCKUP_PERIOD_STATUS.LOCKED : LOCKUP_PERIOD_STATUS.END,
                 penalty: penalty.toString(),
                 blockUntilUnlock: (end - blockNumber),
                 remainingRewards,
