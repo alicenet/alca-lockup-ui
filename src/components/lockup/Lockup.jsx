@@ -2,7 +2,7 @@ import React from "react";
 import ethAdapter from "eth/ethAdapter";
 import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
-import { TOKEN_TYPES } from "redux/constants";
+import { TOKEN_TYPES, LOCKUP_PERIOD_STATUS } from "redux/constants";
 import { Grid, Header, Button, Icon, Message } from "semantic-ui-react";
 import utils from "utils";
 import { ConfirmationModal } from "components";
@@ -23,6 +23,7 @@ export function Lockup() {
     const [status, setStatus] = React.useState({});
     const [openConfirmation, toggleConfirmModal] = React.useState(false);
     const [hash, setHash] = React.useState("");
+    const lockupPeriodEnded = lockedPosition.lockupPeriod === LOCKUP_PERIOD_STATUS.END;
 
     const lockupPosition = async () => {
         try {
@@ -64,7 +65,7 @@ export function Lockup() {
                             color="black"
                             content={"Lockup Positions"}
                             onClick={() => toggleConfirmModal(true)}
-                            disabled={stakedPosition.stakedAlca === 0 || !lockedPosition.lockupPeriod}
+                            disabled={stakedPosition.stakedAlca === 0 || lockupPeriodEnded}
                             loading={waiting}
                         />      
                     </div>
@@ -148,7 +149,7 @@ export function Lockup() {
 
             <Grid padded>
                 {lockupHeader()}
-                {!lockedPosition.lockupPeriod && (
+                {lockupPeriodEnded && (
                     <Grid.Column width={16}>
                         <Message warning><p>{'Lockup is not available outside the lockup period'}</p></Message>
                     </Grid.Column>

@@ -3,8 +3,7 @@ import { ethers } from 'ethers';
 import config from 'config/_config';
 import store from 'redux/store/store';
 import { APPLICATION_ACTIONS } from 'redux/actions';
-import { TOKEN_TYPES } from 'redux/constants';
-import { CONTRACT_ADDRESSES } from 'config/contracts';
+import { TOKEN_TYPES, LOCKUP_PERIOD_STATUS } from 'redux/constants';
 import utils from 'utils';
 
 /** 
@@ -437,7 +436,7 @@ class EthAdapter {
                 payoutEth: ethers.utils.formatEther(payoutEth), 
                 payoutToken: ethers.utils.formatEther(payoutToken),
                 tokenId,
-                lockupPeriod: (blockNumber < end),
+                lockupPeriod: (blockNumber < end) ? LOCKUP_PERIOD_STATUS.INLOCK : LOCKUP_PERIOD_STATUS.END,
                 penalty: penalty.toString(),
                 blockUntilUnlock: (end - blockNumber),
                 remainingRewards,

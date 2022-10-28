@@ -1,4 +1,4 @@
-import { APPLICATION_ACTION_TYPES, ACTION_TYPES } from "redux/constants";
+import { APPLICATION_ACTION_TYPES, ACTION_TYPES, LOCKUP_PERIOD_STATUS } from "redux/constants";
 
 //contains all information to describe application state
 const initialApplicationState = {
@@ -28,7 +28,7 @@ const initialApplicationState = {
         alcaReward: 0,
         ethReward: 0,
         unlockDate: 0,
-        lockupPeriod: true,
+        lockupPeriod: LOCKUP_PERIOD_STATUS.START,
         penalty: 0,
         remainingRewards: 0
     },

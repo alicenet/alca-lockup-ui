@@ -34,3 +34,12 @@ export const TOKEN_TYPES = {
     ALCB: "ALCB",
     ETHEREUM: "ETHEREUM"
 }
+
+/**
+ * @typedef {String} LockupPeriodStatus - Supported token types for balances
+ */
+export const LOCKUP_PERIOD_STATUS = {
+    START: "START",
+    INLOCK: "INLOCK",
+    END: "END"
+}

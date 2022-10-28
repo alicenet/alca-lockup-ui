@@ -2,7 +2,7 @@ import React from "react";
 import ethAdapter from "eth/ethAdapter";
 import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
-import { TOKEN_TYPES } from "redux/constants";
+import { TOKEN_TYPES, LOCKUP_PERIOD_STATUS } from "redux/constants";
 import { Grid, Header, Button, Icon, Message, Segment } from "semantic-ui-react";
 import utils from "utils";
 import { ConfirmationModal } from "components";
@@ -28,6 +28,7 @@ export function LockupClaim() {
     const [claimedEth, setClaimedEth] = React.useState(0);
     const [claimedAlca, setClaimedAlca] = React.useState(0);
     const [hash, setHash] = React.useState("");
+    const lockupPeriodEnded = lockupPeriod === LOCKUP_PERIOD_STATUS.END;
 
     const claimRewards = async () => {
         try {
@@ -152,7 +153,7 @@ export function LockupClaim() {
             actionLabel="Claim Rewards"
             onAccept={() => claimRewards()}
         >
-            {!lockupPeriod && (
+            {!lockupPeriodEnded && (
                 <Message warning>
                     <Message.Header>You are about to claim rewards for this locked position and lose potential rewards</Message.Header>
                     <p>The early exit will have a {penalty}% penalty for earned rewards, users will get the {remainingRewards}%<br />
