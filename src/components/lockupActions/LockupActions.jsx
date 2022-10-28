@@ -55,7 +55,7 @@ export function LockupActions() {
                                     content={<>
                                         <Header
                                             className={classNames({
-                                                "opacity-40": lockedPosition.lockedAlca || !web3Connected,
+                                                "opacity-40": !['0.0', 0].includes(lockedPosition.lockedAlca) || !web3Connected,
                                                 "text-base": true,
                                                 "mb-0": true
                                             })}
@@ -68,7 +68,7 @@ export function LockupActions() {
                                                 ALCA`}
                                         </div>
                                     </>}
-                                    disabled={Boolean(lockedPosition.lockedAlca || !web3Connected)}
+                                    disabled={Boolean(!['0.0', 0].includes(lockedPosition.lockedAlca) || !web3Connected)}
                                     active={activeItem === 'lockup'}
                                     onClick={e => handleItemClick(e, { name: "lockup" })}
                                     className={activeMenuClass("lockup")}
@@ -78,7 +78,7 @@ export function LockupActions() {
                                     content={<>
                                         <Header
                                             className={classNames({
-                                                "opacity-40": !lockedPosition.lockedAlca || !web3Connected,
+                                                "opacity-40": ['0.0', 0].includes(lockedPosition.lockedAlca) || !web3Connected,
                                                 "text-base": true,
                                                 "mb-0": true
                                             })}
@@ -92,7 +92,7 @@ export function LockupActions() {
                                                 ALCA`}
                                         </div>
                                     </>}
-                                    disabled={Boolean(!lockedPosition.lockedAlca || !web3Connected)}
+                                    disabled={Boolean(['0.0', 0].includes(lockedPosition.lockedAlca) || !web3Connected)}
                                     active={activeItem === 'unlock'}
                                     onClick={e => handleItemClick(e, { name: "unlock" })}
                                     className={activeMenuClass("unlock")}
@@ -103,7 +103,7 @@ export function LockupActions() {
                                         <>
                                             <Header
                                                 className={classNames({
-                                                    "opacity-40": !lockedPosition.lockedAlca || lockupPeriodEnded || !web3Connected,
+                                                    "opacity-40": ['0.0', 0].includes(lockedPosition.lockedAlca) || lockupPeriodEnded || !web3Connected,
                                                     "text-base": true,
                                                     "mb-0": true
                                                 })}
@@ -117,7 +117,7 @@ export function LockupActions() {
                                             </div>
                                         </>
                                     }
-                                    disabled={Boolean(!lockedPosition.lockedAlca || lockupPeriodEnded || !web3Connected)}
+                                    disabled={Boolean(['0.0', 0].includes(lockedPosition.lockedAlca) || lockupPeriodEnded || !web3Connected)}
                                     active={activeItem === 'claim'}
                                     onClick={e => handleItemClick(e, { name: "claim" })}
                                     className={activeMenuClass("claim")}
