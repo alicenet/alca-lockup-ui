@@ -149,7 +149,7 @@ export function Unlock() {
             actionLabel="Claim Rewards"
             onAccept={() => claimRewards()}
         >
-            <p>You are about to claim the following rewards. This funds will be send to your wallet.</p>
+            <p>You are about to claim the following rewards. These funds will be send to your wallet.</p>
 
             <div className="font-bold space-x-2">
                 <Icon name="ethereum"/>{ethReward} ETH 
