@@ -1,8 +1,19 @@
 
-# TBD -
+# Swap MadToken => ALCA Tokens
 
-TLDR: Swap MadToken => ALCA Tokens
+## Setting up and running in a dev environment
 
+1. Run `cp  dotenv .env && cp hardhat-env/dotenv hardhat-env/.env ` in project root
+2. Update `hardhat-env/.env` to have appropriate values, you will need to provide:
+    - TESTING_ADDRESS - A testing address
+    - ALCHEMY_API_KEY - An Alchemy API Key
+    - MAD_TOKEN_HOLDER and MAD_TOKEN_ADDRESS can be left as defaults
+3. In project root run `npm run ii` to install all dependencies
+4. Prep the Hardhat environment with `npm run hh-prep`
+5. Start the development node with by running `npm run hh-env` from the project root
+6. Compile the contracts with `npm run hh-compile`
+7. Deploy contracts to the development node with `npm run hh-deploy` from the project root
+8. Start the UI with `npm start`
 # Built from eth interface boilerplate
 
 ## Quick Start ( NO CREATE2 deterministic address generation support )

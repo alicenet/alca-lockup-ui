@@ -3,7 +3,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "selfAddr_",
+          "name": "legacyToken_",
           "type": "address"
         }
       ],
@@ -13,6 +13,11 @@
     {
       "inputs": [],
       "name": "CodeSizeZero",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "SaltAlreadyInUse",
       "type": "error"
     },
     {
@@ -98,6 +103,24 @@
     {
       "inputs": [
         {
+          "internalType": "bytes32",
+          "name": "salt_",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "newContractAddress_",
+          "type": "address"
+        }
+      ],
+      "name": "addNewExternalContract",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "address",
           "name": "target_",
           "type": "address"
@@ -147,19 +170,6 @@
       "name": "delegateCallAny",
       "outputs": [],
       "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "delegator",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "delegator_",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -230,46 +240,29 @@
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "salt_",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "bytes",
-          "name": "initCallData_",
-          "type": "bytes"
-        }
-      ],
-      "name": "deployStatic",
+      "inputs": [],
+      "name": "getATokenAddress",
       "outputs": [
         {
           "internalType": "address",
-          "name": "contractAddr",
+          "name": "",
           "type": "address"
         }
       ],
-      "stateMutability": "nonpayable",
+      "stateMutability": "view",
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "bytes",
-          "name": "deployCode_",
-          "type": "bytes"
-        }
-      ],
-      "name": "deployTemplate",
+      "inputs": [],
+      "name": "getATokenCreationCodeHash",
       "outputs": [
         {
-          "internalType": "address",
-          "name": "contractAddr",
-          "type": "address"
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
         }
       ],
-      "stateMutability": "nonpayable",
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -352,7 +345,7 @@
       "outputs": [
         {
           "internalType": "address",
-          "name": "addr",
+          "name": "",
           "type": "address"
         }
       ],
@@ -362,9 +355,26 @@
     {
       "inputs": [
         {
-          "internalType": "bytes[]",
+          "components": [
+            {
+              "internalType": "address",
+              "name": "target",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "data",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct AliceNetFactoryBase.MultiCallArgs[]",
           "name": "cdata_",
-          "type": "bytes[]"
+          "type": "tuple[]"
         }
       ],
       "name": "multiCall",
@@ -383,19 +393,6 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "newDelegator_",
-          "type": "address"
-        }
-      ],
-      "name": "setDelegator",
-      "outputs": [],
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -448,3 +445,4 @@
       "type": "function"
     }
   ]
+  

@@ -1,18 +1,19 @@
+
+## Change to production to make app live
+REACT_APP__ENV="STAGING"
+
+## Change to TRUE to show app instead of alice.net link when "PRODUCTION" environment is set
+REACT_APP__ISPRODLIVE="FALSE"
+
+REACT_APP__MODE="TESTING"
+
 ## Ethereum Endpoints for JSON RPC requests if desired ( Allows Pre Wallet Connect Reads )
-REACT_APP__ETHEREUM_ENDPOINT_LOCAL=""
-REACT_APP__ETHEREUM_ENDPOINT_STAGING=""
-REACT_APP__ETHEREUM_ENDPOINT_PRODUCTION=""
+REACT_APP__ETHEREUM_ENDPOINT_LOCAL="http://localhost:8545"
+REACT_APP__ETHEREUM_ENDPOINT_STAGING="https://hh.staging.alice.net"
+REACT_APP__ETHEREUM_ENDPOINT_PRODUCTION="https://eth.alice.net"
 
 ## Contracts Below
-REACT_APP__STORAGE_CONTRACT_ADDRESS=0x4095b90030dB59765FF43ab0cf7Cac6A60e3793c
-
-##########################################################
-## Optional _create2 deterministic address requirements ## 
-##########################################################
-## -- Note that you also need to supply bytecode in ./bytecode -- SEE README
-
-REACT_APP__CONTRACT_FACTORY_ADDRESS=0x0
-
-## A Salt is needed for each contract
-
-REACT_APP__STORAGE_CONTRACT_SALT="STORAGE"
+REACT_APP__AToken_CONTRACT_ADDRESS=0x19B1C5d5C0CC03aADBC3C3A5aB8d0ABA34AeD0Fc
+REACT_APP__PublicStaking_CONTRACT_ADDRESS=0x0F27E1c790d776CE13eF852623E2Bc6AcE1b9d4B
+REACT_APP__Lockup_CONTRACT_ADDRESS=0x756AfCc7df19544D7884b969a36b0761863154bC
+REACT_APP__Factory_CONTRACT_ADDRESS=0x0b1F9c2b7bED6Db83295c7B5158E3806d67eC5bc

@@ -10,3 +10,24 @@ export const invertObjectKeyValues = (obj) => {
     }
     return invertedObj;
 }
+
+/**
+ * Gets the lowest index share value of a given Token Metadata array of object
+ * @param { Array<Object> } metadataArray - Token metadata array of objects
+ * @returns { Object }  
+ */
+export const getMinTokenValue = (metadataArray) => {
+    return metadataArray && metadataArray.length > 0
+        ? metadataArray[0]
+        : {};
+}
+
+/**
+ * Find a attribute in the Token Metadata attributes object
+ * @param { Object } attributes - Attribute Name
+ * @param { String } attributeName - Attribute Name
+ * @returns { Object }  
+ */
+export const findTokenAttributeByName = (attributes, attributeName) => {
+    return attributes && attributes.length && attributes.find(item => item.trait_type === attributeName);
+}
