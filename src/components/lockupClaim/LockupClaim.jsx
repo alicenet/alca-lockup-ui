@@ -2,7 +2,7 @@ import React from "react";
 import ethAdapter from "eth/ethAdapter";
 import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
-import { TOKEN_TYPES } from "redux/constants";
+import { TOKEN_TYPES, LOCKUP_PERIOD_STATUS } from "redux/constants";
 import { Grid, Header, Button, Icon, Message, Segment } from "semantic-ui-react";
 import utils from "utils";
 import { ConfirmationModal } from "components";
@@ -10,12 +10,12 @@ import { ConfirmationModal } from "components";
 const ETHERSCAN_URL = process.env.REACT_APP__ETHERSCAN_TX_URL || "https://etherscan.io/tx/";
 
 export function LockupClaim() {
-    const { lockedAlca, tokenId, ethReward, alcaReward, lockupCompleted, penalty, remainingRewards } = useSelector(state => ({
+    const { lockedAlca, tokenId, ethReward, alcaReward, lockupPeriod, penalty, remainingRewards } = useSelector(state => ({
         lockedAlca: state.application.lockedPosition.lockedAlca,
         tokenId: state.application.lockedPosition.tokenId,
         ethReward: state.application.lockedPosition.ethReward,
         alcaReward: state.application.lockedPosition.alcaReward,
-        lockupCompleted: state.application.lockedPosition.lockupCompleted,
+        lockupPeriod: state.application.lockedPosition.lockupPeriod,
         penalty: state.application.lockedPosition.penalty,
         remainingRewards: state.application.lockedPosition.remainingRewards
     }))
@@ -28,6 +28,7 @@ export function LockupClaim() {
     const [claimedEth, setClaimedEth] = React.useState(0);
     const [claimedAlca, setClaimedAlca] = React.useState(0);
     const [hash, setHash] = React.useState("");
+    const lockupPeriodEnded = lockupPeriod === LOCKUP_PERIOD_STATUS.END;
 
     const claimRewards = async () => {
         try {
@@ -52,7 +53,7 @@ export function LockupClaim() {
             setWaiting(false);
             setStatus({ 
                 error: true, 
-                message: exception || "There was a problem with your request, please verify or try again later" 
+                message: exception.toString() || "There was a problem with your request, please verify or try again later" 
             });
         }
     }
@@ -70,14 +71,14 @@ export function LockupClaim() {
                             <Header as="h1" className="mb-0">{lockedAlca} ALCA Staked Locked</Header>
                             <p>
                                 You can claim your rewards at anytime, however early claiming will have a {penalty}% penalty of earned rewards, 
-                                users will get the {remainingRewards}% of their rewards and their original stake position.
+                                users will get the {remainingRewards}% of their rewards and their original staked position's ALCA.
                             </p>
                         </div>
                     </div>
 
-                    <Segment className="flex w-9/12 justify-between items-center rounded-2xl bg-neutral-50 border-neutral-200">
+                    <Segment className="flex justify-between items-center rounded-2xl bg-neutral-50 border-neutral-200">
                         <div>
-                            <Header as="h4">Locked rewards as today</Header>
+                            <Header as="h4">Locked rewards as of today</Header>
                             
                             <div className="font-bold space-x-2">
                                 <Icon name="ethereum"/>{ethReward} ETH 
@@ -89,6 +90,7 @@ export function LockupClaim() {
                         <Button
                             color="blue"
                             loading={waiting}
+                            disabled={['0.0', 0].includes(ethReward) && ['0.0', 0].includes(alcaReward)}
                             onClick={() => toggleConfirmModal(true)}
                             content={"Claim rewards"}
                         />      
@@ -137,7 +139,7 @@ export function LockupClaim() {
                 <Header.Subheader className="mt-3">
                     {hash 
                         ? (`You have claimed your lockup rewards`) 
-                        : (`Lockup rewards can be claim without unlocking your position.`)}
+                        : (`Lockup rewards can be claimed without unlocking your position.`)}
                 </Header.Subheader>
             </Header>
         </Grid.Column>
@@ -148,19 +150,18 @@ export function LockupClaim() {
             title="Claim Reward"
             open={openConfirmation}
             onClose={() => toggleConfirmModal(false)}
-            onOpen={() => console.log('openned')}
             actionLabel="Claim Rewards"
             onAccept={() => claimRewards()}
         >
-            {!lockupCompleted && (
+            {!lockupPeriodEnded && (
                 <Message warning>
-                    <Message.Header>You are about unlock this {lockedAlca} ALCA position and lose potential rewards</Message.Header>
+                    <Message.Header>You are about to claim rewards for this locked position and lose potential rewards</Message.Header>
                     <p>The early exit will have a {penalty}% penalty for earned rewards, users will get the {remainingRewards}%<br />
-                        of their rewards and their original stake position.</p>
+                        of their rewards and their original staked position's ALCA.</p>
                 </Message>
             )}
 
-            <p>You are about to unlock this {lockedAlca} ALCA before the lock-up period this means....</p>
+            <p>You are about to claim the following rewards. These funds will be send to your wallet.</p>
 
             <div className="font-bold space-x-2">
                 <Icon name="ethereum"/>{ethReward} ETH 

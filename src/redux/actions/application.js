@@ -59,46 +59,6 @@ export const updateNetwork = (networkId) => {
     }
 }
 
-// TODO clean up
-export const setLockedPosition = (
-    lockedAlca,
-    tokenId,
-    alcaReward,
-    ethReward,
-    unlockDate) => {
-    return dispatch => { 
-        dispatch({type: APPLICATION_ACTION_TYPES.SET_LOCKED_POSITION, 
-            payload: {
-                lockedAlca: lockedAlca,
-                tokenId: tokenId,
-                alcaReward: alcaReward,
-                ethReward: ethReward,
-                unlockDate: unlockDate,
-            }
-        })
-    }
-}
-
-// TODO clean up
-export const setStakedPosition = (
-    stakedAlca,
-    tokenId,
-    alcaReward,
-    ethReward,
-    unlockDate) => {
-    return dispatch => { 
-        dispatch({type: APPLICATION_ACTION_TYPES.SET_STAKED_POSITION, 
-            payload: {
-                stakedAlca: stakedAlca,
-                tokenId: tokenId,
-                alcaReward: alcaReward,
-                ethReward: ethReward,
-                unlockDate: unlockDate,
-            }
-        })
-    }
-}
-
 /**
  * Set balance by accepted tokenType
  * @param {String} balance - String of current balance for tokenType
@@ -133,7 +93,7 @@ export const updateBalances = tokenType => {
         let ethBalance = state.application.balances.ethereum;
         let alcaBal = state.application.balances.alca;
         let stakedPosition = state.application.balances.stakedPosition;
-        let lockedPosition = state.application.balances.stakedPosition;
+        let lockedPosition = state.application.balances.lockedPosition;
 
         if (tokenType === TOKEN_TYPES.ETHEREUM || tokenType === TOKEN_TYPES.ALL) {
             ethBalance = await ethAdapter.getEthereumBalance(0);
@@ -157,7 +117,7 @@ export const updateBalances = tokenType => {
             return; 
         }
 
-        if (stakedPosition) {
+        if (!stakedPosition.error) {
             dispatch({
                 type: APPLICATION_ACTION_TYPES.SET_STAKED_POSITION,
                 payload: {
@@ -169,16 +129,17 @@ export const updateBalances = tokenType => {
             });
         }
 
-        if (lockedPosition) {
+        if (!lockedPosition.error) {
             dispatch({type: APPLICATION_ACTION_TYPES.SET_LOCKED_POSITION, 
                 payload: {
                     lockedAlca: lockedPosition.lockedAlca,
                     tokenId: lockedPosition.tokenId,
                     ethReward: lockedPosition.payoutEth, 
                     alcaReward: lockedPosition.payoutToken,
-                    lockupCompleted: lockedPosition.lockupCompleted,
+                    lockupPeriod: lockedPosition.lockupPeriod,
                     penalty: lockedPosition.penalty,
-                    remainingRewards: lockedPosition.remainingRewards
+                    remainingRewards: lockedPosition.remainingRewards,
+                    unlockDate: lockedPosition.blockUntilUnlock
                 }
             })
         }

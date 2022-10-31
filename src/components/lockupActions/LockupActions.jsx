@@ -1,7 +1,8 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Grid, Menu, Segment, Header } from "semantic-ui-react";
-import { Lockup, Unlock, LockupWelcome, LockupClaim, UnlockedClaim } from "components";
+import { LOCKUP_PERIOD_STATUS } from 'redux/constants';
+import { Lockup, UnlockEarly, LockupWelcome, LockupClaim, Unlock } from "components";
 import { classNames } from "utils/generic";
 
 export function LockupActions() {
@@ -14,6 +15,7 @@ export function LockupActions() {
     }))
 
     const [activeItem, setActiveItem] = React.useState("welcome");
+    const lockupPeriodEnded = lockedPosition.lockupPeriod === LOCKUP_PERIOD_STATUS.END;
 
     const handleItemClick = (e, { name }) => {
         setActiveItem(name);
@@ -23,7 +25,7 @@ export function LockupActions() {
         switch (activeItem) {
             case "welcome": return <LockupWelcome stepForward={() => lockedPosition.lockedAlca > 0 ? setActiveItem("unlock") : setActiveItem("lockup")} />
             case "lockup": return <Lockup />
-            case "unlock": return lockedPosition.lockupCompleted ? <UnlockedClaim /> : <Unlock />
+            case "unlock": return lockupPeriodEnded ? <Unlock /> : <UnlockEarly />
             case "claim": return <LockupClaim />
             default: return;
         }
@@ -53,20 +55,20 @@ export function LockupActions() {
                                     content={<>
                                         <Header
                                             className={classNames({
-                                                "opacity-40": lockedPosition.lockedAlca || !web3Connected,
+                                                "opacity-40": !['0.0', 0].includes(lockedPosition.lockedAlca) || !web3Connected,
                                                 "text-base": true,
                                                 "mb-0": true
                                             })}
                                             as="h3"
                                         >
-                                            Position Available to Lockup
+                                            {!lockupPeriodEnded ? 'Position Available to Lockup' : 'Currently Staked Position'}
                                         </Header>
                                         <div className="text-xs">
                                             {`${stakedPosition.stakedAlca}
                                                 ALCA`}
                                         </div>
                                     </>}
-                                    disabled={Boolean(lockedPosition.lockedAlca || !web3Connected)}
+                                    disabled={Boolean(!['0.0', 0].includes(lockedPosition.lockedAlca) || !web3Connected)}
                                     active={activeItem === 'lockup'}
                                     onClick={e => handleItemClick(e, { name: "lockup" })}
                                     className={activeMenuClass("lockup")}
@@ -76,7 +78,7 @@ export function LockupActions() {
                                     content={<>
                                         <Header
                                             className={classNames({
-                                                "opacity-40": !lockedPosition.lockedAlca || !web3Connected,
+                                                "opacity-40": ['0.0', 0].includes(lockedPosition.lockedAlca) || !web3Connected,
                                                 "text-base": true,
                                                 "mb-0": true
                                             })}
@@ -90,7 +92,7 @@ export function LockupActions() {
                                                 ALCA`}
                                         </div>
                                     </>}
-                                    disabled={Boolean(!lockedPosition.lockedAlca || !web3Connected)}
+                                    disabled={Boolean(['0.0', 0].includes(lockedPosition.lockedAlca) || !web3Connected)}
                                     active={activeItem === 'unlock'}
                                     onClick={e => handleItemClick(e, { name: "unlock" })}
                                     className={activeMenuClass("unlock")}
@@ -101,7 +103,7 @@ export function LockupActions() {
                                         <>
                                             <Header
                                                 className={classNames({
-                                                    "opacity-40": !lockedPosition.lockedAlca || lockedPosition.lockupCompleted || !web3Connected,
+                                                    "opacity-40": ['0.0', 0].includes(lockedPosition.lockedAlca) || lockupPeriodEnded || !web3Connected,
                                                     "text-base": true,
                                                     "mb-0": true
                                                 })}
@@ -115,7 +117,7 @@ export function LockupActions() {
                                             </div>
                                         </>
                                     }
-                                    disabled={Boolean(!lockedPosition.lockedAlca || lockedPosition.lockupCompleted || !web3Connected)}
+                                    disabled={Boolean(['0.0', 0].includes(lockedPosition.lockedAlca) || lockupPeriodEnded || !web3Connected)}
                                     active={activeItem === 'claim'}
                                     onClick={e => handleItemClick(e, { name: "claim" })}
                                     className={activeMenuClass("claim")}

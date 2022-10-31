@@ -2,7 +2,7 @@ import React from "react";
 import ethAdapter from "eth/ethAdapter";
 import { useDispatch, useSelector } from "react-redux";
 import { APPLICATION_ACTIONS } from "redux/actions";
-import { TOKEN_TYPES } from "redux/constants";
+import { TOKEN_TYPES, LOCKUP_PERIOD_STATUS } from "redux/constants";
 import { Grid, Header, Button, Icon, Message } from "semantic-ui-react";
 import utils from "utils";
 import { ConfirmationModal } from "components";
@@ -23,6 +23,7 @@ export function Lockup() {
     const [status, setStatus] = React.useState({});
     const [openConfirmation, toggleConfirmModal] = React.useState(false);
     const [hash, setHash] = React.useState("");
+    const lockupPeriodEnded = lockedPosition.lockupPeriod === LOCKUP_PERIOD_STATUS.END;
 
     const lockupPosition = async () => {
         try {
@@ -44,7 +45,7 @@ export function Lockup() {
         } catch (exception) {
             setStatus({ 
                 error: true, 
-                message: exception || "There was a problem with your request, please verify or try again later" 
+                message: exception.toString() || "There was a problem with your request, please verify or try again later" 
             });
             setWaiting(false);
         }
@@ -52,7 +53,7 @@ export function Lockup() {
 
     const lockupStakedAmount = () => (
         <Grid.Column width={16}>
-            {((!lockedPosition.lockedAlca) || status.error) && (
+            {((!lockedPosition.lockedAlca || !hash) || status.error) && (
                 <>
                     <div>
                         <Header as="h2">{stakedPosition.stakedAlca} ALCA Staked</Header>
@@ -64,7 +65,7 @@ export function Lockup() {
                             color="black"
                             content={"Lockup Positions"}
                             onClick={() => toggleConfirmModal(true)}
-                            disabled={stakedPosition.stakedAlca === 0}
+                            disabled={stakedPosition.stakedAlca === 0 || lockupPeriodEnded}
                             loading={waiting}
                         />      
                     </div>
@@ -102,11 +103,11 @@ export function Lockup() {
             <Grid.Column width={16} className="mb-10">
                 <Grid.Row>
                     <Header>
-                        {lockedPosition.lockedAlca ? 'Lockup Successful!' : 'Lockup Staked Positions'}
+                        {lockedPosition.lockedAlca && hash ? 'Lockup Successful!' : 'Lockup Staked Positions'}
                         <Header.Subheader className="mt-3">
                             {(!lockedPosition.lockedAlca) 
-                            ? (`You currently have a staked position of ${stakedPosition.stakedAlca} ALCA, a lockup will be a period of 6 months with 5X multiplayer`) 
-                            : (`You have Locked-up ${lockedPosition.lockedAlca} ALCA for 6 months 5X multiplayer`)}
+                            ? (`You currently have a staked position of ${stakedPosition.stakedAlca} ALCA, a lockup will be a period of 6 months with 5X multiplayer (TBD)`) 
+                            : (`You have Locked-up ${lockedPosition.lockedAlca} ALCA for 6 months 5X multiplayer (TBD)`)}
                         </Header.Subheader>
                     </Header>
                     
@@ -135,11 +136,10 @@ export function Lockup() {
             title="Lockup this staked position"
             open={openConfirmation}
             onClose={() => toggleConfirmModal(false)}
-            onOpen={() => console.log('openned')}
             actionLabel="Lockup Position"
             onAccept={() => lockupPosition()}
         >
-            <p>You are about to Lock-up <strong>{stakedPosition.stakedAlca}</strong> ALCA for 6 months with a 5X multiplayer</p>
+            <p>You are about to Lock-up <strong>{stakedPosition.stakedAlca}</strong> ALCA for 6 months with a 5X multiplayer (TBD)</p>
         </ConfirmationModal>
     )
 
@@ -149,7 +149,12 @@ export function Lockup() {
 
             <Grid padded>
                 {lockupHeader()}
-                {lockedPosition.lockedAlca ? lockupSuccessful() : lockupStakedAmount()}
+                {lockupPeriodEnded && (
+                    <Grid.Column width={16}>
+                        <Message warning><p>{'Lockup is not available outside the lockup period'}</p></Message>
+                    </Grid.Column>
+                )}
+                {lockedPosition.lockedAlca && hash ? lockupSuccessful() : lockupStakedAmount()}
 
                 {status.error && (
                     <Grid.Column width={16}>
